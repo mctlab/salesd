@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">SalesD</string>
+
+    <!-- common -->
+    <string name="ok">确定</string>
+    <string name="close">关闭</string>
+    <string name="search">搜索</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确定</string>
+    <string name="account">帐号</string>
+    <string name="password">密码</string>
+    <string name="login">登录</string>
+    <string name="logout">退出登录</string>
+    <string name="register">注册</string>
+    <string name="back">返回</string>
+    <string name="save">保存</string>
+    <string name="not_save">不保存</string>
+    <string name="home">首页</string>
+    <string name="settings">设置</string>
+    <string name="refresh">刷新</string>
+    <string name="retry">重试</string>
+    <string name="share">分享</string>
+
+    <!-- network -->
+    <string name="network_not_available">无法连接至网络，请检查网络设置</string>
+    <string name="tip_load_failed_network_error">网络异常，请稍后再试</string>
+    <string name="tip_load_failed_server_error">加载失败，请重试~</string>
+    <string name="network_error_with_status_code">网络错误(%d)</string>
+
+</resources>
