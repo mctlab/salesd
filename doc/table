@@ -1,0 +1,14 @@
+User(用户, 包括普通用户和管理员)
+<ID, type, 年度指标, 已完成年度指标, 姓名, 用户名, ...>
+Client(客户, 一个公司)
+<ID, ownerId, 客户全称, 业务范围简介, 地理位置, type(客户分类), {组织架构}, [拜访计划], [拜访记录]>
+Project(项目)
+<ID, ownerId, 项目全称, 重要性, [项目配置], [涉及客户], [拜访计划], [拜访记录]>
+Alarm(提醒, 目前只有拜访提醒, 分为客户例行拜访(每月一次)和项目例行拜访(每周一次))
+<ID, type, ownerId, clientId, projectId, ...>
+Visit(拜访计划/拜访记录)
+<ID, type, ownerId, clientId, projectId, [联系人], ...>
+Contact(联系人, Client的内部人员)
+<ID, clientId, 姓名, 职位, 上级, 手机, 办公室电话, ...>
+Client-Project关系表
+Contact-Visit关系表

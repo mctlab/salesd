@@ -1,0 +1,11 @@
+/.idea/
+.project
+.classpath
+/apk/
+/bin/
+/gen/
+/obj/
+/out/
+local.properties
+*.pyc
+*.swp
