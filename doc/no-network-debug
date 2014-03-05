@@ -1,0 +1,6 @@
+无网络调试
+assets中的每一个文件对应一个url, 比如classa.9527对应<prefix>/classa/9527
+当请求<prefix>/classa/9527这个url时, 并不走网络请求, 而是返回classa.9527这个文件中的内容
+url可以在ThisUrl中配置, <prefix>已经在这里配好了
+目前不支持带?的url, 也就是说, <prefix>/classa/9527?xyz=abc也会返回classa.9527
+不处理post和put中带的数据, 也就是说, 对<prefix>/classa/9527执行post还是会返回classa.9527
