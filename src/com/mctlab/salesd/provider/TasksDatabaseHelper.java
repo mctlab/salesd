@@ -13,9 +13,10 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
     public interface Tables {
         public static final String USERS = "users";
         public static final String PROJECTS = "projects";
+        public static final String CONFIG = "config";
         public static final String CUSTOMERS = "customers";
         public static final String CONTACTS = "contacts";
-        public static final String ORDERS = "orders";
+        public static final String PROCUSTS = "procusts";
         public static final String REMINDERS = "reminders";
         public static final String SCHEDULES = "schedules";
     }
@@ -34,7 +35,19 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
     public interface ProjectsColumns {
         public static final String PROJECT_NAME = "project_name";
         public static final String PRIORITY = "priority";
+        public static final String ESTIMATED_AMOUNT = "estimated_amount";
+        public static final String STATUS = "status";
         public static final String OWNER_ID = "owner_id";
+
+        public static final int STATUS_NOT_STARTED = 0;
+        public static final int STATUS_COMPLETE = 1;
+    }
+
+    public interface ConfigColumns {
+        public static final String PROJECT_ID = "project_id";
+        public static final String CATEGORY = "category";
+        public static final String TYPE = "type";
+        public static final String NUMBER = "number";
     }
 
     public interface CustomersColumns {
@@ -63,7 +76,7 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
     }
 
     // relational table between projects and customers
-    public interface OrdersColumns {
+    public interface ProcustsColumns {
         public static final String PROJECT_ID = "project_id";
         public static final String CUSTOMER_ID = "customer_id";
     }
@@ -104,13 +117,25 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
                 UsersColumns.USER_NAME + " TEXT," +
                 UsersColumns.ANNUAL_TARGET + " INTEGER NOT NULL DEFAULT 0," +
                 UsersColumns.COMPLETED + " INTEGER NOT NULL DEFAULT 0," +
-                UsersColumns.PRIVILEGE + " INTEGER NOT NULL DEFAULT 0");
+                UsersColumns.PRIVILEGE + " INTEGER NOT NULL DEFAULT 0" +
+                ");");
 
         db.execSQL("CREATE TABLE " + Tables.PROJECTS + " (" +
                 BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 ProjectsColumns.PROJECT_NAME + " TEXT," +
                 ProjectsColumns.PRIORITY + " INTEGER," +
-                ProjectsColumns.OWNER_ID + " INTEGER");
+                ProjectsColumns.ESTIMATED_AMOUNT + " INTEGER," +
+                ProjectsColumns.STATUS + " INTEGER," +
+                ProjectsColumns.OWNER_ID + " INTEGER" +
+                ");");
+
+        db.execSQL("CREATE TABLE " + Tables.CONFIG + " (" +
+                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ConfigColumns.PROJECT_ID + " INTEGER," +
+                ConfigColumns.CATEGORY + " INTEGER," +
+                ConfigColumns.TYPE + " INTEGER," +
+                ConfigColumns.NUMBER + " INTEGER" +
+                ");");
 
         db.execSQL("CREATE TABLE " + Tables.CUSTOMERS + " (" +
                 BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -118,7 +143,8 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
                 CustomersColumns.BUSINESS_DESCRIPTION + " TEXT," +
                 CustomersColumns.COMPANY_ADDRESS + " TEXT," +
                 CustomersColumns.CUSTOMER_CATEGORY + " INTEGER," +
-                CustomersColumns.OWNER_ID + " INTEGER");
+                CustomersColumns.OWNER_ID + " INTEGER" +
+                ");");
 
         db.execSQL("CREATE TABLE " + Tables.CONTACTS + " (" +
                 BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -129,19 +155,22 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
                 ContactsColumns.DEPARTMENT + " TEXT," +
                 ContactsColumns.TITLE + " TEXT," +
                 ContactsColumns.DIRECT_LEADER_ID + " TEXT," +
-                ContactsColumns.CHARACTERS + " TEXT");
+                ContactsColumns.CHARACTERS + " TEXT" +
+                ");");
 
-        db.execSQL("CREATE TABLE " + Tables.ORDERS + " (" +
+        db.execSQL("CREATE TABLE " + Tables.PROCUSTS + " (" +
                 BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                OrdersColumns.PROJECT_ID + " INTEGER," +
-                OrdersColumns.CUSTOMER_ID + " INTEGER");
+                ProcustsColumns.PROJECT_ID + " INTEGER," +
+                ProcustsColumns.CUSTOMER_ID + " INTEGER" +
+                ");");
 
         db.execSQL("CREATE TABLE " + Tables.REMINDERS + " (" +
                 BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 RemindersColumns.PROJECT_ID + " INTEGER," +
                 RemindersColumns.CUSTOMER_ID + " INTEGER," +
                 RemindersColumns.REMINDER_CYCLE + " INTEGER" +
-                RemindersColumns.OWNER_ID + " INTEGER");
+                RemindersColumns.OWNER_ID + " INTEGER" +
+                ");");
 
         db.execSQL("CREATE TABLE " + Tables.SCHEDULES + " (" +
                 BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -151,7 +180,8 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
                 SchedulesColumns.STATUS + " INTEGER," +
                 SchedulesColumns.NOTE + " TEXT," +
                 SchedulesColumns.LAST_MODIFIED + " INTEGER" +
-                SchedulesColumns.OWNER_ID + " INTEGER");
+                SchedulesColumns.OWNER_ID + " INTEGER" +
+                ");");
     }
 
     @Override
