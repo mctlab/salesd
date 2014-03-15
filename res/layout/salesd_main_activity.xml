@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/darker_gray"
+        android:paddingLeft="@dimen/default_activity_left_padding"
+        android:paddingTop="@dimen/default_activity_top_padding"
+        android:paddingRight="@dimen/default_activity_right_padding"
+        android:paddingBottom="@dimen/default_activity_bottom_padding"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dip"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:id="@+id/annual_completed"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                />
+            <TextView
+                android:id="@+id/annual_target"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:gravity="right"
+                />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/annual_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dip"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/default_activity_left_padding"
+        android:paddingRight="@dimen/default_activity_right_padding"
+        android:orientation="horizontal"
+        >
+        <Button
+            android:id="@+id/btn_projects"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:layout_margin="4dip"
+            android:text="@string/projects"
+            android:drawableTop="@drawable/ic_main_projects"
+            android:contentDescription="@string/projects"
+            />
+        <Button
+            android:id="@+id/btn_customers"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:layout_margin="4dip"
+            android:text="@string/customers"
+            android:drawableTop="@drawable/ic_main_customers"
+            android:contentDescription="@string/customers"
+            />
+        <Button
+            android:id="@+id/btn_contacts"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:layout_margin="4dip"
+            android:text="@string/contacts"
+            android:drawableTop="@drawable/ic_main_contacts"
+            android:contentDescription="@string/contacts"
+            />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/reminders_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        />
+
+    <FrameLayout
+        android:id="@+id/schedules_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        />
+
+</LinearLayout>

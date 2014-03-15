@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="default_activity_left_padding">12dip</dimen>
+    <dimen name="default_activity_top_padding">8dip</dimen>
+    <dimen name="default_activity_right_padding">12dip</dimen>
+    <dimen name="default_activity_bottom_padding">8dip</dimen>
+
+    <dimen name="main_list_item_left_padding">8dip</dimen>
+    <dimen name="main_list_item_top_padding">2dip</dimen>
+    <dimen name="main_list_item_right_padding">8dip</dimen>
+    <dimen name="main_list_item_bottom_padding">2dip</dimen>
+
+    <!-- Width of priority indicator in project list item -->
+    <dimen name="project_priority_indicator_width">8dip</dimen>
+
+    <!-- Layout weight values for project detail screen -->
+    <integer name="project_detail_layout_weight_basic_info">2</integer>
+    <integer name="project_detail_layout_weight_pager">3</integer>
 
 </resources>

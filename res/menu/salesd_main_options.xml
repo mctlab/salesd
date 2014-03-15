@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/opt_search"
+        android:title="@string/search"
+        android:icon="@drawable/ic_menu_search"
+        android:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/opt_settings"
+        android:title="@string/settings"
+        android:showAsAction="withText"
+        android:orderInCategory="1" />
+
+</menu>

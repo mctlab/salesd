@@ -6,13 +6,14 @@
 
     <uses-sdk
         android:minSdkVersion="14"
-        android:targetSdkVersion="18"/>
+        android:targetSdkVersion="19"/>
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:name=".ThisApplication"
         android:label="@string/app_name"
+        android:allowBackup="true"
         android:hardwareAccelerated="true">
 
         <activity
@@ -20,13 +21,60 @@
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"/>
 
+        <activity
+            android:name="com.mctlab.salesd.activity.SalesDMainActivity"
+            android:theme="@style/SalesDTheme"
+            android:label="@string/app_name"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
 
+        <activity
+            android:name="com.mctlab.salesd.reminder.ReminderListActivity"
+            android:theme="@style/SalesDTheme"
+            android:label="@string/visit_reminders"
+            >
+            <intent-filter>
+                <action android:name="mctlab.intent.action.ACTION_REMINDER_LIST"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.mctlab.salesd.schedule.ScheduleListActivity"
+            android:theme="@style/SalesDTheme"
+            android:label="@string/visit_schedules"
+            >
+            <intent-filter>
+                <action android:name="mctlab.intent.action.ACTION_SCHEDULE_LIST"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.mctlab.salesd.project.ProjectListActivity"
+            android:theme="@style/SalesDTheme"
+            android:label="@string/projects"
+            >
+            <intent-filter>
+                <action android:name="mctlab.intent.action.ACTION_PROJECT_LIST"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.mctlab.salesd.project.ProjectDetailActivity"
+            android:theme="@style/SalesDTheme"
+            >
+            <intent-filter>
+                <action android:name="mctlab.intent.action.ACTION_PROJECT_DETAIL"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
         </activity>
 
     </application>

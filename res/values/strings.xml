@@ -22,6 +22,17 @@
     <string name="refresh">刷新</string>
     <string name="retry">重试</string>
     <string name="share">分享</string>
+    <string name="add">新建</string>
+    <string name="edit">编辑</string>
+    <string name="delete">删除</string>
+
+    <string name="projects">项目</string>
+    <string name="customers">客户</string>
+    <string name="contacts">联系人</string>
+
+    <string name="visit_reminders">拜访提醒</string>
+    <string name="visit_schedules">拜访计划</string>
+    <string name="show_more">查看更多</string>
 
     <!-- network -->
     <string name="network_not_available">无法连接至网络，请检查网络设置</string>
