@@ -5,12 +5,14 @@ import com.mctlab.salesd.R;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 public class ScheduleListActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         setContentView(R.layout.schedule_list_activity);
 
@@ -23,6 +25,15 @@ public class ScheduleListActivity extends Activity {
         transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.schedules_container, fragment);
         transaction.commit();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

@@ -136,6 +136,7 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         setContentView(R.layout.customer_detail_activity);
 

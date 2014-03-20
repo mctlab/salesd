@@ -148,6 +148,7 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         setContentView(R.layout.project_detail_activity);
 

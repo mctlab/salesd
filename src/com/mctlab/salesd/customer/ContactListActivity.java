@@ -11,6 +11,7 @@ public class ContactListActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         setContentView(R.layout.contact_list_activity);
 

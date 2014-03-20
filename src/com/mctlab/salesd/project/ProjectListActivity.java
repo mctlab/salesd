@@ -13,6 +13,7 @@ public class ProjectListActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         setContentView(R.layout.project_list_activity);
 

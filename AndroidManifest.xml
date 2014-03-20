@@ -60,6 +60,7 @@
             android:name="com.mctlab.salesd.project.ProjectListActivity"
             android:theme="@style/SalesDTheme"
             android:label="@string/projects"
+            android:parentActivityName="com.mctlab.salesd.activity.SalesDMainActivity"
             >
             <intent-filter>
                 <action android:name="mctlab.intent.action.ACTION_PROJECT_LIST"/>
@@ -70,6 +71,7 @@
         <activity
             android:name="com.mctlab.salesd.project.ProjectDetailActivity"
             android:theme="@style/SalesDTheme"
+            android:parentActivityName="com.mctlab.salesd.project.ProjectListActivity"
             >
             <intent-filter>
                 <action android:name="mctlab.intent.action.ACTION_PROJECT_DETAIL"/>
@@ -81,6 +83,7 @@
             android:name="com.mctlab.salesd.customer.CustomerListActivity"
             android:theme="@style/SalesDTheme"
             android:label="@string/customers"
+            android:parentActivityName="com.mctlab.salesd.activity.SalesDMainActivity"
             >
             <intent-filter>
                 <action android:name="mctlab.intent.action.ACTION_CUSTOMER_LIST"/>
@@ -91,6 +94,7 @@
         <activity
             android:name="com.mctlab.salesd.customer.CustomerDetailActivity"
             android:theme="@style/SalesDTheme"
+            android:parentActivityName="com.mctlab.salesd.customer.CustomerListActivity"
             >
             <intent-filter>
                 <action android:name="mctlab.intent.action.ACTION_CUSTOMER_DETAIL"/>
@@ -102,6 +106,7 @@
             android:name="com.mctlab.salesd.customer.ContactListActivity"
             android:theme="@style/SalesDTheme"
             android:label="@string/contacts"
+            android:parentActivityName="com.mctlab.salesd.activity.SalesDMainActivity"
             >
             <intent-filter>
                 <action android:name="mctlab.intent.action.ACTION_CONTACT_LIST"/>
