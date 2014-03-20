@@ -7,14 +7,18 @@
     android:paddingRight="@dimen/main_list_item_right_padding"
     android:paddingBottom="@dimen/main_list_item_bottom_padding"
     android:orientation="vertical" >
-
-    <ListView android:id="@android:id/list"
+    <TextView
+        android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fadingEdge="none"
-        android:scrollbarStyle="outsideOverlay"
-        android:divider="@color/list_view_divider_color"
-        android:dividerHeight="1dip"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        />
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="12sp"
         />
 
 </LinearLayout>

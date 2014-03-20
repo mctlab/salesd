@@ -1,6 +1,7 @@
 package com.mctlab.salesd.activity;
 
 import com.mctlab.salesd.R;
+import com.mctlab.salesd.SalesDUtils;
 import com.mctlab.salesd.constant.SalesDConstant;
 import com.mctlab.salesd.reminder.ReminderListFragment;
 import com.mctlab.salesd.schedule.ScheduleListFragment;
@@ -35,9 +36,9 @@ public class SalesDMainActivity extends Activity
         mAnnualTarget = (TextView) findViewById(R.id.annual_target);
         mAnnualProgress = (ProgressBar) findViewById(R.id.annual_progress);
 
-        setOnClickViewListener(R.id.btn_projects, this);
-        setOnClickViewListener(R.id.btn_customers, this);
-        setOnClickViewListener(R.id.btn_contacts, this);
+        SalesDUtils.setChildViewOnClickListener(this, R.id.btn_projects, this);
+        SalesDUtils.setChildViewOnClickListener(this, R.id.btn_customers, this);
+        SalesDUtils.setChildViewOnClickListener(this, R.id.btn_contacts, this);
 
         FragmentTransaction transaction;
         transaction = getFragmentManager().beginTransaction();
@@ -70,22 +71,17 @@ public class SalesDMainActivity extends Activity
             intent = new Intent(SalesDConstant.ACTION_PROJECT_LIST);
             break;
         case R.id.btn_customers:
-            Toast.makeText(this, R.string.customers, Toast.LENGTH_SHORT).show();
+//          Toast.makeText(this, R.string.customers, Toast.LENGTH_SHORT).show();
+            intent = new Intent(SalesDConstant.ACTION_CUSTOMER_LIST);
             break;
         case R.id.btn_contacts:
-            Toast.makeText(this, R.string.contacts, Toast.LENGTH_SHORT).show();
+//          Toast.makeText(this, R.string.contacts, Toast.LENGTH_SHORT).show();
+            intent = new Intent(SalesDConstant.ACTION_CONTACT_LIST);
             break;
         }
 
         if (intent != null) {
             startActivity(intent);
-        }
-    }
-
-    protected void setOnClickViewListener(int id, View.OnClickListener listener) {
-        View view = findViewById(id);
-        if (view != null) {
-            view.setOnClickListener(listener);
         }
     }
 

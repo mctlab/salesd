@@ -43,9 +43,9 @@
         android:baselineAligned="false"
         android:orientation="horizontal"
         >
-        <!-- Config tab -->
+        <!-- Project tab -->
         <LinearLayout
-            android:id="@+id/config_tab"
+            android:id="@+id/project_tab"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -53,7 +53,7 @@
             android:orientation="vertical"
             >
             <TextView
-                android:id="@+id/config_tab_title"
+                android:id="@+id/project_tab_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="@dimen/internal_tab_title_top_padding"
@@ -63,35 +63,7 @@
                 android:gravity="center"
                 />
             <View
-                android:id="@+id/config_tab_underline"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/internal_tab_underline_height"
-                android:background="@color/internal_tab_underline_color"
-                android:visibility="invisible"
-                />
-        </LinearLayout>
-
-        <!-- Customer tab -->
-        <LinearLayout
-            android:id="@+id/customer_tab"
-            android:layout_width="0dip"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/internal_tab_bg"
-            android:orientation="vertical"
-            >
-            <TextView
-                android:id="@+id/customer_tab_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/internal_tab_title_top_padding"
-                android:paddingBottom="@dimen/internal_tab_title_bottom_padding"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="15sp"
-                android:gravity="center"
-                />
-            <View
-                android:id="@+id/customer_tab_underline"
+                android:id="@+id/project_tab_underline"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/internal_tab_underline_height"
                 android:background="@color/internal_tab_underline_color"

@@ -77,6 +77,38 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="com.mctlab.salesd.customer.CustomerListActivity"
+            android:theme="@style/SalesDTheme"
+            android:label="@string/customers"
+            >
+            <intent-filter>
+                <action android:name="mctlab.intent.action.ACTION_CUSTOMER_LIST"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.mctlab.salesd.customer.CustomerDetailActivity"
+            android:theme="@style/SalesDTheme"
+            >
+            <intent-filter>
+                <action android:name="mctlab.intent.action.ACTION_CUSTOMER_DETAIL"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.mctlab.salesd.customer.ContactListActivity"
+            android:theme="@style/SalesDTheme"
+            android:label="@string/contacts"
+            >
+            <intent-filter>
+                <action android:name="mctlab.intent.action.ACTION_CONTACT_LIST"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

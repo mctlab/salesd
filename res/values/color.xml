@@ -2,4 +2,10 @@
 <resources>
     <color name="default_activity_bg">#fbfbfb</color>
     <color name="default_action_bar_bg">#9dcd2c</color>
+
+    <color name="internal_tab_underline_color">@android:color/holo_blue_dark</color>
+    <color name="internal_tab_divider_color">@android:color/darker_gray</color>
+
+    <color name="list_view_header_divider_color">@android:color/holo_blue_dark</color>
+    <color name="list_view_divider_color">@android:color/darker_gray</color>
 </resources>

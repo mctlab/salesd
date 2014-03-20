@@ -1,8 +1,8 @@
-package com.mctlab.salesd.project;
+package com.mctlab.salesd.customer;
 
 import com.mctlab.salesd.R;
 import com.mctlab.salesd.SalesDUtils;
-import com.mctlab.salesd.customer.CustomerListFragment;
+import com.mctlab.salesd.project.ProjectListFragment;
 import com.mctlab.salesd.schedule.ScheduleListFragment;
 
 import android.app.Activity;
@@ -17,16 +17,15 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.TextView;
 
-public class ProjectDetailActivity extends Activity implements View.OnClickListener {
+public class CustomerDetailActivity extends Activity implements View.OnClickListener {
 
     public static final String EXTRA_ID = "id";
 
-    private static final int TAB_INDEX_CONFIG = 0;
-    private static final int TAB_INDEX_CUSTOMER = 1;
-    private static final int TAB_INDEX_VISIT_SCHEDULE = 2;
-    private static final int TAB_INDEX_VISIT_RECORD = 3;
+    private static final int TAB_INDEX_PROJECT = 0;
+    private static final int TAB_INDEX_VISIT_SCHEDULE = 1;
+    private static final int TAB_INDEX_VISIT_RECORD = 2;
 
-    private static final int TAB_INDEX_COUNT = 4;
+    private static final int TAB_INDEX_COUNT = 3;
 
     public class ViewPagerAdapter extends FragmentPagerAdapter {
 
@@ -40,11 +39,8 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
             Fragment fragment;
 
             switch (position) {
-            case TAB_INDEX_CONFIG:
-                fragment = new ConfigListFragment();
-                break;
-            case TAB_INDEX_CUSTOMER:
-                fragment = new CustomerListFragment();
+            case TAB_INDEX_PROJECT:
+                fragment = new ProjectListFragment();
                 break;
             case TAB_INDEX_VISIT_SCHEDULE:
                 args.putBoolean(ScheduleListFragment.ARG_FULL_SCREEN, true);
@@ -71,14 +67,12 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
-            case TAB_INDEX_CONFIG:
-                return ProjectDetailActivity.this.getText(R.string.config);
-            case TAB_INDEX_CUSTOMER:
-                return ProjectDetailActivity.this.getText(R.string.customers);
+            case TAB_INDEX_PROJECT:
+                return CustomerDetailActivity.this.getText(R.string.projects);
             case TAB_INDEX_VISIT_SCHEDULE:
-                return ProjectDetailActivity.this.getText(R.string.visit_schedules);
+                return CustomerDetailActivity.this.getText(R.string.visit_schedules);
             case TAB_INDEX_VISIT_RECORD:
-                return ProjectDetailActivity.this.getText(R.string.visit_records);
+                return CustomerDetailActivity.this.getText(R.string.visit_records);
             }
 
             throw new IllegalStateException("No fragment at position " + position);
@@ -102,11 +96,8 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
         public void onPageSelected(int position) {
             View tabUnderline;
             switch (position) {
-            case TAB_INDEX_CONFIG:
-                tabUnderline = mConfigTabUnderline;
-                break;
-            case TAB_INDEX_CUSTOMER:
-                tabUnderline = mCustomerTabUnderline;
+            case TAB_INDEX_PROJECT:
+                tabUnderline = mProjectTabUnderline;
                 break;
             case TAB_INDEX_VISIT_SCHEDULE:
                 tabUnderline = mVisitScheduleTabUnderline;
@@ -126,16 +117,13 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
         }
 
     }
-
     private TextView mDescription;
 
-    private TextView mConfigTabTitle;
-    private TextView mCustomerTabTitle;
+    private TextView mProjectTabTitle;
     private TextView mVisitScheduleTabTitle;
     private TextView mVisitRecordTabTitle;
 
-    private View mConfigTabUnderline;
-    private View mCustomerTabUnderline;
+    private View mProjectTabUnderline;
     private View mVisitScheduleTabUnderline;
     private View mVisitRecordTabUnderline;
     private View mCurrentTabUnderline;
@@ -149,7 +137,7 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.project_detail_activity);
+        setContentView(R.layout.customer_detail_activity);
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -158,15 +146,10 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
 
         mDescription = (TextView) findViewById(R.id.description);
 
-        SalesDUtils.setChildViewOnClickListener(this, R.id.config_tab, this);
-        mConfigTabUnderline = findViewById(R.id.config_tab_underline);
-        mConfigTabTitle = (TextView) findViewById(R.id.config_tab_title);
-        mConfigTabTitle.setText(adapter.getPageTitle(TAB_INDEX_CONFIG));
-
-        SalesDUtils.setChildViewOnClickListener(this, R.id.customer_tab, this);
-        mCustomerTabUnderline = findViewById(R.id.customer_tab_underline);
-        mCustomerTabTitle = (TextView) findViewById(R.id.customer_tab_title);
-        mCustomerTabTitle.setText(adapter.getPageTitle(TAB_INDEX_CUSTOMER));
+        SalesDUtils.setChildViewOnClickListener(this, R.id.project_tab, this);
+        mProjectTabUnderline = findViewById(R.id.project_tab_underline);
+        mProjectTabTitle = (TextView) findViewById(R.id.project_tab_title);
+        mProjectTabTitle.setText(adapter.getPageTitle(TAB_INDEX_PROJECT));
 
         SalesDUtils.setChildViewOnClickListener(this, R.id.visit_schedule_tab, this);
         mVisitScheduleTabUnderline = findViewById(R.id.visit_schedule_tab_underline);
@@ -184,7 +167,7 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
         }
         mId++;
 
-        updateProjectInfo();
+        updateCustomerInfo();
     }
 
     @Override
@@ -196,18 +179,15 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.project_detail_options, menu);
-        return true;
+        inflater.inflate(R.menu.customer_detail_options, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-        case R.id.config_tab:
-            mViewPager.setCurrentItem(TAB_INDEX_CONFIG);
-            break;
-        case R.id.customer_tab:
-            mViewPager.setCurrentItem(TAB_INDEX_CUSTOMER);
+        case R.id.project_tab:
+            mViewPager.setCurrentItem(TAB_INDEX_PROJECT);
             break;
         case R.id.visit_schedule_tab:
             mViewPager.setCurrentItem(TAB_INDEX_VISIT_SCHEDULE);
@@ -218,10 +198,10 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
         }
     }
 
-    protected void updateProjectInfo() {
-        setTitle("Project " + mId);
+    protected void updateCustomerInfo() {
+        setTitle("Customer " + mId);
 
-        mDescription.setText("Description of project " + mId);
+        mDescription.setText("Description of customer " + mId);
     }
 
 }

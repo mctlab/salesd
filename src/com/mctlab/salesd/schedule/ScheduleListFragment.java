@@ -18,7 +18,7 @@ import android.widget.SimpleAdapter;
 public class ScheduleListFragment extends ListFragment
         implements View.OnClickListener {
 
-    protected static final String ARG_FULL_SCREEN = "argFullScreen";
+    public static final String ARG_FULL_SCREEN = "argFullScreen";
 
     protected static final String TITLE = "title";
 

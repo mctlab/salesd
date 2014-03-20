@@ -1,4 +1,4 @@
-package com.mctlab.salesd.project;
+package com.mctlab.salesd.customer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,17 +15,16 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-public class ProjectListFragment extends ListFragment {
+public class CustomerListFragment extends ListFragment {
 
     protected static final String NAME = "name";
     protected static final String DESCRIPTION = "description";
-    protected static final String PRIORITY = "priority";
 
     protected final String[] mFrom = new String[] {
-            NAME, DESCRIPTION, PRIORITY };
+            NAME, DESCRIPTION };
 
     protected final int[] mTo = new int[] {
-            R.id.name, R.id.description, R.id.priority_indicator };
+            R.id.name, R.id.description };
 
     protected ArrayList<HashMap<String, Object>> mData;
 
@@ -37,12 +36,7 @@ public class ProjectListFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.project_list_fragment, container, false);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
+        return inflater.inflate(R.layout.customer_list_fragment, container, false);
     }
 
     @Override
@@ -54,11 +48,10 @@ public class ProjectListFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-//      String project = (String) mData.get(position).get(NAME);
-//      Toast.makeText(getActivity(), project, Toast.LENGTH_SHORT).show();
+        super.onListItemClick(l, v, position, id);
 
-        Intent intent = new Intent(SalesDConstant.ACTION_PROJECT_DETAIL);
-        intent.putExtra(ProjectDetailActivity.EXTRA_ID, position);
+        Intent intent = new Intent(SalesDConstant.ACTION_CUSTOMER_DETAIL);
+        intent.putExtra(CustomerDetailActivity.EXTRA_ID, position);
         getActivity().startActivity(intent);
     }
 
@@ -66,25 +59,22 @@ public class ProjectListFragment extends ListFragment {
         mData = new ArrayList<HashMap<String, Object>>();
 
         HashMap<String, Object> item = new HashMap<String, Object>();
-        item.put(NAME, "Project 1");
-        item.put(DESCRIPTION, "Description of project 1");
-        item.put(PRIORITY, R.drawable.priority_indicator_1);
+        item.put(NAME, "Customer 1");
+        item.put(DESCRIPTION, "Description of customer 1");
         mData.add(item);
 
         item = new HashMap<String, Object>();
-        item.put(NAME, "Project 2");
-        item.put(DESCRIPTION, "Description of project 2");
-        item.put(PRIORITY, R.drawable.priority_indicator_2);
+        item.put(NAME, "Customer 2");
+        item.put(DESCRIPTION, "Description of customer 2");
         mData.add(item);
 
         item = new HashMap<String, Object>();
-        item.put(NAME, "Project 3");
-        item.put(DESCRIPTION, "Description of project 3");
-        item.put(PRIORITY, R.drawable.priority_indicator_3);
+        item.put(NAME, "Customer 3");
+        item.put(DESCRIPTION, "Description of customer 3");
         mData.add(item);
 
         SimpleAdapter adapter = new SimpleAdapter(getActivity(), mData,
-                R.layout.project_list_item, mFrom, mTo);
+                R.layout.customer_list_item, mFrom, mTo);
         getListView().setAdapter(adapter);
     }
 }

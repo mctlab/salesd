@@ -20,21 +20,21 @@
         android:id="@+id/header_divider"
         android:layout_width="match_parent"
         android:layout_height="2dip"
-        android:background="@android:color/holo_blue_dark"
+        android:background="@color/list_view_header_divider_color"
         />
     <ListView android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fadingEdge="none"
         android:scrollbarStyle="outsideOverlay"
-        android:divider="@android:color/darker_gray"
+        android:divider="@color/list_view_divider_color"
         android:dividerHeight="1dip"
         />
     <View
         android:id="@+id/footer_divider"
         android:layout_width="match_parent"
         android:layout_height="1dip"
-        android:background="@android:color/darker_gray"
+        android:background="@color/list_view_divider_color"
         />
     <Button
         android:id="@+id/show_more_schedule"

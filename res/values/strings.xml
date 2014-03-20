@@ -29,9 +29,11 @@
     <string name="projects">项目</string>
     <string name="customers">客户</string>
     <string name="contacts">联系人</string>
+    <string name="config">项目配置</string>
 
     <string name="visit_reminders">拜访提醒</string>
     <string name="visit_schedules">拜访计划</string>
+    <string name="visit_records">拜访记录</string>
     <string name="show_more">查看更多</string>
 
     <!-- network -->

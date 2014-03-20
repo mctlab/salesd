@@ -1,8 +1,16 @@
 package com.mctlab.salesd;
 
+import android.app.Activity;
 import android.view.View;
 
 public class SalesDUtils {
+
+    public static View findChildView(Activity parent, int childId) {
+        if (parent != null) {
+            return parent.findViewById(childId);
+        }
+        return null;
+    }
 
     public static View findChildView(View parent, int childId) {
         if (parent != null) {
@@ -18,7 +26,7 @@ public class SalesDUtils {
         }
     }
 
-    public static void setChildViewOnClickListener(View parent, int childId,
+    public static void setChildViewOnClickListener(Activity parent, int childId,
             View.OnClickListener listener) {
         View child = findChildView(parent, childId);
         if (child != null) {
@@ -26,4 +34,11 @@ public class SalesDUtils {
         }
     }
 
+    public static void setChildViewOnClickListener(View parent, int childId,
+            View.OnClickListener listener) {
+        View child = findChildView(parent, childId);
+        if (child != null) {
+            child.setOnClickListener(listener);
+        }
+    }
 }
