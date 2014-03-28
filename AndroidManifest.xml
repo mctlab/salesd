@@ -69,6 +69,18 @@
         </activity>
 
         <activity
+            android:name="com.mctlab.salesd.project.ProjectEditActivity"
+            android:theme="@style/SalesDTheme"
+            android:label="@string/projects"
+            android:parentActivityName="com.mctlab.salesd.project.ProjectListActivity"
+            >
+            <intent-filter>
+                <action android:name="mctlab.intent.action.ACTION_PROJECT_EDIT"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name="com.mctlab.salesd.project.ProjectDetailActivity"
             android:theme="@style/SalesDTheme"
             android:parentActivityName="com.mctlab.salesd.project.ProjectListActivity"
@@ -87,6 +99,18 @@
             >
             <intent-filter>
                 <action android:name="mctlab.intent.action.ACTION_CUSTOMER_LIST"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.mctlab.salesd.customer.CustomerEditActivity"
+            android:theme="@style/SalesDTheme"
+            android:label="@string/customers"
+            android:parentActivityName="com.mctlab.salesd.customer.CustomerListActivity"
+            >
+            <intent-filter>
+                <action android:name="mctlab.intent.action.ACTION_CUSTOMER_EDIT"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
@@ -114,6 +138,11 @@
             </intent-filter>
         </activity>
 
+        <provider
+            android:name="com.mctlab.salesd.provider.TasksProvider"
+            android:authorities="salesd"
+            android:exported="true"
+            />
     </application>
 
 </manifest>

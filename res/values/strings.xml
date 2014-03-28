@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_name">SalesD</string>
 
@@ -25,9 +25,25 @@
     <string name="add">新建</string>
     <string name="edit">编辑</string>
     <string name="delete">删除</string>
+    <string name="done">完成</string>
+
+    <string name="owner">所有者</string>
 
     <string name="projects">项目</string>
+    <string name="project_name">项目名称</string>
+    <string name="project_amount">总金额</string>
+    <string name="project_priority">重要程度</string>
+    <string name="project_status">项目状态</string>
+    <string name="project_description">详细描述</string>
+    <string name="no_project">没有项目</string>
+
     <string name="customers">客户</string>
+    <string name="customer_name">客户名称</string>
+    <string name="customer_company_address">客户地址</string>
+    <string name="customer_category">客户分类</string>
+    <string name="customer_business_description">业务范围简介</string>
+    <string name="no_customer">没有客户</string>
+
     <string name="contacts">联系人</string>
     <string name="config">项目配置</string>
 
@@ -35,6 +51,14 @@
     <string name="visit_schedules">拜访计划</string>
     <string name="visit_records">拜访记录</string>
     <string name="show_more">查看更多</string>
+
+    <string name="colon">：</string>
+    <string name="zero">0</string>
+
+    <!-- database -->
+    <string name="tip_field_could_not_be_null"><xliff:g id="FIELD">%s</xliff:g>不能为空</string>
+    <string name="tip_save_succeed">保存成功</string>
+    <string name="tip_save_failed">保存失败</string>
 
     <!-- network -->
     <string name="network_not_available">无法连接至网络，请检查网络设置</string>

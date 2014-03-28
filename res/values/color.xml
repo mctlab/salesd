@@ -8,4 +8,6 @@
 
     <color name="list_view_header_divider_color">@android:color/holo_blue_dark</color>
     <color name="list_view_divider_color">@android:color/darker_gray</color>
+
+    <color name="empty_prompt_text_color">@android:color/darker_gray</color>
 </resources>

@@ -22,8 +22,9 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public interface UsersColumns {
+        public static final String _ID = BaseColumns._ID;
         public static final String ACCOUNT = "account";
-        public static final String USER_NAME = "user_name";
+        public static final String NAME = "name";
         public static final String ANNUAL_TARGET = "annual_target";
         public static final String COMPLETED = "completed";
         public static final String PRIVILEGE = "privilege";
@@ -33,17 +34,24 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public interface ProjectsColumns {
-        public static final String PROJECT_NAME = "project_name";
+        public static final String _ID = BaseColumns._ID;
+        public static final String NAME = "name";
         public static final String PRIORITY = "priority";
         public static final String ESTIMATED_AMOUNT = "estimated_amount";
         public static final String STATUS = "status";
+        public static final String DESCRIPTION = "description";
         public static final String OWNER_ID = "owner_id";
 
+        public static final int PRIORITY_COMMON = 0;
+        public static final int PRIORITY_IMPORTANT = 1;
+
         public static final int STATUS_NOT_STARTED = 0;
-        public static final int STATUS_COMPLETE = 1;
+        public static final int STATUS_ONGOING = 1;
+        public static final int STATUS_COMPLETE = 2;
     }
 
     public interface ConfigColumns {
+        public static final String _ID = BaseColumns._ID;
         public static final String PROJECT_ID = "project_id";
         public static final String CATEGORY = "category";
         public static final String TYPE = "type";
@@ -51,10 +59,11 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public interface CustomersColumns {
-        public static final String CUSTOMER_NAME = "customer_name";
+        public static final String _ID = BaseColumns._ID;
+        public static final String NAME = "name";
         public static final String BUSINESS_DESCRIPTION = "business_description";
         public static final String COMPANY_ADDRESS = "company_address";
-        public static final String CUSTOMER_CATEGORY = "customer_category";
+        public static final String CATEGORY = "category";
         public static final String OWNER_ID = "owner_id";
 
         public static final int CATEGORY_HOST_MANUFACTURER = 0;
@@ -65,7 +74,8 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public interface ContactsColumns {
-        public static final String CONTACT_NAME = "contact_name";
+        public static final String _ID = BaseColumns._ID;
+        public static final String NAME = "name";
         public static final String PHONE_NUMBER = "phone_number";
         public static final String EMAIL = "email";
         public static final String OFFICE_LOCATION = "office_location";
@@ -77,12 +87,14 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
 
     // relational table between projects and customers
     public interface ProcustsColumns {
+        public static final String _ID = BaseColumns._ID;
         public static final String PROJECT_ID = "project_id";
         public static final String CUSTOMER_ID = "customer_id";
     }
 
     // only stored on server side
     public interface RemindersColumns {
+        public static final String _ID = BaseColumns._ID;
         public static final String PROJECT_ID = "project_id";
         public static final String CUSTOMER_ID = "customer_id";
         public static final String REMINDER_CYCLE = "reminder_cycle";
@@ -93,6 +105,7 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public interface SchedulesColumns {
+        public static final String _ID = BaseColumns._ID;
         public static final String START_TIME = "start_time";
         public static final String PROJECT_ID = "project_id";
         public static final String CUSTOMER_ID = "customer_id";
@@ -112,25 +125,26 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + Tables.USERS + " (" +
-                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                UsersColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 UsersColumns.ACCOUNT + " TEXT," +
-                UsersColumns.USER_NAME + " TEXT," +
+                UsersColumns.NAME + " TEXT," +
                 UsersColumns.ANNUAL_TARGET + " INTEGER NOT NULL DEFAULT 0," +
                 UsersColumns.COMPLETED + " INTEGER NOT NULL DEFAULT 0," +
                 UsersColumns.PRIVILEGE + " INTEGER NOT NULL DEFAULT 0" +
                 ");");
 
         db.execSQL("CREATE TABLE " + Tables.PROJECTS + " (" +
-                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                ProjectsColumns.PROJECT_NAME + " TEXT," +
+                ProjectsColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ProjectsColumns.NAME + " TEXT," +
                 ProjectsColumns.PRIORITY + " INTEGER," +
                 ProjectsColumns.ESTIMATED_AMOUNT + " INTEGER," +
                 ProjectsColumns.STATUS + " INTEGER," +
+                ProjectsColumns.DESCRIPTION + " TEXT," +
                 ProjectsColumns.OWNER_ID + " INTEGER" +
                 ");");
 
         db.execSQL("CREATE TABLE " + Tables.CONFIG + " (" +
-                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ConfigColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 ConfigColumns.PROJECT_ID + " INTEGER," +
                 ConfigColumns.CATEGORY + " INTEGER," +
                 ConfigColumns.TYPE + " INTEGER," +
@@ -138,17 +152,17 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
                 ");");
 
         db.execSQL("CREATE TABLE " + Tables.CUSTOMERS + " (" +
-                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                CustomersColumns.CUSTOMER_NAME + " TEXT," +
+                CustomersColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                CustomersColumns.NAME + " TEXT," +
                 CustomersColumns.BUSINESS_DESCRIPTION + " TEXT," +
                 CustomersColumns.COMPANY_ADDRESS + " TEXT," +
-                CustomersColumns.CUSTOMER_CATEGORY + " INTEGER," +
+                CustomersColumns.CATEGORY + " INTEGER," +
                 CustomersColumns.OWNER_ID + " INTEGER" +
                 ");");
 
         db.execSQL("CREATE TABLE " + Tables.CONTACTS + " (" +
-                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                ContactsColumns.CONTACT_NAME + " TEXT," +
+                ContactsColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ContactsColumns.NAME + " TEXT," +
                 ContactsColumns.PHONE_NUMBER + " TEXT," +
                 ContactsColumns.EMAIL + " TEXT," +
                 ContactsColumns.OFFICE_LOCATION + " TEXT," +
@@ -159,13 +173,13 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
                 ");");
 
         db.execSQL("CREATE TABLE " + Tables.PROCUSTS + " (" +
-                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ProcustsColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 ProcustsColumns.PROJECT_ID + " INTEGER," +
                 ProcustsColumns.CUSTOMER_ID + " INTEGER" +
                 ");");
 
         db.execSQL("CREATE TABLE " + Tables.REMINDERS + " (" +
-                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                RemindersColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 RemindersColumns.PROJECT_ID + " INTEGER," +
                 RemindersColumns.CUSTOMER_ID + " INTEGER," +
                 RemindersColumns.REMINDER_CYCLE + " INTEGER" +
@@ -173,7 +187,7 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
                 ");");
 
         db.execSQL("CREATE TABLE " + Tables.SCHEDULES + " (" +
-                BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                SchedulesColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 SchedulesColumns.START_TIME + " INTEGER," +
                 SchedulesColumns.PROJECT_ID + " INTEGER," +
                 SchedulesColumns.CUSTOMER_ID + " INTEGER," +

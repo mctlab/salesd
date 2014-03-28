@@ -17,4 +17,13 @@
         android:dividerHeight="1dip"
         />
 
+    <TextView android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_customer"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/empty_prompt_text_color"
+        android:textSize="@dimen/empty_prompt_text_size"
+        />
 </LinearLayout>

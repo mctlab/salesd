@@ -2,6 +2,8 @@ package com.mctlab.salesd;
 
 import android.app.Activity;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 public class SalesDUtils {
 
@@ -40,5 +42,16 @@ public class SalesDUtils {
         if (child != null) {
             child.setOnClickListener(listener);
         }
+    }
+
+    public static Spinner setupSpinner(Activity parent, int spinnerId, int valuesId) {
+        Spinner spinner = (Spinner) findChildView(parent, spinnerId);
+        if (spinner != null) {
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(parent, valuesId,
+                    android.R.layout.simple_spinner_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+        }
+        return spinner;
     }
 }

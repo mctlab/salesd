@@ -1,33 +1,29 @@
 package com.mctlab.salesd.project;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import com.mctlab.salesd.R;
 import com.mctlab.salesd.constant.SalesDConstant;
+import com.mctlab.salesd.provider.TasksDatabaseHelper.ProjectsColumns;
 
 import android.app.ListFragment;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
-public class ProjectListFragment extends ListFragment {
+public class ProjectListFragment extends ListFragment
+        implements ProjectQueryHandler.OnQueryCompleteListener {
 
-    protected static final String NAME = "name";
-    protected static final String DESCRIPTION = "description";
-    protected static final String PRIORITY = "priority";
+    protected ProjectQueryHandler mQueryHandler;
+    protected ListAdapter mAdapter;
 
-    protected final String[] mFrom = new String[] {
-            NAME, DESCRIPTION, PRIORITY };
-
-    protected final int[] mTo = new int[] {
-            R.id.name, R.id.description, R.id.priority_indicator };
-
-    protected ArrayList<HashMap<String, Object>> mData;
+    protected View mEmptyView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,50 +37,81 @@ public class ProjectListFragment extends ListFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mEmptyView = view.findViewById(R.id.empty);
+
+        mQueryHandler = new ProjectQueryHandler(getActivity().getContentResolver());
+        mQueryHandler.setOnQueryCompleteListener(this);
+        mAdapter = new ListAdapter(getActivity());
+        getListView().setAdapter(mAdapter);
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onResume() {
+        super.onResume();
+        mQueryHandler.startQueryProjects(0);
+    }
 
-        setupList();
+    @Override
+    public void onQueryComplete(int token, Cursor cursor) {
+        if (cursor != null && cursor.getCount() > 0) {
+            mEmptyView.setVisibility(View.GONE);
+            mAdapter.changeCursor(cursor);
+        } else {
+            mEmptyView.setVisibility(View.VISIBLE);
+            mAdapter.changeCursor(null);
+        }
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-//      String project = (String) mData.get(position).get(NAME);
-//      Toast.makeText(getActivity(), project, Toast.LENGTH_SHORT).show();
-
         Intent intent = new Intent(SalesDConstant.ACTION_PROJECT_DETAIL);
-        intent.putExtra(ProjectDetailActivity.EXTRA_ID, position);
+        intent.putExtra(SalesDConstant.EXTRA_ID, id);
         getActivity().startActivity(intent);
     }
 
-    protected void setupList() {
-        mData = new ArrayList<HashMap<String, Object>>();
-
-        HashMap<String, Object> item = new HashMap<String, Object>();
-        item.put(NAME, "Project 1");
-        item.put(DESCRIPTION, "Description of project 1");
-        item.put(PRIORITY, R.drawable.priority_indicator_1);
-        mData.add(item);
-
-        item = new HashMap<String, Object>();
-        item.put(NAME, "Project 2");
-        item.put(DESCRIPTION, "Description of project 2");
-        item.put(PRIORITY, R.drawable.priority_indicator_2);
-        mData.add(item);
-
-        item = new HashMap<String, Object>();
-        item.put(NAME, "Project 3");
-        item.put(DESCRIPTION, "Description of project 3");
-        item.put(PRIORITY, R.drawable.priority_indicator_3);
-        mData.add(item);
-
-        SimpleAdapter adapter = new SimpleAdapter(getActivity(), mData,
-                R.layout.project_list_item, mFrom, mTo);
-        getListView().setAdapter(adapter);
+    class ViewHolder {
+        TextView mNameTextView;
+        TextView mDescriptionTextView;
+        ImageView mPriorityIndicator;
     }
+
+    class ListAdapter extends CursorAdapter {
+        protected LayoutInflater mInflater;
+
+        public ListAdapter(Context context) {
+            super(context, null, false);
+            mInflater = LayoutInflater.from(context);
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+            ViewHolder holder = (ViewHolder) view.getTag();
+
+            holder.mNameTextView.setText(mQueryHandler.getName(cursor));
+            holder.mDescriptionTextView.setText(mQueryHandler.getDescription(cursor));
+
+            if (mQueryHandler.getPriority(cursor) == ProjectsColumns.PRIORITY_IMPORTANT) {
+                holder.mPriorityIndicator.setImageResource(R.drawable.priority_indicator_1);
+            } else {
+                holder.mPriorityIndicator.setImageResource(R.drawable.priority_indicator_3);
+            }
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            View view = mInflater.inflate(R.layout.project_list_item, parent, false);
+            ViewHolder holder = new ViewHolder();
+            view.setTag(holder);
+
+            holder.mNameTextView = (TextView) view.findViewById(R.id.name);
+            holder.mDescriptionTextView = (TextView) view.findViewById(R.id.description);
+            holder.mPriorityIndicator = (ImageView) view.findViewById(R.id.priority_indicator);
+
+            return view;
+        }
+
+    }
+
 }

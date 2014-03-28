@@ -1,32 +1,29 @@
 package com.mctlab.salesd.customer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import com.mctlab.salesd.R;
 import com.mctlab.salesd.constant.SalesDConstant;
+import com.mctlab.salesd.provider.TasksDatabaseHelper.CustomersColumns;
 
 import android.app.ListFragment;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
-public class CustomerListFragment extends ListFragment {
+public class CustomerListFragment extends ListFragment
+        implements CustomerQueryHandler.OnQueryCompleteListener {
 
-    protected static final String NAME = "name";
-    protected static final String DESCRIPTION = "description";
+    protected CustomerQueryHandler mQueryHandler;
+    protected ListAdapter mAdapter;
 
-    protected final String[] mFrom = new String[] {
-            NAME, DESCRIPTION };
-
-    protected final int[] mTo = new int[] {
-            R.id.name, R.id.description };
-
-    protected ArrayList<HashMap<String, Object>> mData;
+    protected View mEmptyView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,39 +39,94 @@ public class CustomerListFragment extends ListFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mEmptyView = view.findViewById(R.id.empty);
 
-        setupList();
+        mQueryHandler = new CustomerQueryHandler(getActivity().getContentResolver());
+        mQueryHandler.setOnQueryCompleteListener(this);
+        mAdapter = new ListAdapter(getActivity());
+        getListView().setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mQueryHandler.startQueryCustomers(0);
+    }
+
+    @Override
+    public void onQueryComplete(int token, Cursor cursor) {
+        if (cursor != null && cursor.getCount() > 0) {
+            mEmptyView.setVisibility(View.GONE);
+            mAdapter.changeCursor(cursor);
+        } else {
+            mEmptyView.setVisibility(View.VISIBLE);
+            mAdapter.changeCursor(null);
+        }
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-
         Intent intent = new Intent(SalesDConstant.ACTION_CUSTOMER_DETAIL);
-        intent.putExtra(CustomerDetailActivity.EXTRA_ID, position);
+        intent.putExtra(SalesDConstant.EXTRA_ID, id);
         getActivity().startActivity(intent);
     }
 
-    protected void setupList() {
-        mData = new ArrayList<HashMap<String, Object>>();
+    class ViewHolder {
+        TextView mNameTextView;
+        TextView mCategoryTextView;
+        TextView mDescriptionTextView;
+    }
 
-        HashMap<String, Object> item = new HashMap<String, Object>();
-        item.put(NAME, "Customer 1");
-        item.put(DESCRIPTION, "Description of customer 1");
-        mData.add(item);
+    class ListAdapter extends CursorAdapter {
+        protected LayoutInflater mInflater;
+        protected Resources mResources;
 
-        item = new HashMap<String, Object>();
-        item.put(NAME, "Customer 2");
-        item.put(DESCRIPTION, "Description of customer 2");
-        mData.add(item);
+        public ListAdapter(Context context) {
+            super(context, null, false);
+            mInflater = LayoutInflater.from(context);
+            mResources = getResources();
+        }
 
-        item = new HashMap<String, Object>();
-        item.put(NAME, "Customer 3");
-        item.put(DESCRIPTION, "Description of customer 3");
-        mData.add(item);
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+            ViewHolder holder = (ViewHolder) view.getTag();
 
-        SimpleAdapter adapter = new SimpleAdapter(getActivity(), mData,
-                R.layout.customer_list_item, mFrom, mTo);
-        getListView().setAdapter(adapter);
+            holder.mNameTextView.setText(mQueryHandler.getName(cursor));
+            holder.mDescriptionTextView.setText(mQueryHandler.getDescription(cursor));
+
+            String[] array = mResources.getStringArray(R.array.customer_category_values);
+            int category = mQueryHandler.getCategory(cursor);
+            switch (category) {
+            case CustomersColumns.CATEGORY_INSTITUTE_OF_DESIGN:
+                holder.mCategoryTextView.setText(array[1]);
+                break;
+            case CustomersColumns.CATEGORY_GENERAL_CONTRACTOR:
+                holder.mCategoryTextView.setText(array[2]);
+                break;
+            case CustomersColumns.CATEGORY_DIRECT_OWNER:
+                holder.mCategoryTextView.setText(array[3]);
+                break;
+            case CustomersColumns.CATEGORY_OTHERS:
+                holder.mCategoryTextView.setText(array[4]);
+                break;
+            default:
+                holder.mCategoryTextView.setText(array[0]);
+                break;
+            }
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            View view = mInflater.inflate(R.layout.customer_list_item, parent, false);
+            ViewHolder holder = new ViewHolder();
+            view.setTag(holder);
+
+            holder.mNameTextView = (TextView) view.findViewById(R.id.name);
+            holder.mCategoryTextView = (TextView) view.findViewById(R.id.category);
+            holder.mDescriptionTextView = (TextView) view.findViewById(R.id.description);
+
+            return view;
+        }
+
     }
 }

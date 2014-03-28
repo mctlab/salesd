@@ -15,7 +15,6 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class SalesDMainActivity extends Activity
         implements View.OnClickListener {

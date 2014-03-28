@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="project_priority_values">
+        <item>普通</item>
+        <item>重要</item>
+    </string-array>
+
+    <string-array name="project_status_values">
+        <item>未开始</item>
+        <item>进行中</item>
+        <item>已结束</item>
+    </string-array>
+
+    <string-array name="customer_category_values">
+        <item>主机厂</item>
+        <item>设计院</item>
+        <item>总包商</item>
+        <item>直接业主</item>
+        <item>其他</item>
+    </string-array>
+
+</resources>

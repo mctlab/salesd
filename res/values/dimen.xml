@@ -14,6 +14,16 @@
     <dimen name="internal_tab_title_bottom_padding">4dip</dimen>
     <dimen name="internal_tab_underline_height">4dip</dimen>
 
+    <dimen name="edit_activity_label_padding_left">8dip</dimen>
+    <dimen name="edit_activity_label_padding_top">2dip</dimen>
+    <dimen name="edit_activity_label_padding_bottom">2dip</dimen>
+
+    <dimen name="edit_activity_input_padding_left">15dip</dimen>
+    <dimen name="edit_activity_input_padding_top">8dip</dimen>
+    <dimen name="edit_activity_input_padding_bottom">8dip</dimen>
+
+    <dimen name="empty_prompt_text_size">18sp</dimen>
+
     <!-- Width of priority indicator in project list item -->
     <dimen name="project_priority_indicator_width">8dip</dimen>
 
