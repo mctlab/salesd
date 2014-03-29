@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -58,6 +59,28 @@ public class SalesDMainActivity extends Activity
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.salesd_main_options, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = null;
+        switch (item.getItemId()) {
+        case R.id.opt_add_project:
+            intent = new Intent(SalesDConstant.ACTION_PROJECT_EDIT);
+            break;
+        case R.id.opt_add_customer:
+            intent = new Intent(SalesDConstant.ACTION_CUSTOMER_EDIT);
+            break;
+        case R.id.opt_add_contact:
+            break;
+        case R.id.opt_add_visit_schedule:
+            break;
+        }
+        if (intent != null) {
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

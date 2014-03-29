@@ -7,6 +7,35 @@
         android:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/opt_more"
+        android:title="@string/more"
+        android:icon="@drawable/ic_menu_overflow"
+        android:showAsAction="ifRoom" >
+        <menu>
+            <item
+                android:id="@+id/opt_add_project"
+                android:title="@string/add_project"
+                android:showAsAction="withText"
+                />
+            <item
+                android:id="@+id/opt_add_customer"
+                android:title="@string/add_customer"
+                android:showAsAction="withText"
+                />
+            <item
+                android:id="@+id/opt_add_contact"
+                android:title="@string/add_contact"
+                android:showAsAction="withText"
+                />
+            <item
+                android:id="@+id/opt_add_visit_schedule"
+                android:title="@string/add_visit_schedule"
+                android:showAsAction="withText"
+                />
+        </menu>
+    </item>
+
+    <item
         android:id="@+id/opt_settings"
         android:title="@string/settings"
         android:showAsAction="withText"
