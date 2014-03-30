@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
 
 public class TasksDatabaseHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "tasks.db";
 
     public interface Tables {
@@ -15,6 +15,7 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
         public static final String PROJECTS = "projects";
         public static final String CONFIG = "config";
         public static final String CUSTOMERS = "customers";
+        public static final String POSITIONS = "positions";
         public static final String CONTACTS = "contacts";
         public static final String PROCUSTS = "procusts";
         public static final String REMINDERS = "reminders";
@@ -73,8 +74,17 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
         public static final int CATEGORY_OTHERS = 4;
     }
 
+    // Customer position framework
+    public interface PositionsColumns {
+        public static final String _ID = BaseColumns._ID;
+        public static final String CUSTOMER_ID = "customer_id";
+        public static final String TITLE = "title";
+        public static final String UPPER_POSITION_ID = "upper_position_id";
+    }
+
     public interface ContactsColumns {
         public static final String _ID = BaseColumns._ID;
+        public static final String CUSTOMER_ID = "customer_id";
         public static final String NAME = "name";
         public static final String PHONE_NUMBER = "phone_number";
         public static final String EMAIL = "email";
@@ -106,9 +116,9 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
 
     public interface SchedulesColumns {
         public static final String _ID = BaseColumns._ID;
-        public static final String START_TIME = "start_time";
         public static final String PROJECT_ID = "project_id";
         public static final String CUSTOMER_ID = "customer_id";
+        public static final String START_TIME = "start_time";
         public static final String STATUS = "status";
         public static final String NOTE = "note";
         public static final String LAST_MODIFIED = "last_modified";
@@ -160,8 +170,16 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
                 CustomersColumns.OWNER_ID + " INTEGER" +
                 ");");
 
+        db.execSQL("CREATE TABLE " + Tables.POSITIONS + " (" +
+                PositionsColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                PositionsColumns.CUSTOMER_ID + " INTEGER," +
+                PositionsColumns.TITLE + " TEXT," +
+                PositionsColumns.UPPER_POSITION_ID + " INTEGER" +
+                ");");
+
         db.execSQL("CREATE TABLE " + Tables.CONTACTS + " (" +
                 ContactsColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ContactsColumns.CUSTOMER_ID + " INTEGER," +
                 ContactsColumns.NAME + " TEXT," +
                 ContactsColumns.PHONE_NUMBER + " TEXT," +
                 ContactsColumns.EMAIL + " TEXT," +
@@ -188,9 +206,9 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE " + Tables.SCHEDULES + " (" +
                 SchedulesColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                SchedulesColumns.START_TIME + " INTEGER," +
                 SchedulesColumns.PROJECT_ID + " INTEGER," +
                 SchedulesColumns.CUSTOMER_ID + " INTEGER," +
+                SchedulesColumns.START_TIME + " INTEGER," +
                 SchedulesColumns.STATUS + " INTEGER," +
                 SchedulesColumns.NOTE + " TEXT," +
                 SchedulesColumns.LAST_MODIFIED + " INTEGER" +
@@ -200,7 +218,17 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.USERS + ";");
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.PROJECTS + ";");
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.CONFIG + ";");
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.CUSTOMERS + ";");
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.POSITIONS + ";");
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.CONTACTS + ";");
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.PROCUSTS + ";");
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.REMINDERS + ";");
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.SCHEDULES + ";");
 
+        onCreate(db);
     }
 
 }

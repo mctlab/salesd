@@ -11,6 +11,8 @@ public class SalesDConstant {
     public static String ACTION_CUSTOMER_EDIT = "mctlab.intent.action.ACTION_CUSTOMER_EDIT";
     public static String ACTION_CUSTOMER_DETAIL = "mctlab.intent.action.ACTION_CUSTOMER_DETAIL";
     public static String ACTION_CONTACT_LIST = "mctlab.intent.action.ACTION_CONTACT_LIST";
+    public static String ACTION_CONTACT_EDIT = "mctlab.intent.action.ACTION_CONTACT_EDIT";
+    public static String ACTION_CONTACT_DETAIL = "mctlab.intent.action.ACTION_CONTACT_DETAIL";
 
     public static final String EXTRA_ID = "id";
 }

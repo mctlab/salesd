@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <customer name="MctLab" version="1">
+        <position title="总经理"/>
+        <position title="开发部经理" upper_position="总经理"/>
+        <position title="测试部经理" upper_position="总经理"/>
+        <position title="市场部经理" upper_position="总经理"/>
+        <position title="开发工程师" upper_position="开发部经理"/>
+        <position title="测试工程师" upper_position="测试部经理"/>
+    </customer>
+</resources>

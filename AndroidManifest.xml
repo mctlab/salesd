@@ -138,6 +138,29 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="com.mctlab.salesd.customer.ContactEditActivity"
+            android:theme="@style/SalesDTheme"
+            android:label="@string/contacts"
+            android:parentActivityName="com.mctlab.salesd.activity.ContactListActivity"
+            >
+            <intent-filter>
+                <action android:name="mctlab.intent.action.ACTION_CONTACT_EDIT"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.mctlab.salesd.customer.ContactDetailActivity"
+            android:theme="@style/SalesDTheme"
+            android:parentActivityName="com.mctlab.salesd.activity.ContactListActivity"
+            >
+            <intent-filter>
+                <action android:name="mctlab.intent.action.ACTION_CONTACT_DETAIL"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
         <provider
             android:name="com.mctlab.salesd.provider.TasksProvider"
             android:authorities="salesd"

@@ -72,6 +72,7 @@ public class SalesDMainActivity extends Activity
             intent = new Intent(SalesDConstant.ACTION_CUSTOMER_EDIT);
             break;
         case R.id.opt_add_contact:
+            intent = new Intent(SalesDConstant.ACTION_CONTACT_EDIT);
             break;
         case R.id.opt_add_visit_schedule:
             break;

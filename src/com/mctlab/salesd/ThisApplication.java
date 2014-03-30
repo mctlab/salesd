@@ -1,6 +1,11 @@
 package com.mctlab.salesd;
 
+import android.content.ContentResolver;
+import android.net.Uri;
+import android.net.Uri.Builder;
+
 import com.mctlab.ansight.common.AsApplication;
+import com.mctlab.salesd.provider.TasksProvider;
 
 public class ThisApplication extends AsApplication {
 
@@ -11,12 +16,14 @@ public class ThisApplication extends AsApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        initAppConfig();
+        loadCustomerPositions();
         // TODO: JsonMapper.registerDeserializer(Something.class, new Something.Deserializer());
     }
 
     @Override
     public void initAppConfig() {
-        AppConfig.init();
+        AppConfig.init(getApplicationContext());
     }
 
     @Override
@@ -24,4 +31,10 @@ public class ThisApplication extends AsApplication {
         Runtime.init();
     }
 
+    public void loadCustomerPositions() {
+        ContentResolver resolver = getContentResolver();
+        Builder builder = TasksProvider.POSITIONS_CONTENT_URI.buildUpon();
+        Uri uri = builder.appendPath("positions.xml").build();
+        resolver.insert(uri, null);
+    }
 }
