@@ -47,7 +47,8 @@ public class CustomerQueryHandler extends QueryHandler {
         ContactsColumns.DEPARTMENT,
         ContactsColumns.TITLE,
         ContactsColumns.CHARACTERS,
-        ContactsColumns.DIRECT_LEADER
+        ContactsColumns.DIRECT_LEADER,
+        ContactsColumns.CUSTOMER_ID
     };
 
     public static final int CONTACT_COLUMN_INDEX_ID = 0;
@@ -59,6 +60,7 @@ public class CustomerQueryHandler extends QueryHandler {
     public static final int CONTACT_COLUMN_INDEX_TITLE = 6;
     public static final int CONTACT_COLUMN_INDEX_CHARACTERS = 7;
     public static final int CONTACT_COLUMN_INDEX_DIRECT_LEADER = 8;
+    public static final int CONTACT_COLUMN_INDEX_CUSTOMER_ID = 9;
 
     public static final String[] POSITION_PROJECTION = new String[] {
         PositionsColumns._ID,
@@ -113,20 +115,22 @@ public class CustomerQueryHandler extends QueryHandler {
         // TODO: correct customer id checking
         if (customerId >= 0 && !TextUtils.isEmpty(leaderTitle)) {
             StringBuilder selection = new StringBuilder();
-            //selection.append(ContactsColumns.CUSTOMER_ID + "=" + customerId).append(" AND ");
+            selection.append(ContactsColumns.CUSTOMER_ID + "=" + customerId).append(" AND ");
             selection.append(ContactsColumns.TITLE + "='" + leaderTitle + "'");
             startQuery(token, null, TasksProvider.CONTACTS_CONTENT_URI, CONTACT_PROJECTION,
                     selection.toString(), null, null);
         }
     }
 
-    public void startQueryFollowers(int token, long customerId, long leaderId) {
+    public void startQueryFollowers(int token, long leaderId) {
         Uri.Builder builder = TasksProvider.CONTACTS_CONTENT_URI.buildUpon();
         builder.appendPath("follow").appendPath(String.valueOf(leaderId));
         startQuery(token, null, builder.build(), CONTACT_PROJECTION, null, null, null);
     }
 
     public ArrayList<Position> getPositionList(long customerId) {
+        // for temporary use only
+        customerId = 0;
         if (!mPositionMap.containsKey(customerId)) {
             ContentResolver cr = getContentResolver();
             String selection = PositionsColumns.CUSTOMER_ID + "=" + customerId;
@@ -262,6 +266,13 @@ public class CustomerQueryHandler extends QueryHandler {
     public String getContactDirectLeader(Cursor cursor) {
         if (cursor != null) {
             return cursor.getString(CONTACT_COLUMN_INDEX_DIRECT_LEADER);
+        }
+        return null;
+    }
+
+    public Long getContactCustomerId(Cursor cursor) {
+        if (cursor != null) {
+            return cursor.getLong(CONTACT_COLUMN_INDEX_CUSTOMER_ID);
         }
         return null;
     }

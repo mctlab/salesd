@@ -75,7 +75,7 @@ public class ContactListFragment extends ListFragment
     public void onResume() {
         super.onResume();
         if (mLeaderId > 0) {
-            mQueryHandler.startQueryFollowers(0, -1, mLeaderId);
+            mQueryHandler.startQueryFollowers(0, mLeaderId);
         } else {
             mQueryHandler.startQueryContacts(0, -1);
         }
@@ -91,11 +91,10 @@ public class ContactListFragment extends ListFragment
     public void onQueryComplete(int token, Cursor cursor) {
         if (cursor != null && cursor.getCount() > 0) {
             mEmptyView.setVisibility(View.GONE);
-            mAdapter.changeCursor(cursor);
         } else {
             mEmptyView.setVisibility(View.VISIBLE);
-            mAdapter.changeCursor(null);
         }
+        mAdapter.changeCursor(cursor);
     }
 
     @Override

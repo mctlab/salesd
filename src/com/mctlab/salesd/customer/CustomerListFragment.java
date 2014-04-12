@@ -43,7 +43,7 @@ public class CustomerListFragment extends ListFragment
 
         mQueryHandler = new CustomerQueryHandler(getActivity().getContentResolver());
         mQueryHandler.setOnQueryCompleteListener(this);
-        mAdapter = new ListAdapter(getActivity());
+        mAdapter = new ListAdapter(getActivity(), mQueryHandler);
         getListView().setAdapter(mAdapter);
     }
 
@@ -63,11 +63,10 @@ public class CustomerListFragment extends ListFragment
     public void onQueryComplete(int token, Cursor cursor) {
         if (cursor != null && cursor.getCount() > 0) {
             mEmptyView.setVisibility(View.GONE);
-            mAdapter.changeCursor(cursor);
         } else {
             mEmptyView.setVisibility(View.VISIBLE);
-            mAdapter.changeCursor(null);
         }
+        mAdapter.changeCursor(cursor);
     }
 
     @Override
@@ -77,20 +76,23 @@ public class CustomerListFragment extends ListFragment
         getActivity().startActivity(intent);
     }
 
-    class ViewHolder {
-        TextView mNameTextView;
-        TextView mCategoryTextView;
-        TextView mDescriptionTextView;
-    }
+    public static class ListAdapter extends CursorAdapter {
 
-    class ListAdapter extends CursorAdapter {
+        class ViewHolder {
+            TextView mNameTextView;
+            TextView mCategoryTextView;
+            TextView mDescriptionTextView;
+        }
+
+        protected CustomerQueryHandler mQueryHandler;
         protected LayoutInflater mInflater;
         protected Resources mResources;
 
-        public ListAdapter(Context context) {
+        public ListAdapter(Context context, CustomerQueryHandler handler) {
             super(context, null, false);
+            mQueryHandler = handler;
             mInflater = LayoutInflater.from(context);
-            mResources = getResources();
+            mResources = context.getResources();
         }
 
         @Override

@@ -50,6 +50,10 @@
     <string name="customer_business_description">业务范围简介</string>
     <string name="no_customer">没有客户</string>
 
+    <string name="dlg_title_pick_customer">请选择客户公司</string>
+    <string name="dlg_message_fetching_customers">正在获取客户列表，请稍候。</string>
+    <string name="dlg_message_create_customer">您目前没有客户，确定要新建一个客户吗？</string>
+
     <string name="contacts">联系人</string>
     <string name="contact_name">联系人姓名</string>
     <string name="contact_phone_number">电话</string>

@@ -3,6 +3,7 @@ package com.mctlab.salesd.activity;
 import com.mctlab.salesd.R;
 import com.mctlab.salesd.SalesDUtils;
 import com.mctlab.salesd.constant.SalesDConstant;
+import com.mctlab.salesd.customer.CustomerPickerDialogFragment;
 import com.mctlab.salesd.reminder.ReminderListFragment;
 import com.mctlab.salesd.schedule.ScheduleListFragment;
 
@@ -72,7 +73,7 @@ public class SalesDMainActivity extends Activity
             intent = new Intent(SalesDConstant.ACTION_CUSTOMER_EDIT);
             break;
         case R.id.opt_add_contact:
-            intent = new Intent(SalesDConstant.ACTION_CONTACT_EDIT);
+            CustomerPickerDialogFragment.actionCreateNewContact(getFragmentManager());
             break;
         case R.id.opt_add_visit_schedule:
             break;

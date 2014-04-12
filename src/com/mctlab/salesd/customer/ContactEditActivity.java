@@ -27,16 +27,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ContactEditActivity extends Activity implements
         CustomerQueryHandler.OnQueryCompleteListener, AdapterView.OnItemSelectedListener {
 
     private static final int MSG_SETUP_TITLES = 0;
-    private static final int MSG_LOAD_CONTACT = 1;
 
     private static final int TOKEN_QUERY_CONTACT = 0;
-    private static final int TOKEN_QUERY_LEADERS = 1;
+    private static final int TOKEN_QUERY_CUSTOMER = 1;
+    private static final int TOKEN_QUERY_LEADERS = 2;
 
     static class SpinnerItem {
         long id;
@@ -65,6 +66,7 @@ public class ContactEditActivity extends Activity implements
         }
     }
 
+    private TextView mCustomerName;
     private EditText mNameEditText;
     private EditText mPhoneNumberEditText;
     private EditText mEmailEditText;
@@ -93,6 +95,7 @@ public class ContactEditActivity extends Activity implements
     private String mNoneString;
 
     private long mId = -1;
+    private long mCustomerId = -1;
 
     private Handler mHandler = new Handler() {
 
@@ -101,9 +104,6 @@ public class ContactEditActivity extends Activity implements
             switch (msg.what) {
             case MSG_SETUP_TITLES:
                 setupTitles();
-                return;
-            case MSG_LOAD_CONTACT:
-                mQueryHandler.startQueryContact(TOKEN_QUERY_CONTACT, mId);
                 return;
             }
             super.handleMessage(msg);
@@ -120,6 +120,7 @@ public class ContactEditActivity extends Activity implements
 
         if (getIntent() != null) {
             mId = getIntent().getLongExtra(SalesDConstant.EXTRA_ID, -1);
+            mCustomerId = getIntent().getLongExtra(SalesDConstant.EXTRA_CUSTOMER_ID, -1);
         }
 
         mContentResolver = getContentResolver();
@@ -127,6 +128,15 @@ public class ContactEditActivity extends Activity implements
         mQueryHandler.setOnQueryCompleteListener(this);
 
         initView();
+
+        if (mId > 0) {
+            mQueryHandler.startQueryContact(TOKEN_QUERY_CONTACT, mId);
+        } else if (mCustomerId > 0) {
+            mQueryHandler.startQueryCustomer(TOKEN_QUERY_CUSTOMER, mCustomerId);
+            mHandler.sendEmptyMessage(MSG_SETUP_TITLES);
+        } else {
+            LogUtil.w("Invalid parameters, id: " + mId +", customer id: " + mCustomerId);
+        }
     }
 
     @Override
@@ -161,7 +171,7 @@ public class ContactEditActivity extends Activity implements
         mTitle = mTitles.get(position).text;
 
         String leaderTitle = null;
-        ArrayList<Position> list = mQueryHandler.getPositionList(0);
+        ArrayList<Position> list = mQueryHandler.getPositionList(mCustomerId);
         if (list != null) {
             long leaderId = 0;
             for (Position item : list) {
@@ -180,7 +190,7 @@ public class ContactEditActivity extends Activity implements
             }
         }
         if (!TextUtils.isEmpty(leaderTitle)) {
-            mQueryHandler.startQueryLeaders(TOKEN_QUERY_LEADERS, 0, leaderTitle);
+            mQueryHandler.startQueryLeaders(TOKEN_QUERY_LEADERS, mCustomerId, leaderTitle);
         } else {
             onQueryComplete(TOKEN_QUERY_LEADERS, null);
         }
@@ -189,39 +199,22 @@ public class ContactEditActivity extends Activity implements
     @Override
     public void onQueryComplete(int token, Cursor cursor) {
         if (cursor != null) {
-            if (token == TOKEN_QUERY_LEADERS) {
-                mDirectLeaders = new ArrayList<SpinnerItem>();
-                mDirectLeaders.add(new SpinnerItem(-1, mNoneString));
-                int index = -1;
-
-                LogUtil.d("Cursor count: " + cursor.getCount());
-                if (cursor.getCount() > 0) {
-                    while (cursor.moveToNext()) {
-                        long id = mQueryHandler.getContactId(cursor);
-                        if (mId == id) continue;
-
-                        String name = mQueryHandler.getContactName(cursor);
-                        LogUtil.d("Candidate leader: " + name);
-                        mDirectLeaders.add(new SpinnerItem(id, name));
-
-                        if (name.equals(mDirectLeader)) {
-                            index = mDirectLeaders.size() - 1;
-                        }
-                    }
-                }
-
-                String[] array = SpinnerItem.toArray(mDirectLeaders);
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                        android.R.layout.simple_spinner_item, array);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                mDirectLeaderSpinner.setAdapter(adapter);
-                if (index > 0) {
-                    mDirectLeaderSpinner.setSelection(index);
-                }
-            } else {
+            switch (token) {
+            case TOKEN_QUERY_CONTACT:
                 if (cursor.moveToFirst()) {
                     loadContact(cursor);
                 }
+                mQueryHandler.startQueryCustomer(TOKEN_QUERY_CUSTOMER, mCustomerId);
+                mHandler.sendEmptyMessage(MSG_SETUP_TITLES);
+                break;
+            case TOKEN_QUERY_CUSTOMER:
+                if (cursor.moveToFirst()) {
+                    mCustomerName.setText(mQueryHandler.getCustomerName(cursor));
+                }
+                break;
+            case TOKEN_QUERY_LEADERS:
+                setupDirectLeaders(cursor);
+                break;
             }
             cursor.close();
         }
@@ -233,6 +226,7 @@ public class ContactEditActivity extends Activity implements
     }
 
     protected void initView() {
+        mCustomerName = (TextView) findViewById(R.id.customer_name);
         mNameEditText = (EditText) findViewById(R.id.name);
         mPhoneNumberEditText = (EditText) findViewById(R.id.phone_number);
         mEmailEditText = (EditText) findViewById(R.id.email);
@@ -248,13 +242,10 @@ public class ContactEditActivity extends Activity implements
                 android.R.layout.simple_spinner_item, SpinnerItem.toArray(mDirectLeaders));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mDirectLeaderSpinner.setAdapter(adapter);
-
-        mHandler.sendEmptyMessage(MSG_SETUP_TITLES);
-        mHandler.sendEmptyMessage(MSG_LOAD_CONTACT);
     }
 
     protected void setupTitles() {
-        ArrayList<Position> list = mQueryHandler.getPositionList(0);
+        ArrayList<Position> list = mQueryHandler.getPositionList(mCustomerId);
         if (list != null) {
             mTitles = new ArrayList<SpinnerItem>();
             for (Position position : list) {
@@ -266,14 +257,55 @@ public class ContactEditActivity extends Activity implements
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             mTitleSpinner.setAdapter(adapter);
             mTitleSpinner.setOnItemSelectedListener(this);
+
+            // reset title spinner
+            if (!TextUtils.isEmpty(mTitle)) {
+                for (int i = 0; i < mTitles.size(); i++) {
+                    SpinnerItem item = mTitles.get(i);
+                    if (item.text.equals(mTitle)) {
+                        mTitleSpinner.setSelection(i);
+                        break;
+                    }
+                }
+            }
         }
     }
 
-    protected void setupDirectLeaders() {
+    protected void setupDirectLeaders(Cursor cursor) {
+        mDirectLeaders = new ArrayList<SpinnerItem>();
+        mDirectLeaders.add(new SpinnerItem(-1, mNoneString));
+        int index = -1;
 
+        LogUtil.d("Cursor count: " + cursor.getCount());
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                long id = mQueryHandler.getContactId(cursor);
+                if (mId == id) continue;
+
+                String name = mQueryHandler.getContactName(cursor);
+                LogUtil.d("Candidate leader: " + name);
+                mDirectLeaders.add(new SpinnerItem(id, name));
+
+                if (name.equals(mDirectLeader)) {
+                    index = mDirectLeaders.size() - 1;
+                }
+            }
+        }
+
+        String[] array = SpinnerItem.toArray(mDirectLeaders);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, array);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mDirectLeaderSpinner.setAdapter(adapter);
+        if (index > 0) {
+            mDirectLeaderSpinner.setSelection(index);
+        }
     }
 
     private void loadContact(Cursor cursor) {
+        Long customerId = mQueryHandler.getContactCustomerId(cursor);
+        mCustomerId = customerId == null ? 0 : customerId;
+
         String name = mQueryHandler.getContactName(cursor);
         mNameEditText.setText(name);
 
@@ -292,16 +324,7 @@ public class ContactEditActivity extends Activity implements
         String character = mQueryHandler.getContactCharacters(cursor);
         mCharacterEditText.setText(character);
 
-        String title = mQueryHandler.getContactTitle(cursor);
-        if (mTitles != null) {
-            for (int i = 0; i < mTitles.size(); i++) {
-                SpinnerItem item = mTitles.get(i);
-                if (item.text.equals(title)) {
-                    mTitleSpinner.setSelection(i);
-                    break;
-                }
-            }
-        }
+        mTitle = mQueryHandler.getContactTitle(cursor);
 
         mDirectLeader = mQueryHandler.getContactDirectLeader(cursor);
     }
@@ -391,6 +414,7 @@ public class ContactEditActivity extends Activity implements
             values.put(ContactsColumns.DIRECT_LEADER, mDirectLeader);
         }
 
+        values.put(ContactsColumns.CUSTOMER_ID, mCustomerId);
         return values;
     }
 }

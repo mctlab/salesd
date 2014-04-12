@@ -63,11 +63,10 @@ public class ProjectListFragment extends ListFragment
     public void onQueryComplete(int token, Cursor cursor) {
         if (cursor != null && cursor.getCount() > 0) {
             mEmptyView.setVisibility(View.GONE);
-            mAdapter.changeCursor(cursor);
         } else {
             mEmptyView.setVisibility(View.VISIBLE);
-            mAdapter.changeCursor(null);
         }
+        mAdapter.changeCursor(cursor);
     }
 
     @Override

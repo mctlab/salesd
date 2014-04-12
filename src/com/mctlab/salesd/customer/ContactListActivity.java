@@ -1,11 +1,9 @@
 package com.mctlab.salesd.customer;
 
 import com.mctlab.salesd.R;
-import com.mctlab.salesd.constant.SalesDConstant;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,8 +34,7 @@ public class ContactListActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.opt_add) {
-            Intent intent = new Intent(SalesDConstant.ACTION_CONTACT_EDIT);
-            startActivity(intent);
+            CustomerPickerDialogFragment.actionCreateNewContact(getFragmentManager());
             return true;
         }
         return super.onOptionsItemSelected(item);
