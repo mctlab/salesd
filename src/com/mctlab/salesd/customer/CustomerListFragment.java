@@ -54,6 +54,12 @@ public class CustomerListFragment extends ListFragment
     }
 
     @Override
+    public void onDestroyView() {
+        mAdapter.changeCursor(null);
+        super.onDestroyView();
+    }
+
+    @Override
     public void onQueryComplete(int token, Cursor cursor) {
         if (cursor != null && cursor.getCount() > 0) {
             mEmptyView.setVisibility(View.GONE);
@@ -91,11 +97,11 @@ public class CustomerListFragment extends ListFragment
         public void bindView(View view, Context context, Cursor cursor) {
             ViewHolder holder = (ViewHolder) view.getTag();
 
-            holder.mNameTextView.setText(mQueryHandler.getName(cursor));
-            holder.mDescriptionTextView.setText(mQueryHandler.getDescription(cursor));
+            holder.mNameTextView.setText(mQueryHandler.getCustomerName(cursor));
+            holder.mDescriptionTextView.setText(mQueryHandler.getCustomerDescription(cursor));
 
             String[] array = mResources.getStringArray(R.array.customer_category_values);
-            int category = mQueryHandler.getCategory(cursor);
+            int category = mQueryHandler.getCustomerCategory(cursor);
             switch (category) {
             case CustomersColumns.CATEGORY_INSTITUTE_OF_DESIGN:
                 holder.mCategoryTextView.setText(array[1]);

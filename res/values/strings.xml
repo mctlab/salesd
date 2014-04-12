@@ -51,6 +51,18 @@
     <string name="no_customer">没有客户</string>
 
     <string name="contacts">联系人</string>
+    <string name="contact_name">联系人姓名</string>
+    <string name="contact_phone_number">电话</string>
+    <string name="contact_email">电子邮件</string>
+    <string name="contact_office_location">办公室位置</string>
+    <string name="contact_deparment">部门</string>
+    <string name="contact_title">职位</string>
+    <string name="contact_direct_leader">直接领导</string>
+    <string name="contact_character">性格特点</string>
+    <string name="no_contact">没有联系人</string>
+    <string name="followers">下属</string>
+    <string name="no_follower">没有下属</string>
+
     <string name="config">项目配置</string>
 
     <string name="visit_reminders">拜访提醒</string>
@@ -60,6 +72,7 @@
 
     <string name="colon">：</string>
     <string name="zero">0</string>
+    <string name="none">无</string>
 
     <!-- database -->
     <string name="tip_field_could_not_be_null"><xliff:g id="FIELD">%s</xliff:g>不能为空</string>

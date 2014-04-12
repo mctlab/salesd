@@ -142,7 +142,7 @@
             android:name="com.mctlab.salesd.customer.ContactEditActivity"
             android:theme="@style/SalesDTheme"
             android:label="@string/contacts"
-            android:parentActivityName="com.mctlab.salesd.activity.ContactListActivity"
+            android:parentActivityName="com.mctlab.salesd.customer.ContactListActivity"
             >
             <intent-filter>
                 <action android:name="mctlab.intent.action.ACTION_CONTACT_EDIT"/>
@@ -153,7 +153,7 @@
         <activity
             android:name="com.mctlab.salesd.customer.ContactDetailActivity"
             android:theme="@style/SalesDTheme"
-            android:parentActivityName="com.mctlab.salesd.activity.ContactListActivity"
+            android:parentActivityName="com.mctlab.salesd.customer.ContactListActivity"
             >
             <intent-filter>
                 <action android:name="mctlab.intent.action.ACTION_CONTACT_DETAIL"/>

@@ -13,13 +13,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         >
+        <!-- contact name -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/edit_activity_label_padding_left"
             android:paddingTop="@dimen/edit_activity_label_padding_top"
             android:paddingBottom="@dimen/edit_activity_label_padding_bottom"
-            android:text="@string/project_name"
+            android:text="@string/contact_name"
             android:textAppearance="?android:attr/textAppearanceMedium"
             />
         <EditText
@@ -33,70 +34,138 @@
             android:singleLine="true"
             android:textSize="16sp"
             />
+        <!-- contact phone number -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/edit_activity_label_padding_left"
             android:paddingTop="@dimen/edit_activity_label_padding_top"
             android:paddingBottom="@dimen/edit_activity_label_padding_bottom"
-            android:text="@string/project_amount"
+            android:text="@string/contact_phone_number"
             android:textAppearance="?android:attr/textAppearanceMedium"
             />
         <EditText
-            android:id="@+id/amount"
+            android:id="@+id/phone_number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/edit_activity_input_padding_left"
             android:paddingTop="@dimen/edit_activity_input_padding_top"
             android:paddingBottom="@dimen/edit_activity_input_padding_bottom"
-            android:inputType="number"
+            android:inputType="phone"
             android:singleLine="true"
-            android:hint="@string/zero"
             android:textSize="16sp"
             />
+        <!-- contact email -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/edit_activity_label_padding_left"
             android:paddingTop="@dimen/edit_activity_label_padding_top"
             android:paddingBottom="@dimen/edit_activity_label_padding_bottom"
-            android:text="@string/project_priority"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            />
-        <Spinner
-            android:id="@+id/priority"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/edit_activity_input_padding_top"
-            android:paddingBottom="@dimen/edit_activity_input_padding_bottom"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/edit_activity_label_padding_left"
-            android:paddingTop="@dimen/edit_activity_label_padding_top"
-            android:paddingBottom="@dimen/edit_activity_label_padding_bottom"
-            android:text="@string/project_status"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            />
-        <Spinner
-            android:id="@+id/status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/edit_activity_input_padding_top"
-            android:paddingBottom="@dimen/edit_activity_input_padding_bottom"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/edit_activity_label_padding_left"
-            android:paddingTop="@dimen/edit_activity_label_padding_top"
-            android:paddingBottom="@dimen/edit_activity_label_padding_bottom"
-            android:text="@string/project_description"
+            android:text="@string/contact_email"
             android:textAppearance="?android:attr/textAppearanceMedium"
             />
         <EditText
-            android:id="@+id/description"
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/edit_activity_input_padding_left"
+            android:paddingTop="@dimen/edit_activity_input_padding_top"
+            android:paddingBottom="@dimen/edit_activity_input_padding_bottom"
+            android:inputType="textEmailAddress"
+            android:singleLine="true"
+            android:textSize="16sp"
+            />
+        <!-- contact office location -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/edit_activity_label_padding_left"
+            android:paddingTop="@dimen/edit_activity_label_padding_top"
+            android:paddingBottom="@dimen/edit_activity_label_padding_bottom"
+            android:text="@string/contact_office_location"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            />
+        <EditText
+            android:id="@+id/office_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/edit_activity_input_padding_left"
+            android:paddingTop="@dimen/edit_activity_input_padding_top"
+            android:paddingBottom="@dimen/edit_activity_input_padding_bottom"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textSize="16sp"
+            />
+        <!-- contact department -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/edit_activity_label_padding_left"
+            android:paddingTop="@dimen/edit_activity_label_padding_top"
+            android:paddingBottom="@dimen/edit_activity_label_padding_bottom"
+            android:text="@string/contact_deparment"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="gone"
+            />
+        <EditText
+            android:id="@+id/department"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/edit_activity_input_padding_left"
+            android:paddingTop="@dimen/edit_activity_input_padding_top"
+            android:paddingBottom="@dimen/edit_activity_input_padding_bottom"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textSize="16sp"
+            android:visibility="gone"
+            />
+        <!-- contact title -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/edit_activity_label_padding_left"
+            android:paddingTop="@dimen/edit_activity_label_padding_top"
+            android:paddingBottom="@dimen/edit_activity_label_padding_bottom"
+            android:text="@string/contact_title"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            />
+        <Spinner
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/edit_activity_input_padding_top"
+            android:paddingBottom="@dimen/edit_activity_input_padding_bottom"
+            />
+        <!-- contact direct leader -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/edit_activity_label_padding_left"
+            android:paddingTop="@dimen/edit_activity_label_padding_top"
+            android:paddingBottom="@dimen/edit_activity_label_padding_bottom"
+            android:text="@string/contact_direct_leader"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            />
+        <Spinner
+            android:id="@+id/direct_leader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/edit_activity_input_padding_top"
+            android:paddingBottom="@dimen/edit_activity_input_padding_bottom"
+            />
+        <!-- contact character -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/edit_activity_label_padding_left"
+            android:paddingTop="@dimen/edit_activity_label_padding_top"
+            android:paddingBottom="@dimen/edit_activity_label_padding_bottom"
+            android:text="@string/contact_character"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            />
+        <EditText
+            android:id="@+id/character"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/edit_activity_input_padding_top"

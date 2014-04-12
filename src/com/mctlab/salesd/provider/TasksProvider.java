@@ -9,6 +9,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import com.mctlab.salesd.AppConfig;
+import com.mctlab.salesd.provider.TasksDatabaseHelper.ContactsColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.PositionsColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.Tables;
 import com.mctlab.salesd.util.LogUtil;
@@ -87,6 +88,7 @@ public class TasksProvider extends ContentProvider {
     protected static final int POSITIONS_LOAD_FROM_XML = 52;
     protected static final int CONTACTS = 60;
     protected static final int CONTACTS_ID = 61;
+    protected static final int CONTACTS_FOLLOW_LEADER = 62;
     protected static final int PROCUSTS = 70;
     protected static final int PROCUSTS_ID = 71;
     protected static final int REMINDERS = 80;
@@ -96,6 +98,10 @@ public class TasksProvider extends ContentProvider {
 
     protected static final UriMatcher sUriMatcher = new UriMatcher(
             UriMatcher.NO_MATCH);
+
+//    protected static String ContactsJoinTable = "contacts " +
+//            " LEFT JOIN contacts leader ON (contacts.direct_leader_id = leader._id)";
+//    protected static HashMap<String, String> ContactsJoinColumns;
 
     static {
         sUriMatcher.addURI(AUTHORITY, "users", USERS);
@@ -111,13 +117,42 @@ public class TasksProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, "positions/*", POSITIONS_LOAD_FROM_XML);
         sUriMatcher.addURI(AUTHORITY, "contacts", CONTACTS);
         sUriMatcher.addURI(AUTHORITY, "contacts/#", CONTACTS_ID);
+        sUriMatcher.addURI(AUTHORITY, "contacts/follow/#", CONTACTS_FOLLOW_LEADER);
         sUriMatcher.addURI(AUTHORITY, "procusts", PROCUSTS);
         sUriMatcher.addURI(AUTHORITY, "procusts/#", PROCUSTS_ID);
         sUriMatcher.addURI(AUTHORITY, "reminders", REMINDERS);
         sUriMatcher.addURI(AUTHORITY, "reminders/#", REMINDERS_ID);
         sUriMatcher.addURI(AUTHORITY, "schedules", SCHEDULES);
         sUriMatcher.addURI(AUTHORITY, "schedules/#", SCHEDULES_ID);
+
+//        ContactsJoinColumns = new HashMap<String, String>();
+//        ContactsJoinColumns.put(ContactsColumns._ID, "contacts." +
+//                ContactsColumns._ID);
+//        ContactsJoinColumns.put(ContactsColumns.CUSTOMER_ID, "contacts." +
+//                ContactsColumns.CUSTOMER_ID);
+//        ContactsJoinColumns.put(ContactsColumns.NAME, "contacts." +
+//                ContactsColumns.NAME);
+//        ContactsJoinColumns.put(ContactsColumns.PHONE_NUMBER, "contacts." +
+//                ContactsColumns.PHONE_NUMBER);
+//        ContactsJoinColumns.put(ContactsColumns.EMAIL, "contacts." +
+//                ContactsColumns.EMAIL);
+//        ContactsJoinColumns.put(ContactsColumns.OFFICE_LOCATION, "contacts." +
+//                ContactsColumns.OFFICE_LOCATION);
+//        ContactsJoinColumns.put(ContactsColumns.DEPARTMENT, "contacts." +
+//                ContactsColumns.DEPARTMENT);
+//        ContactsJoinColumns.put(ContactsColumns.TITLE, "contacts." +
+//                ContactsColumns.TITLE);
+//        ContactsJoinColumns.put(ContactsColumns.CHARACTERS, "contacts." +
+//                ContactsColumns.CHARACTERS);
+//        ContactsJoinColumns.put(ContactsColumns.DIRECT_LEADER, "leader." + ContactsColumns.NAME +
+//                " AS " + ContactsColumns.DIRECT_LEADER);
     }
+
+    protected static final String SELECTION_CONTACTS_FOLLOW_LEADER =
+            ContactsColumns.DIRECT_LEADER + " IN "
+                    + "(SELECT " + ContactsColumns.NAME
+                    + " FROM " + Tables.CONTACTS
+                    + " WHERE " + ContactsColumns._ID + "=%d)";
 
     private TasksDatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
@@ -497,6 +532,7 @@ public class TasksProvider extends ContentProvider {
             String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
+        String where = null;
         final int match = sUriMatcher.match(uri);
         switch (match) {
         case USERS_ID:
@@ -525,8 +561,25 @@ public class TasksProvider extends ContentProvider {
             qb.setTables(Tables.POSITIONS);
             break;
         case CONTACTS_ID:
-            qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
+            where = BaseColumns._ID + "=" + ContentUris.parseId(uri);
         case CONTACTS:
+//            if (isInProjection(projection, ContactsColumns.DIRECT_LEADER)) {
+//                if (where != null) {
+//                    qb.appendWhere("contacts." + where);
+//                }
+//                qb.setTables(ContactsJoinTable);
+//                qb.setProjectionMap(ContactsJoinColumns);
+//            } else {
+                if (where != null) {
+                    qb.appendWhere(where);
+                }
+                qb.setTables(Tables.CONTACTS);
+//            }
+            break;
+        case CONTACTS_FOLLOW_LEADER:
+            long leaderId = ContentUris.parseId(uri);
+            where = String.format(SELECTION_CONTACTS_FOLLOW_LEADER, leaderId);
+            qb.appendWhere(where);
             qb.setTables(Tables.CONTACTS);
             break;
         case PROCUSTS_ID:
@@ -552,4 +605,15 @@ public class TasksProvider extends ContentProvider {
         return cursor;
     }
 
+    public boolean isInProjection(String[] projection, String column) {
+        if (projection == null) {
+            return true;
+        }
+        for (String test : projection) {
+            if (column.equals(test)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

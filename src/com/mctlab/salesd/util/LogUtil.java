@@ -13,6 +13,10 @@ public class LogUtil {
         Log.d(TAG, message);
     }
 
+    public static void d(String message, Throwable tr) {
+        Log.d(TAG, message, tr);
+    }
+
     public static void i(String message) {
         Log.i(TAG, message);
     }

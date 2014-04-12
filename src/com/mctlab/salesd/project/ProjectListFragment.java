@@ -54,6 +54,12 @@ public class ProjectListFragment extends ListFragment
     }
 
     @Override
+    public void onDestroyView() {
+        mAdapter.changeCursor(null);
+        super.onDestroyView();
+    }
+
+    @Override
     public void onQueryComplete(int token, Cursor cursor) {
         if (cursor != null && cursor.getCount() > 0) {
             mEmptyView.setVisibility(View.GONE);

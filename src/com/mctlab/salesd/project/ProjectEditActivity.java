@@ -88,8 +88,11 @@ public class ProjectEditActivity extends Activity
 
     @Override
     public void onQueryComplete(int token, Cursor cursor) {
-        if (cursor != null && cursor.moveToFirst()) {
-            loadProject(cursor);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                loadProject(cursor);
+            }
+            cursor.close();
         }
     }
 

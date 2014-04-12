@@ -26,8 +26,6 @@ import android.widget.TextView;
 public class CustomerDetailActivity extends Activity implements View.OnClickListener,
         CustomerQueryHandler.OnQueryCompleteListener {
 
-    public static final String EXTRA_ID = "id";
-
     private static final int TAB_INDEX_PROJECT = 0;
     private static final int TAB_INDEX_VISIT_SCHEDULE = 1;
     private static final int TAB_INDEX_VISIT_RECORD = 2;
@@ -153,7 +151,7 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
         setContentView(R.layout.customer_detail_activity);
 
         if (getIntent() != null) {
-            mId = getIntent().getLongExtra(EXTRA_ID, -1);
+            mId = getIntent().getLongExtra(SalesDConstant.EXTRA_ID, -1);
         }
 
         mQueryHandler = new CustomerQueryHandler(getContentResolver());
@@ -241,14 +239,14 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
 
     protected void updateCustomerInfo(Cursor cursor) {
         Resources res = getResources();
-        String name = mQueryHandler.getName(cursor);
+        String name = mQueryHandler.getCustomerName(cursor);
         setTitle(name);
 
-        String address = mQueryHandler.getAddress(cursor);
+        String address = mQueryHandler.getCustomerAddress(cursor);
         mAddressTextView.setText(address);
 
         String[] array = res.getStringArray(R.array.customer_category_values);
-        int category = mQueryHandler.getCategory(cursor);
+        int category = mQueryHandler.getCustomerCategory(cursor);
         switch (category) {
         case CustomersColumns.CATEGORY_INSTITUTE_OF_DESIGN:
             mCategoryTextView.setText(array[1]);
@@ -267,7 +265,7 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
             break;
         }
 
-        String description = mQueryHandler.getDescription(cursor);
+        String description = mQueryHandler.getCustomerDescription(cursor);
         mDescriptionTextView.setText(description);
     }
 

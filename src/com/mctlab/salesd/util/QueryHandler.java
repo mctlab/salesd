@@ -28,8 +28,15 @@ public class QueryHandler extends AsyncQueryHandler {
     protected OnDeleteCompleteListener mOnDeleteCompleteListener;
     protected OnQueryCompleteListener mOnQueryCompleteListener;
 
+    private final ContentResolver mContentResolver;
+
     public QueryHandler(ContentResolver cr) {
         super(cr);
+        mContentResolver = cr;
+    }
+
+    public ContentResolver getContentResolver() {
+        return mContentResolver;
     }
 
     public void setOnQueryCompleteListener(OnQueryCompleteListener listener) {

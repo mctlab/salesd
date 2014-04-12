@@ -29,7 +29,7 @@ public class ContactListActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.customer_list_options, menu);
+        inflater.inflate(R.menu.contact_list_options, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

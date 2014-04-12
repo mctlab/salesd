@@ -84,19 +84,22 @@ public class CustomerEditActivity extends Activity
 
     @Override
     public void onQueryComplete(int token, Cursor cursor) {
-        if (cursor != null && cursor.moveToFirst()) {
-            loadCustomer(cursor);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                loadCustomer(cursor);
+            }
+            cursor.close();
         }
     }
 
     private void loadCustomer(Cursor cursor) {
-        String name = mQueryHandler.getName(cursor);
+        String name = mQueryHandler.getCustomerName(cursor);
         mNameEditText.setText(name);
 
-        String address = mQueryHandler.getAddress(cursor);
+        String address = mQueryHandler.getCustomerAddress(cursor);
         mAddressEditText.setText(address);
 
-        int category = mQueryHandler.getCategory(cursor);
+        int category = mQueryHandler.getCustomerCategory(cursor);
         switch (category) {
         case CustomersColumns.CATEGORY_INSTITUTE_OF_DESIGN:
             mCategorySpinner.setSelection(1);
@@ -115,7 +118,7 @@ public class CustomerEditActivity extends Activity
             break;
         }
 
-        String description = mQueryHandler.getDescription(cursor);
+        String description = mQueryHandler.getCustomerDescription(cursor);
         mDescriptionEditText.setText(description);
     }
 
