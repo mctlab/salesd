@@ -5,7 +5,7 @@
     android:versionName="1.0.0">
 
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="16"
         android:targetSdkVersion="19"/>
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -87,6 +87,17 @@
             >
             <intent-filter>
                 <action android:name="mctlab.intent.action.ACTION_PROJECT_DETAIL"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.mctlab.salesd.project.ConfigEditActivity"
+            android:theme="@style/SalesDTheme"
+            android:label="@string/config"
+            >
+            <intent-filter>
+                <action android:name="mctlab.intent.action.ACTION_CONFIG_EDIT"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>

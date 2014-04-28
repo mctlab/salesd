@@ -21,4 +21,11 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="ConfigEditCategoryHeader">
+        <item name="android:paddingLeft">@dimen/main_list_item_left_padding</item>
+        <item name="android:paddingTop">@dimen/main_list_item_top_padding</item>
+        <item name="android:paddingRight">@dimen/main_list_item_right_padding</item>
+        <item name="android:paddingBottom">@dimen/main_list_item_bottom_padding</item>
+    </style>
+
 </resources>

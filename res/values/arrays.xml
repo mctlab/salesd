@@ -11,6 +11,15 @@
         <item>已结束</item>
     </string-array>
 
+    <string-array name="config_category_values">
+        <item>电动机</item>
+        <item>小汽发</item>
+        <item>变频器</item>
+        <item>开关柜</item>
+        <item>控制柜</item>
+        <item>其他</item>
+    </string-array>
+
     <string-array name="customer_category_values">
         <item>主机厂</item>
         <item>设计院</item>

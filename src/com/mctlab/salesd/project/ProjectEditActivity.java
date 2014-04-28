@@ -97,20 +97,20 @@ public class ProjectEditActivity extends Activity
     }
 
     private void loadProject(Cursor cursor) {
-        String name = mQueryHandler.getName(cursor);
+        String name = mQueryHandler.getProjectName(cursor);
         mNameEditText.setText(name);
 
-        int amount = mQueryHandler.getAmount(cursor);
+        int amount = mQueryHandler.getProjectAmount(cursor);
         mAmountEditText.setText(String.valueOf(amount));
 
-        int priority = mQueryHandler.getPriority(cursor);
+        int priority = mQueryHandler.getProjectPriority(cursor);
         if (priority == ProjectsColumns.PRIORITY_IMPORTANT) {
             mPrioritySpinner.setSelection(1);
         } else {
             mPrioritySpinner.setSelection(0);
         }
 
-        int status = mQueryHandler.getStatus(cursor);
+        int status = mQueryHandler.getProjectStatus(cursor);
         if (status == ProjectsColumns.STATUS_ONGOING) {
             mStatusSpinner.setSelection(1);
         } else if (status == ProjectsColumns.STATUS_COMPLETE) {
@@ -119,7 +119,7 @@ public class ProjectEditActivity extends Activity
             mStatusSpinner.setSelection(0);
         }
 
-        String description = mQueryHandler.getDescription(cursor);
+        String description = mQueryHandler.getProjectDescription(cursor);
         mDescriptionEditText.setText(description);
     }
 

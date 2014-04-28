@@ -27,7 +27,7 @@ import android.text.TextUtils;
 
 public class TasksProvider extends ContentProvider {
 
-    protected static final String AUTHORITY = "salesd";
+    public static final String AUTHORITY = "salesd";
     protected static final String URI_AUTHORITY_PREFIX = "content://" + AUTHORITY + "/";
 
     public static final Uri USERS_CONTENT_URI = Uri.parse(URI_AUTHORITY_PREFIX + "users");

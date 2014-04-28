@@ -46,7 +46,9 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
 
             switch (position) {
             case TAB_INDEX_CONFIG:
+                args.putLong(SalesDConstant.EXTRA_PROJECT_ID, mId);
                 fragment = new ConfigListFragment();
+                fragment.setArguments(args);
                 break;
             case TAB_INDEX_CUSTOMER:
                 fragment = new CustomerListFragment();
@@ -223,8 +225,11 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
 
     @Override
     public void onQueryComplete(int token, Cursor cursor) {
-        if (cursor != null && cursor.moveToFirst()) {
-            updateProjectInfo(cursor);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                updateProjectInfo(cursor);
+            }
+            cursor.close();
         }
     }
 
@@ -263,14 +268,14 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
 
     protected void updateProjectInfo(Cursor cursor) {
         Resources res = getResources();
-        String name = mQueryHandler.getName(cursor);
+        String name = mQueryHandler.getProjectName(cursor);
         setTitle(name);
 
-        int amount = mQueryHandler.getAmount(cursor);
+        int amount = mQueryHandler.getProjectAmount(cursor);
         mAmountTextView.setText(String.valueOf(amount));
 
         String[] array = res.getStringArray(R.array.project_priority_values);
-        int priority = mQueryHandler.getPriority(cursor);
+        int priority = mQueryHandler.getProjectPriority(cursor);
         if (priority == ProjectsColumns.PRIORITY_IMPORTANT) {
             mPriorityTextView.setText(array[1]);
         } else {
@@ -278,7 +283,7 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
         }
 
         array = res.getStringArray(R.array.project_status_values);
-        int status = mQueryHandler.getStatus(cursor);
+        int status = mQueryHandler.getProjectStatus(cursor);
         if (status == ProjectsColumns.STATUS_ONGOING) {
             mStatusTextView.setText(array[1]);
         } else if (status == ProjectsColumns.STATUS_COMPLETE) {
@@ -287,7 +292,7 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
             mStatusTextView.setText(array[0]);
         }
 
-        String description = mQueryHandler.getDescription(cursor);
+        String description = mQueryHandler.getProjectDescription(cursor);
         mDescriptionTextView.setText(description);
     }
 

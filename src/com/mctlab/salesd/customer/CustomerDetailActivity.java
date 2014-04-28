@@ -206,8 +206,11 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
 
     @Override
     public void onQueryComplete(int token, Cursor cursor) {
-        if (cursor != null && cursor.moveToFirst()) {
-            updateCustomerInfo(cursor);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                updateCustomerInfo(cursor);
+            }
+            cursor.close();
         }
     }
 

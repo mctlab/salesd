@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.mctlab.salesd.project.ConfigEditCategoryView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        style="@style/ConfigEditCategoryHeader"
+        android:id="@+id/header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/list_view_header_divider_color"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dip"
+        android:layout_marginTop="@dimen/edit_activity_label_padding_top"
+        android:layout_marginBottom="@dimen/edit_activity_label_padding_bottom"
+        android:background="@color/list_view_header_divider_color"
+        />
+
+    <LinearLayout
+        android:id="@+id/fields"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+    <FrameLayout
+        android:id="@+id/add_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dip"
+        android:paddingLeft="@dimen/editor_add_field_label_padding_left"
+        android:background="?android:attr/selectableItemBackground"
+        >
+        <TextView
+            android:id="@+id/add_field_text"
+            android:layout_gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:duplicateParentState="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="18sp"
+            android:text="@string/add_new_field"
+            />
+    </FrameLayout>
+
+</com.mctlab.salesd.project.ConfigEditCategoryView>

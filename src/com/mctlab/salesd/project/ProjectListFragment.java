@@ -94,10 +94,10 @@ public class ProjectListFragment extends ListFragment
         public void bindView(View view, Context context, Cursor cursor) {
             ViewHolder holder = (ViewHolder) view.getTag();
 
-            holder.mNameTextView.setText(mQueryHandler.getName(cursor));
-            holder.mDescriptionTextView.setText(mQueryHandler.getDescription(cursor));
+            holder.mNameTextView.setText(mQueryHandler.getProjectName(cursor));
+            holder.mDescriptionTextView.setText(mQueryHandler.getProjectDescription(cursor));
 
-            if (mQueryHandler.getPriority(cursor) == ProjectsColumns.PRIORITY_IMPORTANT) {
+            if (mQueryHandler.getProjectPriority(cursor) == ProjectsColumns.PRIORITY_IMPORTANT) {
                 holder.mPriorityIndicator.setImageResource(R.drawable.priority_indicator_1);
             } else {
                 holder.mPriorityIndicator.setImageResource(R.drawable.priority_indicator_3);

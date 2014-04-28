@@ -3,10 +3,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/main_list_item_left_padding"
-    android:paddingTop="@dimen/main_list_item_top_padding"
     android:paddingRight="@dimen/main_list_item_right_padding"
     android:paddingBottom="@dimen/main_list_item_bottom_padding"
     android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/add"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="36dip"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/main_list_item_left_padding"
+        android:paddingTop="@dimen/main_list_item_top_padding"
+        android:paddingRight="@dimen/main_list_item_right_padding"
+        android:paddingBottom="@dimen/main_list_item_bottom_padding"
+        android:text="@string/modify_config"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="@color/internal_tab_divider_color"
+        android:paddingLeft="@dimen/main_list_item_left_padding"
+        android:paddingRight="@dimen/main_list_item_right_padding"
+        />
 
     <ListView android:id="@android:id/list"
         android:layout_width="match_parent"
@@ -15,6 +36,16 @@
         android:scrollbarStyle="outsideOverlay"
         android:divider="@color/list_view_divider_color"
         android:dividerHeight="1dip"
+        />
+
+    <TextView android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_config"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/empty_prompt_text_color"
+        android:textSize="@dimen/empty_prompt_text_size"
         />
 
 </LinearLayout>

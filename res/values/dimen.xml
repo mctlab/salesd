@@ -22,6 +22,16 @@
     <dimen name="edit_activity_input_padding_top">8dip</dimen>
     <dimen name="edit_activity_input_padding_bottom">8dip</dimen>
 
+    <!-- Config Editor -->
+    <dimen name="editor_add_field_label_padding_left">16dip</dimen>
+    <dimen name="editor_min_field_height">48dip</dimen>
+
+    <!-- Padding of the rounded plus/minus/expand/collapse buttons in the editor  -->
+    <dimen name="editor_round_button_padding_left">8dip</dimen>
+    <dimen name="editor_round_button_padding_right">8dip</dimen>
+    <dimen name="editor_round_button_padding_top">8dip</dimen>
+    <dimen name="editor_round_button_padding_bottom">8dip</dimen>
+
     <dimen name="empty_prompt_text_size">18sp</dimen>
 
     <!-- Width of priority indicator in project list item -->
