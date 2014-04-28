@@ -57,6 +57,8 @@ public class ConfigEditActivity extends Activity
 
         mQueryHandler = new ProjectQueryHandler(getContentResolver());
         mQueryHandler.setOnQueryCompleteListener(this);
+
+        loadConfig(null);
     }
 
     @Override

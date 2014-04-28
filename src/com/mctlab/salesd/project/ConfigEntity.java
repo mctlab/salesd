@@ -40,7 +40,7 @@ public class ConfigEntity implements Parcelable {
     }
 
     public void fromCursor(Cursor cursor) {
-        if (cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             do {
                 final ContentValues before = new ContentValues();
 
