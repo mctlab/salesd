@@ -151,7 +151,7 @@ public class ConfigEditFieldView extends LinearLayout {
         mNumberEditText.setText(number);
 
         // Show the delete button if we have a non-null value
-        setDeleteButtonVisible(type != null && number != null);
+        setDeleteButtonVisible(!isEmpty());
     }
 
     public void setDeleteButtonVisible(boolean visible) {
