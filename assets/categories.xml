@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <categories version="1">
+        <category name="电动机" sort_index="1" />
+        <category name="小汽发" sort_index="2" />
+        <category name="变频器" sort_index="3" />
+        <category name="开关柜" sort_index="4" />
+        <category name="控制柜" sort_index="5" />
+        <category name="其他" sort_index="6" />
+    </categories>
+</resources>

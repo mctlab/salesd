@@ -48,12 +48,6 @@
     <string name="config">项目配置</string>
     <string name="modify_config">修改配置</string>
     <string name="no_config">没有配置</string>
-    <string name="config_category_motor">电动机</string>
-    <string name="config_category_engine">小汽发</string>
-    <string name="config_category_converter">变频器</string>
-    <string name="config_category_switch_cabinet">开关柜</string>
-    <string name="config_category_control_cabinet">控制柜</string>
-    <string name="config_category_others">其他</string>
 
     <string name="add_new_field">添加新条目</string>
     <string name="hint_config_type">设备类型</string>

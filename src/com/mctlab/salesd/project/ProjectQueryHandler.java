@@ -5,9 +5,10 @@ import android.content.ContentUris;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.mctlab.salesd.provider.TasksProvider;
+import com.mctlab.salesd.provider.TasksDatabaseHelper.ConfigCategoriesColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ConfigColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ProjectsColumns;
+import com.mctlab.salesd.provider.TasksProvider;
 import com.mctlab.salesd.util.QueryHandler;
 
 public class ProjectQueryHandler extends QueryHandler {
@@ -28,19 +29,29 @@ public class ProjectQueryHandler extends QueryHandler {
     public static final int PROJECT_COLUMN_INDEX_STATUS = 4;
     public static final int PROJECT_COLUMN_INDEX_DESCRIPTION = 5;
 
+    public static final String[] CONFIG_CATEGORY_PROJECTION = new String[] {
+        ConfigCategoriesColumns._ID,
+        ConfigCategoriesColumns.CATEGORY,
+        ConfigCategoriesColumns.SORT_INDEX
+    };
+
+    public static final int CONFIG_CATEGORY_COLUMN_INDEX_ID = 0;
+    public static final int CONFIG_CATEGORY_COLUMN_INDEX_CATEGORY = 1;
+    public static final int CONFIG_CATEGORY_COLUMN_INDEX_SORT_INDEX = 2;
+
     public static final String[] CONFIG_PROJECTION = new String[] {
         ConfigColumns._ID,
         ConfigColumns.PROJECT_ID,
-        ConfigColumns.CATEGORY,
         ConfigColumns.TYPE,
-        ConfigColumns.NUMBER
+        ConfigColumns.NUMBER,
+        ConfigCategoriesColumns.CATEGORY
     };
 
     public static final int CONFIG_COLUMN_INDEX_ID = 0;
     public static final int CONFIG_COLUMN_INDEX_PROJECT_ID = 1;
-    public static final int CONFIG_COLUMN_INDEX_CATEGORY = 2;
-    public static final int CONFIG_COLUMN_INDEX_TYPE = 3;
-    public static final int CONFIG_COLUMN_INDEX_NUMBER = 4;
+    public static final int CONFIG_COLUMN_INDEX_TYPE = 2;
+    public static final int CONFIG_COLUMN_INDEX_NUMBER = 3;
+    public static final int CONFIG_COLUMN_INDEX_CATEGORY = 4;
 
     public ProjectQueryHandler(ContentResolver cr) {
         super(cr);
@@ -58,11 +69,16 @@ public class ProjectQueryHandler extends QueryHandler {
         }
     }
 
-    public void startQueryConfigs(int token, long projectId) {
+    public void startQueryConfigCategories(int token) {
+        startQuery(token, null, TasksProvider.CONFIG_CATEGORIES_CONTENT_URI,
+                CONFIG_CATEGORY_PROJECTION, null, null, ConfigCategoriesColumns.SORT_INDEX);
+    }
+
+    public void startQueryConfig(int token, long projectId) {
         if (projectId > 0) {
             String selection = ConfigColumns.PROJECT_ID + "=" + projectId;
             startQuery(token, null, TasksProvider.CONFIG_CONTENT_URI, CONFIG_PROJECTION,
-                    selection, null, ConfigColumns.CATEGORY);
+                    selection, null, ConfigCategoriesColumns.SORT_INDEX);
         }
     }
 
@@ -101,11 +117,18 @@ public class ProjectQueryHandler extends QueryHandler {
         return null;
     }
 
-    public String getConfigCategory(Cursor cursor) {
+    public String getConfigCategoryName(Cursor cursor) {
         if (cursor != null) {
-            return cursor.getString(CONFIG_COLUMN_INDEX_CATEGORY);
+            return cursor.getString(CONFIG_CATEGORY_COLUMN_INDEX_CATEGORY);
         }
         return null;
+    }
+
+    public int getConfigCategorySortIndex(Cursor cursor) {
+        if (cursor != null) {
+            return cursor.getInt(CONFIG_CATEGORY_COLUMN_INDEX_SORT_INDEX);
+        }
+        return 0;
     }
 
     public String getConfigType(Cursor cursor) {
@@ -120,5 +143,12 @@ public class ProjectQueryHandler extends QueryHandler {
             return cursor.getInt(CONFIG_COLUMN_INDEX_NUMBER);
         }
         return 0;
+    }
+
+    public String getConfigCategory(Cursor cursor) {
+        if (cursor != null) {
+            return cursor.getString(CONFIG_COLUMN_INDEX_CATEGORY);
+        }
+        return null;
     }
 }

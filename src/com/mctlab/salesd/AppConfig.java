@@ -10,6 +10,7 @@ public class AppConfig extends AsAppConfig {
 
     private static final String PREF_NAME = "configuration";
 
+    private static final String KEY_CATEGORIES_VERSION = "categories_version";
     private static final String KEY_POSITIONS_VERSION_SUFFIX = "_positions_version";
 
     private static SharedPreferences mPreferences;
@@ -29,6 +30,14 @@ public class AppConfig extends AsAppConfig {
 
     public static AppConfig getInstance() {
         return (AppConfig) AsAppConfig.getInstance();
+    }
+
+    public static void setCategoriesVersion(int version) {
+        mEditor.putInt(KEY_CATEGORIES_VERSION, version).commit();
+    }
+
+    public static int getCategoriesVersion() {
+        return mPreferences.getInt(KEY_CATEGORIES_VERSION, -1);
     }
 
     public static void setCustomerPositionsVersion(String customer, int version) {

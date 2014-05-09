@@ -57,7 +57,7 @@ public class ConfigListFragment extends ListFragment
     @Override
     public void onResume() {
         super.onResume();
-        mQueryHandler.startQueryConfigs(0, mProjectId);
+        mQueryHandler.startQueryConfig(0, mProjectId);
     }
 
     @Override

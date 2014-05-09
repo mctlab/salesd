@@ -7,13 +7,14 @@ import android.provider.BaseColumns;
 
 public class TasksDatabaseHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "tasks.db";
 
     public interface Tables {
         public static final String USERS = "users";
         public static final String PROJECTS = "projects";
         public static final String CONFIG = "config";
+        public static final String CONFIG_CATEGORIES = "config_categories";
         public static final String CUSTOMERS = "customers";
         public static final String POSITIONS = "positions";
         public static final String CONTACTS = "contacts";
@@ -54,9 +55,15 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
     public interface ConfigColumns {
         public static final String _ID = BaseColumns._ID;
         public static final String PROJECT_ID = "project_id";
-        public static final String CATEGORY = "category";
+        public static final String CATEGORY_ID = "category_id";
         public static final String TYPE = "type";
         public static final String NUMBER = "number";
+    }
+
+    public interface ConfigCategoriesColumns {
+        public static final String _ID = BaseColumns._ID;
+        public static final String CATEGORY = "category";
+        public static final String SORT_INDEX = "sort_index";
     }
 
     public interface CustomersColumns {
@@ -156,9 +163,15 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + Tables.CONFIG + " (" +
                 ConfigColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 ConfigColumns.PROJECT_ID + " INTEGER," +
-                ConfigColumns.CATEGORY + " INTEGER," +
-                ConfigColumns.TYPE + " INTEGER," +
+                ConfigColumns.CATEGORY_ID + " INTEGER," +
+                ConfigColumns.TYPE + " TEXT," +
                 ConfigColumns.NUMBER + " INTEGER" +
+                ");");
+
+        db.execSQL("CREATE TABLE " + Tables.CONFIG_CATEGORIES + " (" +
+                ConfigCategoriesColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ConfigCategoriesColumns.CATEGORY + " TEXT," +
+                ConfigCategoriesColumns.SORT_INDEX + " INTEGER" +
                 ");");
 
         db.execSQL("CREATE TABLE " + Tables.CUSTOMERS + " (" +
@@ -177,6 +190,7 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
                 PositionsColumns.UPPER_POSITION_ID + " INTEGER" +
                 ");");
 
+        // TODO: store leader id instead of leader name
         db.execSQL("CREATE TABLE " + Tables.CONTACTS + " (" +
                 ContactsColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 ContactsColumns.CUSTOMER_ID + " INTEGER," +
@@ -221,6 +235,7 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + Tables.USERS + ";");
         db.execSQL("DROP TABLE IF EXISTS " + Tables.PROJECTS + ";");
         db.execSQL("DROP TABLE IF EXISTS " + Tables.CONFIG + ";");
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.CONFIG_CATEGORIES + ";");
         db.execSQL("DROP TABLE IF EXISTS " + Tables.CUSTOMERS + ";");
         db.execSQL("DROP TABLE IF EXISTS " + Tables.POSITIONS + ";");
         db.execSQL("DROP TABLE IF EXISTS " + Tables.CONTACTS + ";");

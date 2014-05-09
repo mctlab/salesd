@@ -3,6 +3,7 @@ package com.mctlab.salesd.project;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 
 import com.mctlab.salesd.R;
 import com.mctlab.salesd.constant.SalesDConstant;
@@ -25,12 +26,14 @@ import android.view.ViewGroup;
 
 public class ConfigEditActivity extends Activity
         implements ProjectQueryHandler.OnQueryCompleteListener {
+    private static int TOKEN_QUERY_CATEGORIES = 0;
+    private static int TOKEN_QUERY_CONFIG = 1;
 
     private LayoutInflater mInflater;
     private ViewGroup mCategoryContainer;
 
-    private String[] mCategories;
-    private CategoryComparator mCategoryComparator;
+    private final HashMap<String, Integer> mCategories = new HashMap<String, Integer>();
+    private final CategoryComparator mCategoryComparator = new CategoryComparator();
 
     protected ProjectQueryHandler mQueryHandler;
     private ConfigEntity mConfigEntity;
@@ -52,28 +55,32 @@ public class ConfigEditActivity extends Activity
 
         mCategoryContainer = (ViewGroup)findViewById(R.id.categories);
 
-        mCategories = getResources().getStringArray(R.array.config_category_values);
-        mCategoryComparator = new CategoryComparator();
-
         mQueryHandler = new ProjectQueryHandler(getContentResolver());
         mQueryHandler.setOnQueryCompleteListener(this);
-
-        loadConfig(null);
+        mQueryHandler.startQueryConfigCategories(TOKEN_QUERY_CATEGORIES);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mQueryHandler.startQueryConfigs(0, mProjectId);
     }
 
     @Override
     public void onQueryComplete(int token, Cursor cursor) {
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                loadConfig(cursor);
+        if (token == TOKEN_QUERY_CATEGORIES) {
+            if (cursor != null) {
+                loadConfigCategories(cursor);
+                cursor.close();
             }
-            cursor.close();
+            loadConfig(null);
+            mQueryHandler.startQueryConfig(TOKEN_QUERY_CONFIG, mProjectId);
+        } else {
+            if (cursor != null) {
+                if (token == TOKEN_QUERY_CONFIG) {
+                    loadConfig(cursor);
+                }
+                cursor.close();
+            }
         }
     }
 
@@ -110,11 +117,22 @@ public class ConfigEditActivity extends Activity
         }
     }
 
+    private void loadConfigCategories(Cursor cursor) {
+        if (cursor.moveToFirst()) {
+            mCategories.clear();
+            do {
+                String category = mQueryHandler.getConfigCategoryName(cursor);
+                int sortIndex = mQueryHandler.getConfigCategorySortIndex(cursor);
+                mCategories.put(category, sortIndex);
+            } while (cursor.moveToNext());
+        }
+    }
+
     private void loadConfig(Cursor cursor) {
         mConfigEntity = new ConfigEntity(mProjectId);
         mConfigEntity.fromCursor(cursor);
 
-        for (String category : mCategories) {
+        for (String category : mCategories.keySet()) {
             mConfigEntity.ensureCategoryExists(category);
         }
 
@@ -144,17 +162,10 @@ public class ConfigEditActivity extends Activity
     class CategoryComparator implements Comparator<String> {
         @Override
         public int compare(String lhs, String rhs) {
-            int length = mCategories.length;
-            int lidx = length;
-            int ridx = length;
-            for (int i = 0; i < length; i++) {
-                if (mCategories[i].equals(lhs)) {
-                    lidx = i;
-                }
-                if (mCategories[i].equals(rhs)) {
-                    ridx = i;
-                }
-            }
+            Integer l = mCategories.get(lhs);
+            int lidx = l == null ? 0 : l.intValue();
+            Integer r = mCategories.get(rhs);
+            int ridx = r == null ? 0 : r.intValue();
             return lidx - ridx;
         }
     }

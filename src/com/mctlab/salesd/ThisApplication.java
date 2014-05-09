@@ -17,6 +17,7 @@ public class ThisApplication extends AsApplication {
     public void onCreate() {
         super.onCreate();
         initAppConfig();
+        loadConfigCategories();
         loadCustomerPositions();
         // TODO: JsonMapper.registerDeserializer(Something.class, new Something.Deserializer());
     }
@@ -29,6 +30,13 @@ public class ThisApplication extends AsApplication {
     @Override
     public void initRuntime() {
         Runtime.init();
+    }
+
+    public void loadConfigCategories() {
+        ContentResolver resolver = getContentResolver();
+        Builder builder = TasksProvider.CONFIG_CATEGORIES_CONTENT_URI.buildUpon();
+        Uri uri = builder.appendPath("categories.xml").build();
+        resolver.insert(uri, null);
     }
 
     public void loadCustomerPositions() {

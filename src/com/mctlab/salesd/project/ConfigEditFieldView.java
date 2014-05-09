@@ -180,7 +180,18 @@ public class ConfigEditFieldView extends LinearLayout {
     }
 
     protected void saveValue(String column, String value) {
-        mConfigValues.put(column, value);
+        if (ConfigColumns.TYPE.equals(column)) {
+            mConfigValues.put(column, value);
+        } else if (ConfigColumns.NUMBER.equals(column)) {
+            int number = 0;
+            if (!TextUtils.isEmpty(value)) {
+                try {
+                    number = Integer.valueOf(value);
+                } catch (Exception e) {
+                }
+            }
+            mConfigValues.put(column, number);
+        }
     }
 
     protected void notifyListener() {

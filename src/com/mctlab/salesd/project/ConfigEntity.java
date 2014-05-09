@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.mctlab.salesd.provider.TasksDatabaseHelper.ConfigCategoriesColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ConfigColumns;
 import com.mctlab.salesd.provider.TasksProvider;
 
@@ -54,11 +55,6 @@ public class ConfigEntity implements Parcelable {
                     before.put(ConfigColumns.PROJECT_ID, cursor.getLong(index));
                 }
 
-                index = cursor.getColumnIndex(ConfigColumns.CATEGORY);
-                if (index != -1) {
-                    before.put(ConfigColumns.CATEGORY, cursor.getString(index));
-                }
-
                 index = cursor.getColumnIndex(ConfigColumns.TYPE);
                 if (index != -1) {
                     before.put(ConfigColumns.TYPE, cursor.getString(index));
@@ -67,6 +63,11 @@ public class ConfigEntity implements Parcelable {
                 index = cursor.getColumnIndex(ConfigColumns.NUMBER);
                 if (index != -1) {
                     before.put(ConfigColumns.NUMBER, cursor.getInt(index));
+                }
+
+                index = cursor.getColumnIndex(ConfigCategoriesColumns.CATEGORY);
+                if (index != -1) {
+                    before.put(ConfigCategoriesColumns.CATEGORY, cursor.getString(index));
                 }
 
                 final ConfigValues entry = ConfigValues.fromBefore(before);
@@ -87,7 +88,7 @@ public class ConfigEntity implements Parcelable {
 
     public ConfigValues insertEntry(String category) {
         final ContentValues after = new ContentValues();
-        after.put(ConfigColumns.CATEGORY, category);
+        after.put(ConfigCategoriesColumns.CATEGORY, category);
 
         final ConfigValues entry = ConfigValues.fromAfter(after);
         addEntry(entry);
@@ -360,7 +361,7 @@ public class ConfigEntity implements Parcelable {
         }
 
         public String getCategory() {
-            return getAsString(ConfigColumns.CATEGORY);
+            return getAsString(ConfigCategoriesColumns.CATEGORY);
         }
 
         public Long getId() {
