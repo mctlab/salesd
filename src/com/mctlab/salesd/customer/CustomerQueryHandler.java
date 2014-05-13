@@ -7,6 +7,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.database.Cursor;
 import android.net.Uri;
+import android.net.Uri.Builder;
 import android.text.TextUtils;
 
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ContactsColumns;
@@ -84,6 +85,18 @@ public class CustomerQueryHandler extends QueryHandler {
     public void startQueryCustomers(int token) {
         startQuery(token, null, TasksProvider.CUSTOMERS_CONTENT_URI, CUSTOMER_PROJECTION,
                 null, null, null);
+    }
+
+    public void startQueryCustomers(int token, long projectId, boolean forIntroduction) {
+        if (projectId > 0) {
+            Builder builder = TasksProvider.CUSTOMERS_CONTENT_URI.buildUpon();
+            builder.appendQueryParameter("project_id", String.valueOf(projectId));
+            if (forIntroduction) {
+                builder.appendQueryParameter("for_introduction", String.valueOf(true));
+            }
+            startQuery(token, null, builder.build(), CUSTOMER_PROJECTION,
+                    null, null, null);
+        }
     }
 
     public void startQueryCustomer(int token, long customerId) {

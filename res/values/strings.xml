@@ -57,6 +57,7 @@
     <!-- customers -->
     <string name="customers">客户</string>
     <string name="add_customer">新建客户</string>
+    <string name="introduce_customer">添加客户</string>
     <string name="customer_name">客户名称</string>
     <string name="customer_company_address">客户地址</string>
     <string name="customer_category">客户分类</string>
@@ -65,7 +66,7 @@
 
     <string name="dlg_title_pick_customer">请选择客户公司</string>
     <string name="dlg_message_fetching_customers">正在获取客户列表，请稍候。</string>
-    <string name="dlg_message_create_customer">您目前没有客户，确定要新建一个客户吗？</string>
+    <string name="dlg_message_create_customer">您没有可选择的客户，确定要新建一个客户吗？</string>
 
     <!-- contacts -->
     <string name="contacts">联系人</string>

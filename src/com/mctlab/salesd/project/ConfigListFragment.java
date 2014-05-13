@@ -45,7 +45,7 @@ public class ConfigListFragment extends ListFragment
 
         mEmptyView = view.findViewById(R.id.empty);
 
-        view.findViewById(R.id.add).setOnClickListener(this);
+        view.findViewById(R.id.modify).setOnClickListener(this);
 
         mQueryHandler = new ProjectQueryHandler(getActivity().getContentResolver());
         mQueryHandler.setOnQueryCompleteListener(this);

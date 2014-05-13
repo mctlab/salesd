@@ -3,6 +3,7 @@ package com.mctlab.salesd.customer;
 import com.mctlab.salesd.R;
 import com.mctlab.salesd.constant.SalesDConstant;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.CustomersColumns;
+import com.mctlab.salesd.util.LogUtil;
 
 import android.app.ListFragment;
 import android.content.Context;
@@ -18,12 +19,21 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class CustomerListFragment extends ListFragment
-        implements CustomerQueryHandler.OnQueryCompleteListener {
+        implements CustomerQueryHandler.OnQueryCompleteListener, View.OnClickListener {
+
+    public interface OnIntroduceCustomersListener {
+        public void OnIntroduceCustomers();
+    }
+
+    protected OnIntroduceCustomersListener mOnIntroduceCustomersListener;
 
     protected CustomerQueryHandler mQueryHandler;
     protected ListAdapter mAdapter;
 
     protected View mEmptyView;
+
+    private boolean mProjectRelated = false;
+    private long mProjectId = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,6 +49,19 @@ public class CustomerListFragment extends ListFragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null) {
+            mProjectId = args.getLong(SalesDConstant.EXTRA_PROJECT_ID, -1);
+            mProjectRelated = true;
+        }
+
+        if (mProjectRelated) {
+            View introduce = view.findViewById(R.id.introduce);
+            introduce.setVisibility(View.VISIBLE);
+            introduce.setOnClickListener(this);
+            view.findViewById(R.id.introduce_divider).setVisibility(View.VISIBLE);
+        }
+
         mEmptyView = view.findViewById(R.id.empty);
 
         mQueryHandler = new CustomerQueryHandler(getActivity().getContentResolver());
@@ -50,13 +73,20 @@ public class CustomerListFragment extends ListFragment
     @Override
     public void onResume() {
         super.onResume();
-        mQueryHandler.startQueryCustomers(0);
+        refreshView();
     }
 
     @Override
     public void onDestroyView() {
         mAdapter.changeCursor(null);
         super.onDestroyView();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (mOnIntroduceCustomersListener != null) {
+            mOnIntroduceCustomersListener.OnIntroduceCustomers();
+        }
     }
 
     @Override
@@ -74,6 +104,19 @@ public class CustomerListFragment extends ListFragment
         Intent intent = new Intent(SalesDConstant.ACTION_CUSTOMER_DETAIL);
         intent.putExtra(SalesDConstant.EXTRA_ID, id);
         getActivity().startActivity(intent);
+    }
+
+    public void setOnIntroduceCustomersListener(OnIntroduceCustomersListener listener) {
+        mOnIntroduceCustomersListener = listener;
+    }
+
+    public void refreshView() {
+        LogUtil.d("refresh CustomerListFragment");
+        if (mProjectRelated) {
+            mQueryHandler.startQueryCustomers(0, mProjectId, false);
+        } else {
+            mQueryHandler.startQueryCustomers(0);
+        }
     }
 
     public static class ListAdapter extends CursorAdapter {

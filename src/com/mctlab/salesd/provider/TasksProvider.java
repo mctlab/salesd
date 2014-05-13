@@ -12,7 +12,9 @@ import com.mctlab.salesd.AppConfig;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ConfigCategoriesColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ConfigColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ContactsColumns;
+import com.mctlab.salesd.provider.TasksDatabaseHelper.CustomersColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.PositionsColumns;
+import com.mctlab.salesd.provider.TasksDatabaseHelper.ProcustsColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.Tables;
 import com.mctlab.salesd.util.LogUtil;
 
@@ -114,6 +116,18 @@ public class TasksProvider extends ContentProvider {
 
     protected static final UriMatcher sUriMatcher = new UriMatcher(
             UriMatcher.NO_MATCH);
+
+    protected static String CUSTOMERS_OF_PROJECT_SELECT =
+            CustomersColumns._ID + " IN "
+                    + "(SELECT " + ProcustsColumns.CUSTOMER_ID
+                    + " FROM " + Tables.PROCUSTS
+                    + " WHERE " + ProcustsColumns.PROJECT_ID + "=?)";
+
+    protected static String CUSTOMERS_NOT_BELONG_TO_PROJECT_SELECT =
+            CustomersColumns._ID + " NOT IN "
+                    + "(SELECT " + ProcustsColumns.CUSTOMER_ID
+                    + " FROM " + Tables.PROCUSTS
+                    + " WHERE " + ProcustsColumns.PROJECT_ID + "=?)";
 
     protected static String ConfigJoinTable = "config " +
             " LEFT JOIN config_categories ON (config.category_id = config_categories._id)";
@@ -751,6 +765,23 @@ public class TasksProvider extends ContentProvider {
         case CUSTOMERS_ID:
             qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
         case CUSTOMERS:
+            String projectId = uri.getQueryParameter("project_id");
+            String forIntroduction = uri.getQueryParameter("for_introduction");
+            if (!TextUtils.isEmpty(projectId)) {
+                boolean belongTo = !Boolean.parseBoolean(forIntroduction);
+                try {
+                    long id = Long.parseLong(projectId);
+                    if (id > 0) {
+                        if (belongTo) {
+                            qb.appendWhere(CUSTOMERS_OF_PROJECT_SELECT);
+                        } else {
+                            qb.appendWhere(CUSTOMERS_NOT_BELONG_TO_PROJECT_SELECT);
+                        }
+                        selectionArgs = insertSelectionArg(selectionArgs, String.valueOf(id));
+                    }
+                } catch (NumberFormatException e) {
+                }
+            }
             qb.setTables(Tables.CUSTOMERS);
             break;
         case POSITIONS_ID:
@@ -813,5 +844,20 @@ public class TasksProvider extends ContentProvider {
             }
         }
         return false;
+    }
+
+    /**
+     * Inserts an argument at the beginning of the selection arg list.
+     */
+    private String[] insertSelectionArg(String[] selectionArgs, String arg) {
+        if (selectionArgs == null) {
+            return new String[] {arg};
+        } else {
+            int newLength = selectionArgs.length + 1;
+            String[] newSelectionArgs = new String[newLength];
+            newSelectionArgs[0] = arg;
+            System.arraycopy(selectionArgs, 0, newSelectionArgs, 1, selectionArgs.length);
+            return newSelectionArgs;
+        }
     }
 }

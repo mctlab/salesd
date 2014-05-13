@@ -1,15 +1,21 @@
 package com.mctlab.salesd.project;
 
+import java.util.List;
+
 import com.mctlab.salesd.R;
 import com.mctlab.salesd.SalesDUtils;
 import com.mctlab.salesd.constant.SalesDConstant;
 import com.mctlab.salesd.customer.CustomerListFragment;
+import com.mctlab.salesd.customer.CustomerPickerDialogFragment;
+import com.mctlab.salesd.provider.TasksDatabaseHelper.ProcustsColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ProjectsColumns;
+import com.mctlab.salesd.provider.TasksProvider;
 import com.mctlab.salesd.schedule.ScheduleListFragment;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -24,7 +30,9 @@ import android.view.View;
 import android.widget.TextView;
 
 public class ProjectDetailActivity extends Activity implements View.OnClickListener,
-        ProjectQueryHandler.OnQueryCompleteListener {
+        ProjectQueryHandler.OnQueryCompleteListener,
+        CustomerListFragment.OnIntroduceCustomersListener,
+        CustomerPickerDialogFragment.OnPickCustomersListener {
 
     private static final int TAB_INDEX_CONFIG = 0;
     private static final int TAB_INDEX_CUSTOMER = 1;
@@ -51,7 +59,11 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
                 fragment.setArguments(args);
                 break;
             case TAB_INDEX_CUSTOMER:
-                fragment = new CustomerListFragment();
+                args.putLong(SalesDConstant.EXTRA_PROJECT_ID, mId);
+                mCustomerListFragment = new CustomerListFragment();
+                mCustomerListFragment.setArguments(args);
+                mCustomerListFragment.setOnIntroduceCustomersListener(ProjectDetailActivity.this);
+                fragment = mCustomerListFragment;
                 break;
             case TAB_INDEX_VISIT_SCHEDULE:
                 args.putBoolean(ScheduleListFragment.ARG_FULL_SCREEN, true);
@@ -135,6 +147,8 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
     }
 
     private ViewPager mViewPager;
+
+    private CustomerListFragment mCustomerListFragment;
 
     private TextView mConfigTabTitle;
     private TextView mCustomerTabTitle;
@@ -220,6 +234,26 @@ public class ProjectDetailActivity extends Activity implements View.OnClickListe
         case R.id.visit_record_tab:
             mViewPager.setCurrentItem(TAB_INDEX_VISIT_RECORD);
             break;
+        }
+    }
+
+    @Override
+    public void OnIntroduceCustomers() {
+        CustomerPickerDialogFragment.actionJoinProject(getFragmentManager(), mId, this);
+    }
+
+    @Override
+    public void OnPickCustomers(List<Long> ids) {
+        if (ids != null) {
+            for (Long id : ids) {
+                ContentValues values = new ContentValues();
+                values.put(ProcustsColumns.PROJECT_ID, mId);
+                values.put(ProcustsColumns.CUSTOMER_ID, id);
+                getContentResolver().insert(TasksProvider.PROCUSTS_CONTENT_URI, values);
+            }
+        }
+        if (mCustomerListFragment != null) {
+            mCustomerListFragment.refreshView();
         }
     }
 

@@ -1,5 +1,8 @@
 package com.mctlab.salesd.customer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.mctlab.salesd.R;
 import com.mctlab.salesd.constant.SalesDConstant;
 import com.mctlab.salesd.customer.CustomerListFragment.ListAdapter;
@@ -20,18 +23,39 @@ public class CustomerPickerDialogFragment extends DialogFragment
         implements CustomerQueryHandler.OnQueryCompleteListener, View.OnClickListener,
             AdapterView.OnItemClickListener {
 
+    protected static final int MODE_CREATE_NEW_CONTACT = 0;
+    protected static final int MODE_JOIN_PROJECT = 1;
+
+    public interface OnPickCustomersListener {
+        public void OnPickCustomers(List<Long> ids);
+    }
+
     private TextView mMessage;
     private View mProgressRow;
     private View mProgress;
     private View mCancel;
     private View mConfirm;
 
+    protected long mProjectId;
+    protected int mMode;
+
+    protected OnPickCustomersListener mOnPickCustomersListener;
     protected ListAdapter mAdapter;
 
     CustomerQueryHandler mQueryHandler;
 
     public static void actionCreateNewContact(FragmentManager fragmentManager) {
         CustomerPickerDialogFragment dialog = new CustomerPickerDialogFragment();
+        dialog.mMode = MODE_CREATE_NEW_CONTACT;
+        dialog.show(fragmentManager, null);
+    }
+
+    public static void actionJoinProject(FragmentManager fragmentManager, long projectId,
+            OnPickCustomersListener listener) {
+        CustomerPickerDialogFragment dialog = new CustomerPickerDialogFragment();
+        dialog.mProjectId = projectId;
+        dialog.mMode = MODE_JOIN_PROJECT;
+        dialog.setOnPickCustomersListener(listener);
         dialog.show(fragmentManager, null);
     }
 
@@ -40,7 +64,11 @@ public class CustomerPickerDialogFragment extends DialogFragment
         super.onCreate(savedInstanceState);
         mQueryHandler = new CustomerQueryHandler(getActivity().getContentResolver());
         mQueryHandler.setOnQueryCompleteListener(this);
-        mQueryHandler.startQueryCustomers(0);
+        if (mMode == MODE_JOIN_PROJECT) {
+            mQueryHandler.startQueryCustomers(0, mProjectId, true);
+        } else {
+            mQueryHandler.startQueryCustomers(0);
+        }
 
         mAdapter = new ListAdapter(getActivity(), mQueryHandler);
     }
@@ -95,9 +123,17 @@ public class CustomerPickerDialogFragment extends DialogFragment
 
     @Override
     public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-        Intent intent = new Intent(SalesDConstant.ACTION_CONTACT_EDIT);
-        intent.putExtra(SalesDConstant.EXTRA_CUSTOMER_ID, id);
-        startActivity(intent);
+        if (mMode == MODE_CREATE_NEW_CONTACT) {
+            Intent intent = new Intent(SalesDConstant.ACTION_CONTACT_EDIT);
+            intent.putExtra(SalesDConstant.EXTRA_CUSTOMER_ID, id);
+            startActivity(intent);
+        } else if (mMode == MODE_JOIN_PROJECT) {
+            if (mOnPickCustomersListener != null) {
+                ArrayList<Long> ids = new ArrayList<Long>();
+                ids.add(id);
+                mOnPickCustomersListener.OnPickCustomers(ids);
+            }
+        }
         dismiss();
     }
 
@@ -113,4 +149,7 @@ public class CustomerPickerDialogFragment extends DialogFragment
         mAdapter.changeCursor(cursor);
     }
 
+    protected void setOnPickCustomersListener(OnPickCustomersListener listener) {
+        mOnPickCustomersListener = listener;
+    }
 }
