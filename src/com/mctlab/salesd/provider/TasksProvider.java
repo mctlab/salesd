@@ -15,6 +15,7 @@ import com.mctlab.salesd.provider.TasksDatabaseHelper.ContactsColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.CustomersColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.PositionsColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ProcustsColumns;
+import com.mctlab.salesd.provider.TasksDatabaseHelper.ProjectsColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.Tables;
 import com.mctlab.salesd.util.LogUtil;
 
@@ -116,6 +117,12 @@ public class TasksProvider extends ContentProvider {
 
     protected static final UriMatcher sUriMatcher = new UriMatcher(
             UriMatcher.NO_MATCH);
+
+    protected static String PROJECTS_HAVE_CUSTOMER_SELECT =
+            ProjectsColumns._ID + " IN "
+                    + "(SELECT " + ProcustsColumns.PROJECT_ID
+                    + " FROM " + Tables.PROCUSTS
+                    + " WHERE " + ProcustsColumns.CUSTOMER_ID + "=?)";
 
     protected static String CUSTOMERS_OF_PROJECT_SELECT =
             CustomersColumns._ID + " IN "
@@ -742,6 +749,17 @@ public class TasksProvider extends ContentProvider {
         case PROJECTS_ID:
             qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
         case PROJECTS:
+            String customerId = uri.getQueryParameter("customer_id");
+            if (!TextUtils.isEmpty(customerId)) {
+                try {
+                    long id = Long.parseLong(customerId);
+                    if (id > 0) {
+                        qb.appendWhere(PROJECTS_HAVE_CUSTOMER_SELECT);
+                        selectionArgs = insertSelectionArg(selectionArgs, String.valueOf(id));
+                    }
+                } catch (NumberFormatException e) {
+                }
+            }
             qb.setTables(Tables.PROJECTS);
             break;
         case CONFIG_ID:

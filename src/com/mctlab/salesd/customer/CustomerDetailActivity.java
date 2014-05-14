@@ -45,7 +45,9 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
 
             switch (position) {
             case TAB_INDEX_PROJECT:
+                args.putLong(SalesDConstant.EXTRA_CUSTOMER_ID, mId);
                 fragment = new ProjectListFragment();
+                fragment.setArguments(args);
                 break;
             case TAB_INDEX_VISIT_SCHEDULE:
                 args.putBoolean(ScheduleListFragment.ARG_FULL_SCREEN, true);

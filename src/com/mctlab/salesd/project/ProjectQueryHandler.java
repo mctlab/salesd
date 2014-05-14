@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.database.Cursor;
 import android.net.Uri;
+import android.net.Uri.Builder;
 
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ConfigCategoriesColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ConfigColumns;
@@ -60,6 +61,15 @@ public class ProjectQueryHandler extends QueryHandler {
     public void startQueryProjects(int token) {
         startQuery(token, null, TasksProvider.PROJECTS_CONTENT_URI, PROJECT_PROJECTION,
                 null, null, null);
+    }
+
+    public void startQueryProjects(int token, long customerId) {
+        if (customerId > 0) {
+            Builder builder = TasksProvider.PROJECTS_CONTENT_URI.buildUpon();
+            builder.appendQueryParameter("customer_id", String.valueOf(customerId));
+            startQuery(token, null, builder.build(), PROJECT_PROJECTION,
+                    null, null, null);
+        }
     }
 
     public void startQueryProject(int token, long id) {

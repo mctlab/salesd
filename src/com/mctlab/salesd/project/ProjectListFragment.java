@@ -25,6 +25,9 @@ public class ProjectListFragment extends ListFragment
 
     protected View mEmptyView;
 
+    private boolean mCustomerRelated = false;
+    private long mCustomerId = -1;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +42,12 @@ public class ProjectListFragment extends ListFragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null) {
+            mCustomerId = args.getLong(SalesDConstant.EXTRA_CUSTOMER_ID, -1);
+            mCustomerRelated = true;
+        }
+
         mEmptyView = view.findViewById(R.id.empty);
 
         mQueryHandler = new ProjectQueryHandler(getActivity().getContentResolver());
@@ -50,7 +59,11 @@ public class ProjectListFragment extends ListFragment
     @Override
     public void onResume() {
         super.onResume();
-        mQueryHandler.startQueryProjects(0);
+        if (mCustomerRelated) {
+            mQueryHandler.startQueryProjects(0, mCustomerId);
+        } else {
+            mQueryHandler.startQueryProjects(0);
+        }
     }
 
     @Override
@@ -73,6 +86,7 @@ public class ProjectListFragment extends ListFragment
     public void onListItemClick(ListView l, View v, int position, long id) {
         Intent intent = new Intent(SalesDConstant.ACTION_PROJECT_DETAIL);
         intent.putExtra(SalesDConstant.EXTRA_ID, id);
+//      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         getActivity().startActivity(intent);
     }
 

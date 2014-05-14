@@ -103,6 +103,7 @@ public class CustomerListFragment extends ListFragment
     public void onListItemClick(ListView l, View v, int position, long id) {
         Intent intent = new Intent(SalesDConstant.ACTION_CUSTOMER_DETAIL);
         intent.putExtra(SalesDConstant.EXTRA_ID, id);
+//      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         getActivity().startActivity(intent);
     }
 
