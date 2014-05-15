@@ -1,7 +1,6 @@
 package com.mctlab.salesd.customer;
 
 import com.mctlab.salesd.R;
-import com.mctlab.salesd.SalesDUtils;
 import com.mctlab.salesd.constant.SalesDConstant;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.CustomersColumns;
 import com.mctlab.salesd.provider.TasksProvider;
@@ -17,8 +16,8 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 public class CustomerEditActivity extends Activity
@@ -27,12 +26,22 @@ public class CustomerEditActivity extends Activity
     private EditText mNameEditText;
     private EditText mAddressEditText;
     private EditText mDescriptionEditText;
-    private Spinner mCategorySpinner;
+
+    private CheckBox mHostManufacturerCB;
+    private CheckBox mInstituteOfDesignCB;
+    private CheckBox mGeneralContractorCB;
+    private CheckBox mDirectOwnerCB;
+    private CheckBox mOthersCB;
 
     private String mName;
     private String mAddress;
     private String mDescription;
-    private int mCategory;
+
+    private boolean mHostManufacturer;
+    private boolean mInstituteOfDesign;
+    private boolean mGeneralContractor;
+    private boolean mDirectOwner;
+    private boolean mOthers;
 
     private ContentResolver mContentResolver;
     private CustomerQueryHandler mQueryHandler;
@@ -51,8 +60,12 @@ public class CustomerEditActivity extends Activity
         mNameEditText = (EditText) findViewById(R.id.name);
         mAddressEditText = (EditText) findViewById(R.id.address);
         mDescriptionEditText = (EditText) findViewById(R.id.description);
-        mCategorySpinner = SalesDUtils.setupSpinner(this, R.id.category,
-                R.array.customer_category_values);
+
+        mHostManufacturerCB = (CheckBox) findViewById(R.id.is_host_manufacturer);
+        mInstituteOfDesignCB = (CheckBox) findViewById(R.id.is_institute_of_design);
+        mGeneralContractorCB = (CheckBox) findViewById(R.id.is_general_contractor);
+        mDirectOwnerCB = (CheckBox) findViewById(R.id.is_direct_owner);
+        mOthersCB = (CheckBox) findViewById(R.id.is_others);
 
         mContentResolver = getContentResolver();
         mQueryHandler = new CustomerQueryHandler(mContentResolver);
@@ -99,24 +112,11 @@ public class CustomerEditActivity extends Activity
         String address = mQueryHandler.getCustomerAddress(cursor);
         mAddressEditText.setText(address);
 
-        int category = mQueryHandler.getCustomerCategory(cursor);
-        switch (category) {
-        case CustomersColumns.CATEGORY_INSTITUTE_OF_DESIGN:
-            mCategorySpinner.setSelection(1);
-            break;
-        case CustomersColumns.CATEGORY_GENERAL_CONTRACTOR:
-            mCategorySpinner.setSelection(2);
-            break;
-        case CustomersColumns.CATEGORY_DIRECT_OWNER:
-            mCategorySpinner.setSelection(3);
-            break;
-        case CustomersColumns.CATEGORY_OTHERS:
-            mCategorySpinner.setSelection(4);
-            break;
-        default:
-            mCategorySpinner.setSelection(0);
-            break;
-        }
+        mHostManufacturerCB.setChecked(mQueryHandler.isCustomerHostManufacturer(cursor));
+        mInstituteOfDesignCB.setChecked(mQueryHandler.isCustomerInstituteOfDesign(cursor));
+        mGeneralContractorCB.setChecked(mQueryHandler.isCustomerGeneralContractor(cursor));
+        mDirectOwnerCB.setChecked(mQueryHandler.isCustomerDirectOwner(cursor));
+        mOthersCB.setChecked(mQueryHandler.isCustomerOthers(cursor));
 
         String description = mQueryHandler.getCustomerDescription(cursor);
         mDescriptionEditText.setText(description);
@@ -158,7 +158,11 @@ public class CustomerEditActivity extends Activity
 
         mAddress = mAddressEditText.getText().toString().trim();
 
-        mCategory = mCategorySpinner.getSelectedItemPosition();
+        mHostManufacturer = mHostManufacturerCB.isChecked();
+        mInstituteOfDesign = mInstituteOfDesignCB.isChecked();
+        mGeneralContractor = mGeneralContractorCB.isChecked();
+        mDirectOwner = mDirectOwnerCB.isChecked();
+        mOthers = mOthersCB.isChecked();
 
         mDescription = mDescriptionEditText.getText().toString().trim();
         return true;
@@ -175,7 +179,11 @@ public class CustomerEditActivity extends Activity
             values.put(CustomersColumns.COMPANY_ADDRESS, mAddress);
         }
 
-        values.put(CustomersColumns.CATEGORY, mCategory);
+        values.put(CustomersColumns.IS_HOST_MANUFACTURER, mHostManufacturer ? 1 : 0);
+        values.put(CustomersColumns.IS_INSTITUTE_OF_DESIGN, mInstituteOfDesign ? 1 : 0);
+        values.put(CustomersColumns.IS_GENERAL_CONTRACTOR, mGeneralContractor ? 1 : 0);
+        values.put(CustomersColumns.IS_DIRECT_OWNER, mDirectOwner ? 1 : 0);
+        values.put(CustomersColumns.IS_OTHERS, mOthers ? 1 : 0);
 
         if (!TextUtils.isEmpty(mDescription)) {
             values.put(CustomersColumns.BUSINESS_DESCRIPTION, mDescription);

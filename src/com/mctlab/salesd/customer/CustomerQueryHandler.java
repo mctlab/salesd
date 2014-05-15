@@ -29,15 +29,23 @@ public class CustomerQueryHandler extends QueryHandler {
         CustomersColumns._ID,
         CustomersColumns.NAME,
         CustomersColumns.COMPANY_ADDRESS,
-        CustomersColumns.CATEGORY,
+        CustomersColumns.IS_HOST_MANUFACTURER,
+        CustomersColumns.IS_INSTITUTE_OF_DESIGN,
+        CustomersColumns.IS_GENERAL_CONTRACTOR,
+        CustomersColumns.IS_DIRECT_OWNER,
+        CustomersColumns.IS_OTHERS,
         CustomersColumns.BUSINESS_DESCRIPTION
     };
 
     public static final int CUSTOMER_COLUMN_INDEX_ID = 0;
     public static final int CUSTOMER_COLUMN_INDEX_NAME = 1;
     public static final int CUSTOMER_COLUMN_INDEX_ADDRESS = 2;
-    public static final int CUSTOMER_COLUMN_INDEX_CATEGORY = 3;
-    public static final int CUSTOMER_COLUMN_INDEX_DESCRIPTION = 4;
+    public static final int CUSTOMER_COLUMN_INDEX_IS_HOST_MANUFACTURER = 3;
+    public static final int CUSTOMER_COLUMN_INDEX_IS_INSTITUTE_OF_DESIGN = 4;
+    public static final int CUSTOMER_COLUMN_INDEX_IS_GENERAL_CONTRACTOR = 5;
+    public static final int CUSTOMER_COLUMN_INDEX_IS_DIRECT_OWNER = 6;
+    public static final int CUSTOMER_COLUMN_INDEX_IS_OTHERS = 7;
+    public static final int CUSTOMER_COLUMN_INDEX_DESCRIPTION = 8;
 
     public static final String[] CONTACT_PROJECTION = new String[] {
         ContactsColumns._ID,
@@ -205,11 +213,39 @@ public class CustomerQueryHandler extends QueryHandler {
         return null;
     }
 
-    public int getCustomerCategory(Cursor cursor) {
+    public boolean isCustomerHostManufacturer(Cursor cursor) {
         if (cursor != null) {
-            return cursor.getInt(CUSTOMER_COLUMN_INDEX_CATEGORY);
+            return cursor.getInt(CUSTOMER_COLUMN_INDEX_IS_HOST_MANUFACTURER) != 0;
         }
-        return CustomersColumns.CATEGORY_HOST_MANUFACTURER;
+        return false;
+    }
+
+    public boolean isCustomerInstituteOfDesign(Cursor cursor) {
+        if (cursor != null) {
+            return cursor.getInt(CUSTOMER_COLUMN_INDEX_IS_INSTITUTE_OF_DESIGN) != 0;
+        }
+        return false;
+    }
+
+    public boolean isCustomerGeneralContractor(Cursor cursor) {
+        if (cursor != null) {
+            return cursor.getInt(CUSTOMER_COLUMN_INDEX_IS_GENERAL_CONTRACTOR) != 0;
+        }
+        return false;
+    }
+
+    public boolean isCustomerDirectOwner(Cursor cursor) {
+        if (cursor != null) {
+            return cursor.getInt(CUSTOMER_COLUMN_INDEX_IS_DIRECT_OWNER) != 0;
+        }
+        return false;
+    }
+
+    public boolean isCustomerOthers(Cursor cursor) {
+        if (cursor != null) {
+            return cursor.getInt(CUSTOMER_COLUMN_INDEX_IS_OTHERS) != 0;
+        }
+        return false;
     }
 
     public String getCustomerDescription(Cursor cursor) {

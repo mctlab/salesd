@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
 
 public class TasksDatabaseHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     private static final String DATABASE_NAME = "tasks.db";
 
     public interface Tables {
@@ -71,14 +71,12 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
         public static final String NAME = "name";
         public static final String BUSINESS_DESCRIPTION = "business_description";
         public static final String COMPANY_ADDRESS = "company_address";
-        public static final String CATEGORY = "category";
+        public static final String IS_HOST_MANUFACTURER = "is_host_manufacturer";
+        public static final String IS_INSTITUTE_OF_DESIGN = "is_institute_of_design";
+        public static final String IS_GENERAL_CONTRACTOR = "is_general_contractor";
+        public static final String IS_DIRECT_OWNER = "is_direct_owner";
+        public static final String IS_OTHERS = "is_others";
         public static final String OWNER_ID = "owner_id";
-
-        public static final int CATEGORY_HOST_MANUFACTURER = 0;
-        public static final int CATEGORY_INSTITUTE_OF_DESIGN = 1;
-        public static final int CATEGORY_GENERAL_CONTRACTOR = 2;
-        public static final int CATEGORY_DIRECT_OWNER = 3;
-        public static final int CATEGORY_OTHERS = 4;
     }
 
     // Customer position framework
@@ -179,7 +177,11 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
                 CustomersColumns.NAME + " TEXT," +
                 CustomersColumns.BUSINESS_DESCRIPTION + " TEXT," +
                 CustomersColumns.COMPANY_ADDRESS + " TEXT," +
-                CustomersColumns.CATEGORY + " INTEGER," +
+                CustomersColumns.IS_HOST_MANUFACTURER + " INTEGER," +
+                CustomersColumns.IS_INSTITUTE_OF_DESIGN + " INTEGER," +
+                CustomersColumns.IS_GENERAL_CONTRACTOR + " INTEGER," +
+                CustomersColumns.IS_DIRECT_OWNER + " INTEGER," +
+                CustomersColumns.IS_OTHERS + " INTEGER," +
                 CustomersColumns.OWNER_ID + " INTEGER" +
                 ");");
 

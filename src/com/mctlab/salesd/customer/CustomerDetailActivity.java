@@ -4,14 +4,12 @@ import com.mctlab.salesd.R;
 import com.mctlab.salesd.SalesDUtils;
 import com.mctlab.salesd.constant.SalesDConstant;
 import com.mctlab.salesd.project.ProjectListFragment;
-import com.mctlab.salesd.provider.TasksDatabaseHelper.CustomersColumns;
 import com.mctlab.salesd.schedule.ScheduleListFragment;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
@@ -243,32 +241,46 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
     }
 
     protected void updateCustomerInfo(Cursor cursor) {
-        Resources res = getResources();
         String name = mQueryHandler.getCustomerName(cursor);
         setTitle(name);
 
         String address = mQueryHandler.getCustomerAddress(cursor);
         mAddressTextView.setText(address);
 
-        String[] array = res.getStringArray(R.array.customer_category_values);
-        int category = mQueryHandler.getCustomerCategory(cursor);
-        switch (category) {
-        case CustomersColumns.CATEGORY_INSTITUTE_OF_DESIGN:
-            mCategoryTextView.setText(array[1]);
-            break;
-        case CustomersColumns.CATEGORY_GENERAL_CONTRACTOR:
-            mCategoryTextView.setText(array[2]);
-            break;
-        case CustomersColumns.CATEGORY_DIRECT_OWNER:
-            mCategoryTextView.setText(array[3]);
-            break;
-        case CustomersColumns.CATEGORY_OTHERS:
-            mCategoryTextView.setText(array[4]);
-            break;
-        default:
-            mCategoryTextView.setText(array[0]);
-            break;
+        StringBuilder builder = new StringBuilder();
+        String comma = getString(R.string.comma);
+        boolean needComma = false;
+
+        if (mQueryHandler.isCustomerHostManufacturer(cursor)) {
+            builder.append(getString(R.string.customer_category_host_manufacturer));
+            needComma = true;
         }
+
+        if (mQueryHandler.isCustomerInstituteOfDesign(cursor)) {
+            if (needComma) builder.append(comma);
+            builder.append(getString(R.string.customer_category_institute_of_design));
+            needComma = true;
+        }
+
+        if (mQueryHandler.isCustomerGeneralContractor(cursor)) {
+            if (needComma) builder.append(comma);
+            builder.append(getString(R.string.customer_category_general_contractor));
+            needComma = true;
+        }
+
+        if (mQueryHandler.isCustomerDirectOwner(cursor)) {
+            if (needComma) builder.append(comma);
+            builder.append(getString(R.string.customer_category_direct_owner));
+            needComma = true;
+        }
+
+        if (mQueryHandler.isCustomerOthers(cursor)) {
+            if (needComma) builder.append(comma);
+            builder.append(getString(R.string.customer_category_others));
+            needComma = true;
+        }
+
+        mCategoryTextView.setText(builder.toString());
 
         String description = mQueryHandler.getCustomerDescription(cursor);
         mDescriptionTextView.setText(description);

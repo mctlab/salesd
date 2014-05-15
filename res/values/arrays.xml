@@ -11,12 +11,4 @@
         <item>已结束</item>
     </string-array>
 
-    <string-array name="customer_category_values">
-        <item>主机厂</item>
-        <item>设计院</item>
-        <item>总包商</item>
-        <item>直接业主</item>
-        <item>其他</item>
-    </string-array>
-
 </resources>

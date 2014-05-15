@@ -2,7 +2,6 @@ package com.mctlab.salesd.customer;
 
 import com.mctlab.salesd.R;
 import com.mctlab.salesd.constant.SalesDConstant;
-import com.mctlab.salesd.provider.TasksDatabaseHelper.CustomersColumns;
 import com.mctlab.salesd.util.LogUtil;
 
 import android.app.ListFragment;
@@ -130,13 +129,13 @@ public class CustomerListFragment extends ListFragment
 
         protected CustomerQueryHandler mQueryHandler;
         protected LayoutInflater mInflater;
-        protected Resources mResources;
+        protected Resources mRes;
 
         public ListAdapter(Context context, CustomerQueryHandler handler) {
             super(context, null, false);
             mQueryHandler = handler;
             mInflater = LayoutInflater.from(context);
-            mResources = context.getResources();
+            mRes = context.getResources();
         }
 
         @Override
@@ -146,25 +145,40 @@ public class CustomerListFragment extends ListFragment
             holder.mNameTextView.setText(mQueryHandler.getCustomerName(cursor));
             holder.mDescriptionTextView.setText(mQueryHandler.getCustomerDescription(cursor));
 
-            String[] array = mResources.getStringArray(R.array.customer_category_values);
-            int category = mQueryHandler.getCustomerCategory(cursor);
-            switch (category) {
-            case CustomersColumns.CATEGORY_INSTITUTE_OF_DESIGN:
-                holder.mCategoryTextView.setText(array[1]);
-                break;
-            case CustomersColumns.CATEGORY_GENERAL_CONTRACTOR:
-                holder.mCategoryTextView.setText(array[2]);
-                break;
-            case CustomersColumns.CATEGORY_DIRECT_OWNER:
-                holder.mCategoryTextView.setText(array[3]);
-                break;
-            case CustomersColumns.CATEGORY_OTHERS:
-                holder.mCategoryTextView.setText(array[4]);
-                break;
-            default:
-                holder.mCategoryTextView.setText(array[0]);
-                break;
+            StringBuilder builder = new StringBuilder();
+            String comma = mRes.getString(R.string.comma);
+            boolean needComma = false;
+
+            if (mQueryHandler.isCustomerHostManufacturer(cursor)) {
+                builder.append(mRes.getString(R.string.customer_category_host_manufacturer));
+                needComma = true;
             }
+
+            if (mQueryHandler.isCustomerInstituteOfDesign(cursor)) {
+                if (needComma) builder.append(comma);
+                builder.append(mRes.getString(R.string.customer_category_institute_of_design));
+                needComma = true;
+            }
+
+            if (mQueryHandler.isCustomerGeneralContractor(cursor)) {
+                if (needComma) builder.append(comma);
+                builder.append(mRes.getString(R.string.customer_category_general_contractor));
+                needComma = true;
+            }
+
+            if (mQueryHandler.isCustomerDirectOwner(cursor)) {
+                if (needComma) builder.append(comma);
+                builder.append(mRes.getString(R.string.customer_category_direct_owner));
+                needComma = true;
+            }
+
+            if (mQueryHandler.isCustomerOthers(cursor)) {
+                if (needComma) builder.append(comma);
+                builder.append(mRes.getString(R.string.customer_category_others));
+                needComma = true;
+            }
+
+            holder.mCategoryTextView.setText(builder.toString());
         }
 
         @Override

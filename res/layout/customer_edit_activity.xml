@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         >
+        <!-- name -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,6 +34,7 @@
             android:singleLine="true"
             android:textSize="16sp"
             />
+        <!-- address -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,6 +55,7 @@
             android:singleLine="true"
             android:textSize="16sp"
             />
+        <!-- category -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -62,13 +65,119 @@
             android:text="@string/customer_category"
             android:textAppearance="?android:attr/textAppearanceMedium"
             />
-        <Spinner
-            android:id="@+id/category"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/edit_activity_input_padding_top"
-            android:paddingBottom="@dimen/edit_activity_input_padding_bottom"
-            />
+            android:paddingTop="1dip"
+            android:paddingBottom="1dip"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="15dip"
+                android:text="@string/customer_category_host_manufacturer"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="16sp"
+                />
+            <CheckBox
+                android:id="@+id/is_host_manufacturer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="4dip"
+                />
+            <TextView
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="15dip"
+                android:text="@string/customer_category_institute_of_design"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="16sp"
+                />
+            <CheckBox
+                android:id="@+id/is_institute_of_design"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="4dip"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="1dip"
+            android:paddingBottom="1dip"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="15dip"
+                android:text="@string/customer_category_general_contractor"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="16sp"
+                />
+            <CheckBox
+                android:id="@+id/is_general_contractor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="4dip"
+                />
+            <TextView
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="15dip"
+                android:text="@string/customer_category_direct_owner"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="16sp"
+                />
+            <CheckBox
+                android:id="@+id/is_direct_owner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="4dip"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="1dip"
+            android:paddingBottom="1dip"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="15dip"
+                android:text="@string/customer_category_others"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="16sp"
+                />
+            <CheckBox
+                android:id="@+id/is_others"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="4dip"
+                />
+            <TextView
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="15dip"
+                android:visibility="invisible"
+                />
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="4dip"
+                android:visibility="invisible"
+                />
+        </LinearLayout>
+        <!-- description -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
