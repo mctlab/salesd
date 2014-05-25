@@ -179,6 +179,7 @@
             />
         <!-- contact direct leader -->
         <TextView
+            android:id="@+id/label_direct_leader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/edit_activity_label_padding_left"

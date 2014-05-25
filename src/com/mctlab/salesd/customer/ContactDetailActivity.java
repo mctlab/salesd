@@ -8,15 +8,20 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class ContactDetailActivity extends Activity
-        implements CustomerQueryHandler.OnQueryCompleteListener {
+public class ContactDetailActivity extends Activity implements
+        CustomerQueryHandler.OnQueryCompleteListener,
+        ContactListFragment.OnIntroduceFollowersListener {
+
+    private boolean mIsLeader = false;
 
     private long mId = -1;
+    private long mCustomerId = -1;
 
     private CustomerQueryHandler mQueryHandler;
 
@@ -27,9 +32,13 @@ public class ContactDetailActivity extends Activity
     private TextView mLeader;
     private TextView mCharacter;
 
+    private String mName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         setContentView(R.layout.contact_detail_activity);
 
         if (getIntent() != null) {
@@ -42,13 +51,14 @@ public class ContactDetailActivity extends Activity
         args.putString(ContactListFragment.ARG_EMPTY_HINT, getString(R.string.no_follower));
         ContactListFragment fragment = new ContactListFragment();
         fragment.setArguments(args);
+        fragment.setOnIntroduceFollowersListener(this);
 
         FragmentTransaction transaction;
         transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.contacts_container, fragment);
         transaction.commit();
 
-        mQueryHandler = new CustomerQueryHandler(getContentResolver());
+        mQueryHandler = new CustomerQueryHandler(this);
         mQueryHandler.setOnQueryCompleteListener(this);
 
         initView();
@@ -71,9 +81,13 @@ public class ContactDetailActivity extends Activity
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
         switch (itemId) {
+        case android.R.id.home:
+            onBackPressed();
+            return true;
         case R.id.opt_edit:
             Intent intent = new Intent(SalesDConstant.ACTION_CONTACT_EDIT);
             intent.putExtra(SalesDConstant.EXTRA_ID, mId);
+            intent.putExtra(ContactEditActivity.EXTRA_IS_LEADER, mIsLeader);
             startActivity(intent);
             return true;
         }
@@ -90,6 +104,14 @@ public class ContactDetailActivity extends Activity
         }
     }
 
+    @Override
+    public void OnIntroduceFollowers() {
+        Intent intent = new Intent(SalesDConstant.ACTION_CONTACT_EDIT);
+        intent.putExtra(SalesDConstant.EXTRA_CUSTOMER_ID, mCustomerId);
+        intent.putExtra(ContactEditActivity.EXTRA_MY_LEADER, mName);
+        startActivity(intent);
+    }
+
     private void initView() {
         mPhoneNumber = (TextView) findViewById(R.id.phone_number);
         mEmail = (TextView) findViewById(R.id.email);
@@ -100,8 +122,8 @@ public class ContactDetailActivity extends Activity
     }
 
     private void updateContactInfo(Cursor cursor) {
-        String name = mQueryHandler.getContactName(cursor);
-        setTitle(name);
+        mName = mQueryHandler.getContactName(cursor);
+        setTitle(mName);
 
         String phoneNumber = mQueryHandler.getContactPhoneNumber(cursor);
         mPhoneNumber.setText(phoneNumber);
@@ -115,5 +137,15 @@ public class ContactDetailActivity extends Activity
         mLeader.setText(leader);
         String character = mQueryHandler.getContactCharacters(cursor);
         mCharacter.setText(character);
+
+        mCustomerId = mQueryHandler.getContactCustomerId(cursor);
+
+        String none = getString(R.string.none);
+        if (TextUtils.isEmpty(leader) || leader.equals(none)) {
+            mIsLeader = true;
+        } else {
+            mIsLeader = false;
+        }
     }
+
 }

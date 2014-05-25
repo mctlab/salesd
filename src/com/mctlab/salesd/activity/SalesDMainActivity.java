@@ -1,5 +1,7 @@
 package com.mctlab.salesd.activity;
 
+import java.util.List;
+
 import com.mctlab.salesd.R;
 import com.mctlab.salesd.SalesDUtils;
 import com.mctlab.salesd.constant.SalesDConstant;
@@ -18,8 +20,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class SalesDMainActivity extends Activity
-        implements View.OnClickListener {
+public class SalesDMainActivity extends Activity implements
+        View.OnClickListener, CustomerPickerDialogFragment.OnPickCustomersListener {
 
     private TextView mUserName;
     private TextView mAnnualCompleted;
@@ -59,6 +61,9 @@ public class SalesDMainActivity extends Activity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.salesd_main_options, menu);
+
+        MenuItem item = menu.findItem(R.id.opt_add_contact);
+        item.setVisible(false);
         return true;
     }
 
@@ -73,7 +78,7 @@ public class SalesDMainActivity extends Activity
             intent = new Intent(SalesDConstant.ACTION_CUSTOMER_EDIT);
             break;
         case R.id.opt_add_contact:
-            CustomerPickerDialogFragment.actionCreateNewContact(getFragmentManager());
+            CustomerPickerDialogFragment.actionCreateNewContact(getFragmentManager(), this);
             break;
         case R.id.opt_add_visit_schedule:
             break;
@@ -105,6 +110,16 @@ public class SalesDMainActivity extends Activity
         }
 
         if (intent != null) {
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void OnPickCustomers(List<Long> ids) {
+        if (ids != null && ids.size() > 0) {
+            Long id = ids.get(0);
+            Intent intent = new Intent(SalesDConstant.ACTION_CONTACT_EDIT);
+            intent.putExtra(SalesDConstant.EXTRA_CUSTOMER_ID, id);
             startActivity(intent);
         }
     }

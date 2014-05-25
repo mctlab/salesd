@@ -5,11 +5,13 @@ import java.util.HashMap;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.net.Uri.Builder;
 import android.text.TextUtils;
 
+import com.mctlab.salesd.R;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ContactsColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.CustomersColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.PositionsColumns;
@@ -86,8 +88,11 @@ public class CustomerQueryHandler extends QueryHandler {
     private static final HashMap<Long, ArrayList<Position>> mPositionMap =
             new HashMap<Long, ArrayList<Position>>();
 
-    public CustomerQueryHandler(ContentResolver cr) {
-        super(cr);
+    private final Context mContext;
+
+    public CustomerQueryHandler(Context context) {
+        super(context.getContentResolver());
+        mContext = context;
     }
 
     public void startQueryCustomers(int token) {
@@ -114,6 +119,18 @@ public class CustomerQueryHandler extends QueryHandler {
         }
     }
 
+    public void startQueryCustomerLeader(int token, long customerId) {
+        if (customerId > 0) {
+            String none = mContext.getString(R.string.none);
+            StringBuilder selection = new StringBuilder();
+            selection.append(ContactsColumns.CUSTOMER_ID + "=" + customerId).append(" AND (");
+            selection.append(ContactsColumns.DIRECT_LEADER + " is null OR ");
+            selection.append(ContactsColumns.DIRECT_LEADER + "='" + none + "')");
+            startQuery(token, null, TasksProvider.CONTACTS_CONTENT_URI, CONTACT_PROJECTION,
+                    selection.toString(), null, null);
+        }
+    }
+
     public void startQueryContacts(int token, long customerId) {
         String selection = null;
         if (customerId > 0) {
@@ -134,10 +151,13 @@ public class CustomerQueryHandler extends QueryHandler {
     public void startQueryLeaders(int token, long customerId, String leaderTitle) {
         LogUtil.v("Query leaders, customer id: " + customerId + ", title: " + leaderTitle);
         // TODO: correct customer id checking
-        if (customerId >= 0 && !TextUtils.isEmpty(leaderTitle)) {
+        if (customerId >= 0) {
             StringBuilder selection = new StringBuilder();
-            selection.append(ContactsColumns.CUSTOMER_ID + "=" + customerId).append(" AND ");
-            selection.append(ContactsColumns.TITLE + "='" + leaderTitle + "'");
+            selection.append(ContactsColumns.CUSTOMER_ID + "=" + customerId);
+            if (!TextUtils.isEmpty(leaderTitle)) {
+                selection.append(" AND ");
+                selection.append(ContactsColumns.TITLE + "='" + leaderTitle + "'");
+            }
             startQuery(token, null, TasksProvider.CONTACTS_CONTENT_URI, CONTACT_PROJECTION,
                     selection.toString(), null, null);
         }

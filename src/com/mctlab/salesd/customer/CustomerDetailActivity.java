@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +24,9 @@ import android.widget.TextView;
 
 public class CustomerDetailActivity extends Activity implements View.OnClickListener,
         CustomerQueryHandler.OnQueryCompleteListener {
+
+    private static final int TOKEN_QUERY_CUSTOMER = 0;
+    private static final int TOKEN_QUERY_CUSTOMER_LEADER = 1;
 
     private static final int TAB_INDEX_PROJECT = 0;
     private static final int TAB_INDEX_VISIT_SCHEDULE = 1;
@@ -133,6 +137,8 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
     private View mCurrentTabUnderline;
 
     private long mId = -1;
+    private long mLeaderId = -1;
+    private String mLeader;
 
     private final PageChangeListener mPageChangeListener = new PageChangeListener();
     private ViewPager mViewPager;
@@ -141,6 +147,7 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
 
     private TextView mCategoryTextView;
     private TextView mAddressTextView;
+    private TextView mLeaderTextView;
     private TextView mDescriptionTextView;
 
     @Override
@@ -154,7 +161,7 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
             mId = getIntent().getLongExtra(SalesDConstant.EXTRA_ID, -1);
         }
 
-        mQueryHandler = new CustomerQueryHandler(getContentResolver());
+        mQueryHandler = new CustomerQueryHandler(this);
         mQueryHandler.setOnQueryCompleteListener(this);
 
         initView();
@@ -164,7 +171,8 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
     protected void onResume() {
         super.onResume();
         mPageChangeListener.onPageSelected(mViewPager.getCurrentItem());
-        mQueryHandler.startQueryCustomer(0, mId);
+        mQueryHandler.startQueryCustomer(TOKEN_QUERY_CUSTOMER, mId);
+        mQueryHandler.startQueryCustomerLeader(TOKEN_QUERY_CUSTOMER_LEADER, mId);
     }
 
     @Override
@@ -192,6 +200,19 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+        case R.id.leader:
+            Intent intent = null;
+            if (mLeaderId > 0) {
+                intent = new Intent(SalesDConstant.ACTION_CONTACT_DETAIL);
+                intent.putExtra(SalesDConstant.EXTRA_ID, mLeaderId);
+            } else {
+                intent = new Intent(SalesDConstant.ACTION_CONTACT_EDIT);
+                intent.putExtra(SalesDConstant.EXTRA_CUSTOMER_ID, mId);
+                intent.putExtra(ContactEditActivity.EXTRA_IS_LEADER, true);
+                intent.putExtra(ContactEditActivity.EXTRA_MY_LEADER, mLeader);
+            }
+            startActivity(intent);
+            break;
         case R.id.project_tab:
             mViewPager.setCurrentItem(TAB_INDEX_PROJECT);
             break;
@@ -208,7 +229,11 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
     public void onQueryComplete(int token, Cursor cursor) {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                updateCustomerInfo(cursor);
+                if (token == TOKEN_QUERY_CUSTOMER) {
+                    updateCustomerInfo(cursor);
+                } else if (token == TOKEN_QUERY_CUSTOMER_LEADER) {
+                    updateCustomerLeader(cursor);
+                }
             }
             cursor.close();
         }
@@ -238,6 +263,8 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
         mCategoryTextView = (TextView) findViewById(R.id.category);
         mAddressTextView = (TextView) findViewById(R.id.address);
         mDescriptionTextView = (TextView) findViewById(R.id.description);
+        mLeaderTextView = (TextView) findViewById(R.id.leader);
+        mLeaderTextView.setOnClickListener(this);
     }
 
     protected void updateCustomerInfo(Cursor cursor) {
@@ -286,4 +313,10 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
         mDescriptionTextView.setText(description);
     }
 
+    protected void updateCustomerLeader(Cursor cursor) {
+        mLeaderId = mQueryHandler.getContactId(cursor);
+
+        mLeader = mQueryHandler.getContactName(cursor);
+        mLeaderTextView.setText(Html.fromHtml("<u>" + mLeader + "</u>"));
+    }
 }

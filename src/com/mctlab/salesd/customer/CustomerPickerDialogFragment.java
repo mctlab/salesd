@@ -44,9 +44,11 @@ public class CustomerPickerDialogFragment extends DialogFragment
 
     CustomerQueryHandler mQueryHandler;
 
-    public static void actionCreateNewContact(FragmentManager fragmentManager) {
+    public static void actionCreateNewContact(FragmentManager fragmentManager,
+            OnPickCustomersListener listener) {
         CustomerPickerDialogFragment dialog = new CustomerPickerDialogFragment();
         dialog.mMode = MODE_CREATE_NEW_CONTACT;
+        dialog.setOnPickCustomersListener(listener);
         dialog.show(fragmentManager, null);
     }
 
@@ -62,7 +64,7 @@ public class CustomerPickerDialogFragment extends DialogFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mQueryHandler = new CustomerQueryHandler(getActivity().getContentResolver());
+        mQueryHandler = new CustomerQueryHandler(getActivity());
         mQueryHandler.setOnQueryCompleteListener(this);
         if (mMode == MODE_JOIN_PROJECT) {
             mQueryHandler.startQueryCustomers(0, mProjectId, true);
@@ -123,16 +125,10 @@ public class CustomerPickerDialogFragment extends DialogFragment
 
     @Override
     public void onItemClick(AdapterView<?> l, View v, int position, long id) {
-        if (mMode == MODE_CREATE_NEW_CONTACT) {
-            Intent intent = new Intent(SalesDConstant.ACTION_CONTACT_EDIT);
-            intent.putExtra(SalesDConstant.EXTRA_CUSTOMER_ID, id);
-            startActivity(intent);
-        } else if (mMode == MODE_JOIN_PROJECT) {
-            if (mOnPickCustomersListener != null) {
-                ArrayList<Long> ids = new ArrayList<Long>();
-                ids.add(id);
-                mOnPickCustomersListener.OnPickCustomers(ids);
-            }
+        if (mOnPickCustomersListener != null) {
+            ArrayList<Long> ids = new ArrayList<Long>();
+            ids.add(id);
+            mOnPickCustomersListener.OnPickCustomers(ids);
         }
         dismiss();
     }

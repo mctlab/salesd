@@ -32,6 +32,7 @@
     <string name="comma">，</string>
     <string name="zero">0</string>
     <string name="none">无</string>
+    <string name="none_u"><u>无</u></string>
 
     <string name="owner">所有者</string>
 
@@ -62,6 +63,7 @@
     <string name="customer_name">客户名称</string>
     <string name="customer_company_address">客户地址</string>
     <string name="customer_category">客户分类</string>
+    <string name="customer_leader">客户经理</string>
     <string name="customer_business_description">业务范围简介</string>
     <string name="no_customer">没有客户</string>
 
@@ -89,6 +91,7 @@
     <string name="no_contact">没有联系人</string>
 
     <string name="followers">下属</string>
+    <string name="introduce_follower">添加下属</string>
     <string name="no_follower">没有下属</string>
 
     <!-- reminders and schedules -->

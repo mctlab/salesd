@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,6 +33,9 @@ import android.widget.Toast;
 
 public class ContactEditActivity extends Activity implements
         CustomerQueryHandler.OnQueryCompleteListener, AdapterView.OnItemSelectedListener {
+
+    public static final String EXTRA_IS_LEADER = "is_leader";
+    public static final String EXTRA_MY_LEADER = "my_leader";
 
     private static final int MSG_SETUP_TITLES = 0;
 
@@ -94,6 +98,8 @@ public class ContactEditActivity extends Activity implements
 
     private String mNoneString;
 
+    private boolean mIsLeader = false;
+
     private long mId = -1;
     private long mCustomerId = -1;
 
@@ -118,13 +124,16 @@ public class ContactEditActivity extends Activity implements
 
         mNoneString = getString(R.string.none);
 
-        if (getIntent() != null) {
-            mId = getIntent().getLongExtra(SalesDConstant.EXTRA_ID, -1);
-            mCustomerId = getIntent().getLongExtra(SalesDConstant.EXTRA_CUSTOMER_ID, -1);
+        Intent intent = getIntent();
+        if (intent != null) {
+            mId = intent.getLongExtra(SalesDConstant.EXTRA_ID, -1);
+            mCustomerId = intent.getLongExtra(SalesDConstant.EXTRA_CUSTOMER_ID, -1);
+            mIsLeader = intent.getBooleanExtra(EXTRA_IS_LEADER, false);
+            mDirectLeader = intent.getStringExtra(EXTRA_MY_LEADER);
         }
 
         mContentResolver = getContentResolver();
-        mQueryHandler = new CustomerQueryHandler(mContentResolver);
+        mQueryHandler = new CustomerQueryHandler(this);
         mQueryHandler.setOnQueryCompleteListener(this);
 
         initView();
@@ -142,6 +151,7 @@ public class ContactEditActivity extends Activity implements
     @Override
     protected void onResume() {
         super.onResume();
+        mQueryHandler.startQueryLeaders(TOKEN_QUERY_LEADERS, mCustomerId, null);
     }
 
     @Override
@@ -189,11 +199,11 @@ public class ContactEditActivity extends Activity implements
                 }
             }
         }
-        if (!TextUtils.isEmpty(leaderTitle)) {
-            mQueryHandler.startQueryLeaders(TOKEN_QUERY_LEADERS, mCustomerId, leaderTitle);
-        } else {
-            onQueryComplete(TOKEN_QUERY_LEADERS, null);
-        }
+//        if (!TextUtils.isEmpty(leaderTitle)) {
+//            mQueryHandler.startQueryLeaders(TOKEN_QUERY_LEADERS, mCustomerId, leaderTitle);
+//        } else {
+//            onQueryComplete(TOKEN_QUERY_LEADERS, null);
+//        }
     }
 
     @Override
@@ -242,6 +252,12 @@ public class ContactEditActivity extends Activity implements
                 android.R.layout.simple_spinner_item, SpinnerItem.toArray(mDirectLeaders));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mDirectLeaderSpinner.setAdapter(adapter);
+
+        // hide leader spinner if this contact is the leader of the customer
+        int leaderVisibility = mIsLeader ? View.GONE : View.VISIBLE;
+        TextView mDirectLeaderLabel = (TextView) findViewById(R.id.label_direct_leader);
+        mDirectLeaderLabel.setVisibility(leaderVisibility);
+        mDirectLeaderSpinner.setVisibility(leaderVisibility);
     }
 
     protected void setupTitles() {

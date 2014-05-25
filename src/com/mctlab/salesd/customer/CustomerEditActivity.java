@@ -68,7 +68,7 @@ public class CustomerEditActivity extends Activity
         mOthersCB = (CheckBox) findViewById(R.id.is_others);
 
         mContentResolver = getContentResolver();
-        mQueryHandler = new CustomerQueryHandler(mContentResolver);
+        mQueryHandler = new CustomerQueryHandler(this);
         mQueryHandler.setOnQueryCompleteListener(this);
         mQueryHandler.startQueryCustomer(0, mId);
     }

@@ -18,11 +18,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class ContactListFragment extends ListFragment
-        implements CustomerQueryHandler.OnQueryCompleteListener {
+        implements CustomerQueryHandler.OnQueryCompleteListener, View.OnClickListener {
 
     public static final String ARG_LEADER_ID = "argLeaderId";
     public static final String ARG_HEADER_LABEL = "argHeaderLabel";
     public static final String ARG_EMPTY_HINT = "argEmptyHint";
+
+    public interface OnIntroduceFollowersListener {
+        public void OnIntroduceFollowers();
+    }
+
+    protected OnIntroduceFollowersListener mOnIntroduceFollowersListener;
 
     protected CustomerQueryHandler mQueryHandler;
     protected ListAdapter mAdapter;
@@ -60,12 +66,19 @@ public class ContactListFragment extends ListFragment
             view.findViewById(R.id.header_divider).setVisibility(View.VISIBLE);
         }
 
+        if (mLeaderId > 0) {
+            View introduce = view.findViewById(R.id.introduce);
+            introduce.setVisibility(View.VISIBLE);
+            introduce.setOnClickListener(this);
+            view.findViewById(R.id.introduce_divider).setVisibility(View.VISIBLE);
+        }
+
         mEmptyView = (TextView) view.findViewById(R.id.empty);
         if (!TextUtils.isEmpty(emptyHint)) {
             mEmptyView.setText(emptyHint);
         }
 
-        mQueryHandler = new CustomerQueryHandler(getActivity().getContentResolver());
+        mQueryHandler = new CustomerQueryHandler(getActivity());
         mQueryHandler.setOnQueryCompleteListener(this);
         mAdapter = new ListAdapter(getActivity());
         getListView().setAdapter(mAdapter);
@@ -88,6 +101,13 @@ public class ContactListFragment extends ListFragment
     }
 
     @Override
+    public void onClick(View v) {
+        if (mOnIntroduceFollowersListener != null) {
+            mOnIntroduceFollowersListener.OnIntroduceFollowers();
+        }
+    }
+
+    @Override
     public void onQueryComplete(int token, Cursor cursor) {
         if (cursor != null && cursor.getCount() > 0) {
             mEmptyView.setVisibility(View.GONE);
@@ -102,6 +122,10 @@ public class ContactListFragment extends ListFragment
         Intent intent = new Intent(SalesDConstant.ACTION_CONTACT_DETAIL);
         intent.putExtra(SalesDConstant.EXTRA_ID, id);
         getActivity().startActivity(intent);
+    }
+
+    public void setOnIntroduceFollowersListener(OnIntroduceFollowersListener listener) {
+        mOnIntroduceFollowersListener = listener;
     }
 
     class ViewHolder {
@@ -140,4 +164,5 @@ public class ContactListFragment extends ListFragment
         }
 
     }
+
 }

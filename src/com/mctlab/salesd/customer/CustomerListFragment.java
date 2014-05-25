@@ -63,7 +63,7 @@ public class CustomerListFragment extends ListFragment
 
         mEmptyView = view.findViewById(R.id.empty);
 
-        mQueryHandler = new CustomerQueryHandler(getActivity().getContentResolver());
+        mQueryHandler = new CustomerQueryHandler(getActivity());
         mQueryHandler.setOnQueryCompleteListener(this);
         mAdapter = new ListAdapter(getActivity(), mQueryHandler);
         getListView().setAdapter(mAdapter);
