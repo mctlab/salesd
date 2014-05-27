@@ -16,7 +16,6 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
         public static final String CONFIG = "config";
         public static final String CONFIG_CATEGORIES = "config_categories";
         public static final String CUSTOMERS = "customers";
-        public static final String POSITIONS = "positions";
         public static final String CONTACTS = "contacts";
         public static final String PROCUSTS = "procusts";
         public static final String REMINDERS = "reminders";
@@ -77,14 +76,6 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
         public static final String IS_DIRECT_OWNER = "is_direct_owner";
         public static final String IS_OTHERS = "is_others";
         public static final String OWNER_ID = "owner_id";
-    }
-
-    // Customer position framework
-    public interface PositionsColumns {
-        public static final String _ID = BaseColumns._ID;
-        public static final String CUSTOMER_ID = "customer_id";
-        public static final String TITLE = "title";
-        public static final String UPPER_POSITION_ID = "upper_position_id";
     }
 
     public interface ContactsColumns {
@@ -185,13 +176,6 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
                 CustomersColumns.OWNER_ID + " INTEGER" +
                 ");");
 
-        db.execSQL("CREATE TABLE " + Tables.POSITIONS + " (" +
-                PositionsColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                PositionsColumns.CUSTOMER_ID + " INTEGER," +
-                PositionsColumns.TITLE + " TEXT," +
-                PositionsColumns.UPPER_POSITION_ID + " INTEGER" +
-                ");");
-
         // TODO: store leader id instead of leader name
         db.execSQL("CREATE TABLE " + Tables.CONTACTS + " (" +
                 ContactsColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -239,7 +223,6 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + Tables.CONFIG + ";");
         db.execSQL("DROP TABLE IF EXISTS " + Tables.CONFIG_CATEGORIES + ";");
         db.execSQL("DROP TABLE IF EXISTS " + Tables.CUSTOMERS + ";");
-        db.execSQL("DROP TABLE IF EXISTS " + Tables.POSITIONS + ";");
         db.execSQL("DROP TABLE IF EXISTS " + Tables.CONTACTS + ";");
         db.execSQL("DROP TABLE IF EXISTS " + Tables.PROCUSTS + ";");
         db.execSQL("DROP TABLE IF EXISTS " + Tables.REMINDERS + ";");

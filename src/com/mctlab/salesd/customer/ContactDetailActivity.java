@@ -28,6 +28,7 @@ public class ContactDetailActivity extends Activity implements
     private TextView mPhoneNumber;
     private TextView mEmail;
     private TextView mOfficeLocation;
+    private TextView mDepartment;
     private TextView mTitle;
     private TextView mLeader;
     private TextView mCharacter;
@@ -116,6 +117,7 @@ public class ContactDetailActivity extends Activity implements
         mPhoneNumber = (TextView) findViewById(R.id.phone_number);
         mEmail = (TextView) findViewById(R.id.email);
         mOfficeLocation = (TextView) findViewById(R.id.office_location);
+        mDepartment = (TextView) findViewById(R.id.department);
         mTitle = (TextView) findViewById(R.id.title);
         mLeader = (TextView) findViewById(R.id.leader);
         mCharacter = (TextView) findViewById(R.id.character);
@@ -131,6 +133,8 @@ public class ContactDetailActivity extends Activity implements
         mEmail.setText(email);
         String officeLocation = mQueryHandler.getContactOfficeLocation(cursor);
         mOfficeLocation.setText(officeLocation);
+        String department = mQueryHandler.getContactDepartment(cursor);
+        mDepartment.setText(department);
         String title = mQueryHandler.getContactTitle(cursor);
         mTitle.setText(title);
         String leader = mQueryHandler.getContactDirectLeader(cursor);

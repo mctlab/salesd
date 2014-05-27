@@ -3,6 +3,7 @@ package com.mctlab.salesd.provider;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Locale;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -13,7 +14,6 @@ import com.mctlab.salesd.provider.TasksDatabaseHelper.ConfigCategoriesColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ConfigColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ContactsColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.CustomersColumns;
-import com.mctlab.salesd.provider.TasksDatabaseHelper.PositionsColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ProcustsColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ProjectsColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.Tables;
@@ -66,11 +66,6 @@ public class TasksProvider extends ContentProvider {
     protected static final String CUSTOMERS_TYPE = TYPE_PREFIX + "customer";
     protected static final String CUSTOMERS_ITEM_TYPE = ITEM_TYPE_PREFIX + "customer";
 
-    public static final Uri POSITIONS_CONTENT_URI = Uri.parse(URI_AUTHORITY_PREFIX + "positions");
-
-    protected static final String POSITIONS_TYPE = TYPE_PREFIX + "position";
-    protected static final String POSITIONS_ITEM_TYPE = ITEM_TYPE_PREFIX + "position";
-
     public static final Uri CONTACTS_CONTENT_URI = Uri.parse(URI_AUTHORITY_PREFIX + "contacts");
 
     protected static final String CONTACTS_TYPE = TYPE_PREFIX + "contact";
@@ -102,18 +97,15 @@ public class TasksProvider extends ContentProvider {
     protected static final int CONFIG_CATEGORIES_LOAD_FROM_XML = 34;
     protected static final int CUSTOMERS = 40;
     protected static final int CUSTOMERS_ID = 41;
-    protected static final int POSITIONS = 50;
-    protected static final int POSITIONS_ID = 51;
-    protected static final int POSITIONS_LOAD_FROM_XML = 52;
-    protected static final int CONTACTS = 60;
-    protected static final int CONTACTS_ID = 61;
-    protected static final int CONTACTS_FOLLOW_LEADER = 62;
-    protected static final int PROCUSTS = 70;
-    protected static final int PROCUSTS_ID = 71;
-    protected static final int REMINDERS = 80;
-    protected static final int REMINDERS_ID = 81;
-    protected static final int SCHEDULES = 90;
-    protected static final int SCHEDULES_ID = 91;
+    protected static final int CONTACTS = 50;
+    protected static final int CONTACTS_ID = 51;
+    protected static final int CONTACTS_FOLLOW_LEADER = 52;
+    protected static final int PROCUSTS = 60;
+    protected static final int PROCUSTS_ID = 61;
+    protected static final int REMINDERS = 70;
+    protected static final int REMINDERS_ID = 71;
+    protected static final int SCHEDULES = 80;
+    protected static final int SCHEDULES_ID = 81;
 
     protected static final UriMatcher sUriMatcher = new UriMatcher(
             UriMatcher.NO_MATCH);
@@ -156,9 +148,6 @@ public class TasksProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, "config/categories/*", CONFIG_CATEGORIES_LOAD_FROM_XML);
         sUriMatcher.addURI(AUTHORITY, "customers", CUSTOMERS);
         sUriMatcher.addURI(AUTHORITY, "customers/#", CUSTOMERS_ID);
-        sUriMatcher.addURI(AUTHORITY, "positions", POSITIONS);
-        sUriMatcher.addURI(AUTHORITY, "positions/#", POSITIONS_ID);
-        sUriMatcher.addURI(AUTHORITY, "positions/*", POSITIONS_LOAD_FROM_XML);
         sUriMatcher.addURI(AUTHORITY, "contacts", CONTACTS);
         sUriMatcher.addURI(AUTHORITY, "contacts/#", CONTACTS_ID);
         sUriMatcher.addURI(AUTHORITY, "contacts/follow/#", CONTACTS_FOLLOW_LEADER);
@@ -248,12 +237,6 @@ public class TasksProvider extends ContentProvider {
             return CUSTOMERS_TYPE;
         case CUSTOMERS_ID:
             return CUSTOMERS_ITEM_TYPE;
-        case POSITIONS:
-            return POSITIONS_TYPE;
-        case POSITIONS_ID:
-            return POSITIONS_ITEM_TYPE;
-        case POSITIONS_LOAD_FROM_XML:
-            return POSITIONS_TYPE;
         case CONTACTS:
             return CONTACTS_TYPE;
         case CONTACTS_ID:
@@ -298,11 +281,6 @@ public class TasksProvider extends ContentProvider {
         case CUSTOMERS:
             table = Tables.CUSTOMERS;
             break;
-        case POSITIONS:
-            table = Tables.POSITIONS;
-            break;
-        case POSITIONS_LOAD_FROM_XML:
-            return loadPositionsFromXml(uri.getLastPathSegment());
         case CONTACTS:
             table = Tables.CONTACTS;
             break;
@@ -524,8 +502,8 @@ public class TasksProvider extends ContentProvider {
         }
         AppConfig.setCustomerPositionsVersion(customer, version);
 
-        String selection = PositionsColumns.CUSTOMER_ID + "=0";
-        mDb.delete(Tables.POSITIONS, selection, null);
+//        String selection = PositionsColumns.CUSTOMER_ID + "=0";
+//        mDb.delete(Tables.POSITIONS, selection, null);
         mPositionIdMap.clear();
 
         return true;
@@ -556,35 +534,35 @@ public class TasksProvider extends ContentProvider {
             }
         }
 
-        long customerId = 0;
-        ContentValues values = new ContentValues();
-        values.put(PositionsColumns.CUSTOMER_ID, customerId);
-        values.put(PositionsColumns.TITLE, title);
-        values.put(PositionsColumns.UPPER_POSITION_ID, upperPositionId);
-
-        long id = mDb.insert(Tables.POSITIONS, null, values);
-        mPositionIdMap.put(title, id);
+//        long customerId = 0;
+//        ContentValues values = new ContentValues();
+//        values.put(PositionsColumns.CUSTOMER_ID, customerId);
+//        values.put(PositionsColumns.TITLE, title);
+//        values.put(PositionsColumns.UPPER_POSITION_ID, upperPositionId);
+//
+//        long id = mDb.insert(Tables.POSITIONS, null, values);
+//        mPositionIdMap.put(title, id);
 
         if (positionId < 0) {
-            values = new ContentValues();
-            values.put(PositionsColumns.UPPER_POSITION_ID, id);
-
-            StringBuilder builder = new StringBuilder();
-            builder.append(PositionsColumns.CUSTOMER_ID + "=" + customerId).append(" AND ");
-            builder.append(PositionsColumns.UPPER_POSITION_ID + "=" + positionId);
-
-            mDb.update(Tables.POSITIONS, values, builder.toString(), null);
+//            values = new ContentValues();
+//            values.put(PositionsColumns.UPPER_POSITION_ID, id);
+//
+//            StringBuilder builder = new StringBuilder();
+//            builder.append(PositionsColumns.CUSTOMER_ID + "=" + customerId).append(" AND ");
+//            builder.append(PositionsColumns.UPPER_POSITION_ID + "=" + positionId);
+//
+//            mDb.update(Tables.POSITIONS, values, builder.toString(), null);
         }
     }
 
     protected void deleteInvalidCustomerPositions(String customer) {
-        long customerId = 0;
+//        long customerId = 0;
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(PositionsColumns.CUSTOMER_ID + "=" + customerId).append(" AND ");
-        builder.append(PositionsColumns.UPPER_POSITION_ID + "<0");
-
-        mDb.delete(Tables.POSITIONS, builder.toString(), null);
+//        StringBuilder builder = new StringBuilder();
+//        builder.append(PositionsColumns.CUSTOMER_ID + "=" + customerId).append(" AND ");
+//        builder.append(PositionsColumns.UPPER_POSITION_ID + "<0");
+//
+//        mDb.delete(Tables.POSITIONS, builder.toString(), null);
     }
 
     @Override
@@ -619,11 +597,6 @@ public class TasksProvider extends ContentProvider {
             selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
         case CUSTOMERS:
             table = Tables.CUSTOMERS;
-            break;
-        case POSITIONS_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case POSITIONS:
-            table = Tables.POSITIONS;
             break;
         case CONTACTS_ID:
             selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
@@ -691,11 +664,6 @@ public class TasksProvider extends ContentProvider {
             selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
         case CUSTOMERS:
             table = Tables.CUSTOMERS;
-            break;
-        case POSITIONS_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case POSITIONS:
-            table = Tables.POSITIONS;
             break;
         case CONTACTS_ID:
             selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
@@ -802,11 +770,6 @@ public class TasksProvider extends ContentProvider {
             }
             qb.setTables(Tables.CUSTOMERS);
             break;
-        case POSITIONS_ID:
-            qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
-        case POSITIONS:
-            qb.setTables(Tables.POSITIONS);
-            break;
         case CONTACTS_ID:
             where = BaseColumns._ID + "=" + ContentUris.parseId(uri);
         case CONTACTS:
@@ -825,7 +788,7 @@ public class TasksProvider extends ContentProvider {
             break;
         case CONTACTS_FOLLOW_LEADER:
             long leaderId = ContentUris.parseId(uri);
-            where = String.format(SELECTION_CONTACTS_FOLLOW_LEADER, leaderId);
+            where = String.format(Locale.US, SELECTION_CONTACTS_FOLLOW_LEADER, leaderId);
             qb.appendWhere(where);
             qb.setTables(Tables.CONTACTS);
             break;

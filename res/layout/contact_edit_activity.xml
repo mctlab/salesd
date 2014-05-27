@@ -146,7 +146,6 @@
             android:paddingBottom="@dimen/edit_activity_label_padding_bottom"
             android:text="@string/contact_deparment"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:visibility="gone"
             />
         <EditText
             android:id="@+id/department"
@@ -158,7 +157,6 @@
             android:inputType="text"
             android:singleLine="true"
             android:textSize="16sp"
-            android:visibility="gone"
             />
         <!-- contact title -->
         <TextView
@@ -170,12 +168,16 @@
             android:text="@string/contact_title"
             android:textAppearance="?android:attr/textAppearanceMedium"
             />
-        <Spinner
+        <EditText
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/edit_activity_input_padding_left"
             android:paddingTop="@dimen/edit_activity_input_padding_top"
             android:paddingBottom="@dimen/edit_activity_input_padding_bottom"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textSize="16sp"
             />
         <!-- contact direct leader -->
         <TextView

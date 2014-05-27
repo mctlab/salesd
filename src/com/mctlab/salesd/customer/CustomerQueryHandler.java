@@ -1,9 +1,5 @@
 package com.mctlab.salesd.customer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -14,18 +10,11 @@ import android.text.TextUtils;
 import com.mctlab.salesd.R;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ContactsColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.CustomersColumns;
-import com.mctlab.salesd.provider.TasksDatabaseHelper.PositionsColumns;
 import com.mctlab.salesd.provider.TasksProvider;
 import com.mctlab.salesd.util.LogUtil;
 import com.mctlab.salesd.util.QueryHandler;
 
 public class CustomerQueryHandler extends QueryHandler {
-
-    public static class Position {
-        long id;
-        String title;
-        long upperPositionId;
-    }
 
     public static final String[] CUSTOMER_PROJECTION = new String[] {
         CustomersColumns._ID,
@@ -72,21 +61,6 @@ public class CustomerQueryHandler extends QueryHandler {
     public static final int CONTACT_COLUMN_INDEX_CHARACTERS = 7;
     public static final int CONTACT_COLUMN_INDEX_DIRECT_LEADER = 8;
     public static final int CONTACT_COLUMN_INDEX_CUSTOMER_ID = 9;
-
-    public static final String[] POSITION_PROJECTION = new String[] {
-        PositionsColumns._ID,
-        PositionsColumns.CUSTOMER_ID,
-        PositionsColumns.TITLE,
-        PositionsColumns.UPPER_POSITION_ID
-    };
-
-    public static final int POSITION_COLUMN_INDEX_ID = 0;
-    public static final int POSITION_COLUMN_INDEX_CUSTOMER_ID = 1;
-    public static final int POSITION_COLUMN_INDEX_TITLE = 2;
-    public static final int POSITION_COLUMN_INDEX_UPPER_POSITION_ID = 3;
-
-    private static final HashMap<Long, ArrayList<Position>> mPositionMap =
-            new HashMap<Long, ArrayList<Position>>();
 
     private final Context mContext;
 
@@ -148,16 +122,11 @@ public class CustomerQueryHandler extends QueryHandler {
         }
     }
 
-    public void startQueryLeaders(int token, long customerId, String leaderTitle) {
-        LogUtil.v("Query leaders, customer id: " + customerId + ", title: " + leaderTitle);
+    public void startQueryLeaders(int token, long customerId) {
         // TODO: correct customer id checking
         if (customerId >= 0) {
             StringBuilder selection = new StringBuilder();
             selection.append(ContactsColumns.CUSTOMER_ID + "=" + customerId);
-            if (!TextUtils.isEmpty(leaderTitle)) {
-                selection.append(" AND ");
-                selection.append(ContactsColumns.TITLE + "='" + leaderTitle + "'");
-            }
             startQuery(token, null, TasksProvider.CONTACTS_CONTENT_URI, CONTACT_PROJECTION,
                     selection.toString(), null, null);
         }
@@ -167,56 +136,6 @@ public class CustomerQueryHandler extends QueryHandler {
         Uri.Builder builder = TasksProvider.CONTACTS_CONTENT_URI.buildUpon();
         builder.appendPath("follow").appendPath(String.valueOf(leaderId));
         startQuery(token, null, builder.build(), CONTACT_PROJECTION, null, null, null);
-    }
-
-    public ArrayList<Position> getPositionList(long customerId) {
-        // for temporary use only
-        customerId = 0;
-        if (!mPositionMap.containsKey(customerId)) {
-            ContentResolver cr = getContentResolver();
-            String selection = PositionsColumns.CUSTOMER_ID + "=" + customerId;
-            Cursor cursor = null;
-            try {
-                cursor = cr.query(TasksProvider.POSITIONS_CONTENT_URI, POSITION_PROJECTION,
-                        selection, null, null);
-                if (cursor != null && cursor.moveToFirst()) {
-                    HashMap<Long, Position> map = new HashMap<Long, Position>();
-                    ArrayList<Long> ids = new ArrayList<Long>();
-                    do {
-                        Position position = new Position();
-                        position.id = cursor.getLong(POSITION_COLUMN_INDEX_ID);
-                        position.title = cursor.getString(POSITION_COLUMN_INDEX_TITLE);
-                        position.upperPositionId = cursor.getLong(
-                                POSITION_COLUMN_INDEX_UPPER_POSITION_ID);
-                        map.put(position.id, position);
-
-                        if (position.upperPositionId == 0) {
-                            ids.add(position.id);
-                        }
-                    } while (cursor.moveToNext());
-
-                    ArrayList<Position> positionList = new ArrayList<Position>();
-                    mPositionMap.put(customerId, positionList);
-                    while (!ids.isEmpty()) {
-                        Long id = ids.remove(0);
-                        Position position = map.remove(id);
-                        if (position != null) {
-                            positionList.add(position);
-                            for (HashMap.Entry<Long, Position> entry : map.entrySet()) {
-                                if (id.equals(entry.getValue().upperPositionId)) {
-                                    ids.add(entry.getValue().id);
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                if (cursor != null) {
-                    cursor.close();
-                }
-            }
-        }
-        return mPositionMap.get(customerId);
     }
 
     public String getCustomerName(Cursor cursor) {

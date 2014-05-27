@@ -18,7 +18,6 @@ public class ThisApplication extends AsApplication {
         super.onCreate();
         initAppConfig();
         loadConfigCategories();
-        loadCustomerPositions();
         // TODO: JsonMapper.registerDeserializer(Something.class, new Something.Deserializer());
     }
 
@@ -39,10 +38,4 @@ public class ThisApplication extends AsApplication {
         resolver.insert(uri, null);
     }
 
-    public void loadCustomerPositions() {
-        ContentResolver resolver = getContentResolver();
-        Builder builder = TasksProvider.POSITIONS_CONTENT_URI.buildUpon();
-        Uri uri = builder.appendPath("positions.xml").build();
-        resolver.insert(uri, null);
-    }
 }
