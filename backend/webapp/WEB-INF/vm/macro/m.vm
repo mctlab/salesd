@@ -1,0 +1,3 @@
+#macro(message $msg)
+<span>$msg</span>
+#end

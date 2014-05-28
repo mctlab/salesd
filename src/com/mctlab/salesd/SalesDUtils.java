@@ -28,16 +28,14 @@ public class SalesDUtils {
         }
     }
 
-    public static void setChildViewOnClickListener(Activity parent, int childId,
-            View.OnClickListener listener) {
+    public static void setChildViewOnClickListener(Activity parent, int childId, View.OnClickListener listener) {
         View child = findChildView(parent, childId);
         if (child != null) {
             child.setOnClickListener(listener);
         }
     }
 
-    public static void setChildViewOnClickListener(View parent, int childId,
-            View.OnClickListener listener) {
+    public static void setChildViewOnClickListener(View parent, int childId, View.OnClickListener listener) {
         View child = findChildView(parent, childId);
         if (child != null) {
             child.setOnClickListener(listener);
@@ -47,8 +45,7 @@ public class SalesDUtils {
     public static Spinner setupSpinner(Activity parent, int spinnerId, int valuesId) {
         Spinner spinner = (Spinner) findChildView(parent, spinnerId);
         if (spinner != null) {
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(parent, valuesId,
-                    android.R.layout.simple_spinner_item);
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(parent, valuesId, android.R.layout.simple_spinner_item);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter);
         }

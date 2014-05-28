@@ -1,0 +1,3 @@
+#parse("include/head.vm")
+#message(${msg})
+#parse("include/tail.vm")

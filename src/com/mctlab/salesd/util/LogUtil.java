@@ -3,6 +3,7 @@ package com.mctlab.salesd.util;
 import android.util.Log;
 
 public class LogUtil {
+
     public static final String TAG = "SalesD";
 
     public static void v(String message) {

@@ -1,0 +1,4 @@
+#parse("include/head.vm")
+#set($msg = "This is a page!")
+#message(${msg})
+#parse("include/tail.vm")
