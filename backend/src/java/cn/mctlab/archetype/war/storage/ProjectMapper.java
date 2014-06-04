@@ -7,10 +7,9 @@
 package cn.mctlab.archetype.war.storage;
 
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.SelectKey;
-import org.apache.ibatis.mapping.StatementType;
 
 import cn.mctlab.archetype.war.data.Project;
 
@@ -22,12 +21,30 @@ public interface ProjectMapper {
     @Select("CREATE TABLE IF NOT EXISTS project("
             + "serverId BIGINT NOT NULL AUTO_INCREMENT, "
             + "name TEXT NOT NULL, "
+            + "priority INT, "
+            + "estimatedAmount INT, "
+            + "status INT, "
+            + "description TEXT, "
+            + "ownerId INT, "
             + "PRIMARY KEY (serverId))"
     )
     void createTable();
 
-    @Insert("INSERT INTO project(name) VALUES(#{PROJECT.name})")
-    @SelectKey(before = false, resultType = Long.class, keyProperty = "PROJECT.serverId",
-            statementType = StatementType.STATEMENT, statement = "SELECT LAST_INSERT_ID() AS serverId")
-    long insert(final @Param("PROJECT") Project project);
+    @Insert("INSERT INTO project("
+            + "name, "
+            + "priority, "
+            + "estimatedAmount, "
+            + "status, "
+            + "description, "
+            + "ownerId"
+            + ") VALUES("
+            + "#{PROJECT.name}, "
+            + "#{PROJECT.priority}, "
+            + "#{PROJECT.estimatedAmount}, "
+            + "#{PROJECT.status}, "
+            + "#{PROJECT.description}, "
+            + "#{PROJECT.ownerId}"
+            + ")")
+    @Options(useGeneratedKeys = true, keyProperty = "PROJECT.serverId", keyColumn = "serverId")
+    int insert(final @Param("PROJECT") Project project);
 }

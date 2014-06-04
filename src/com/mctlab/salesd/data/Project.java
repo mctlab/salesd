@@ -1,16 +1,13 @@
-/**
- * @(#)Project.java, 5/28/14.
- *
- * Copyright 2014 fenbi.com. All rights reserved.
- * FENBI.COM PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
-package cn.mctlab.archetype.war.data;
+package com.mctlab.salesd.data;
+
+import com.mctlab.ansight.common.data.BaseData;
 
 /**
- * @author liqiang
+ * Created by liqiang on 6/4/14.
  */
 public class Project extends BaseData {
 
+    private int id;
     private long serverId;
     private String name;
     private int priority;
@@ -18,6 +15,14 @@ public class Project extends BaseData {
     private int status;
     private String description;
     private int ownerId;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public long getServerId() {
         return serverId;

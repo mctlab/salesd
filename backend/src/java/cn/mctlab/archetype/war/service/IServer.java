@@ -7,10 +7,14 @@
  */
 package cn.mctlab.archetype.war.service;
 
+import cn.mctlab.archetype.war.data.Project;
+
 /**
  *
  */
 public interface IServer {
 
     String response();
+
+    long insertProject(Project project);
 }

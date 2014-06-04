@@ -39,5 +39,4 @@ public interface AsEmptyConst {
         @Override
         public void afterDecode(Result result) {}
     }
-
 }

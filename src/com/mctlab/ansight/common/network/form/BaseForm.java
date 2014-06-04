@@ -58,8 +58,7 @@ public class BaseForm implements IForm {
         for (NameValuePair pair : params) {
             sb.append(pair.getName() + " = " + pair.getValue() + "\n");
         }
-        sb.append("]\n");
+        sb.append("]");
         return sb.toString();
     }
-
 }

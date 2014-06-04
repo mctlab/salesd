@@ -1,11 +1,5 @@
 package com.mctlab.salesd.project;
 
-import com.mctlab.salesd.R;
-import com.mctlab.salesd.SalesDUtils;
-import com.mctlab.salesd.constant.SalesDConstant;
-import com.mctlab.salesd.provider.TasksProvider;
-import com.mctlab.salesd.provider.TasksDatabaseHelper.ProjectsColumns;
-
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -20,6 +14,16 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.mctlab.ansight.common.exception.ApiException;
+import com.mctlab.ansight.common.util.StringUtils;
+import com.mctlab.salesd.R;
+import com.mctlab.salesd.SalesDUtils;
+import com.mctlab.salesd.api.EditProjectApi;
+import com.mctlab.salesd.constant.SalesDConstant;
+import com.mctlab.salesd.data.Project;
+import com.mctlab.salesd.provider.TasksDatabaseHelper.ProjectsColumns;
+import com.mctlab.salesd.provider.TasksProvider;
 
 public class ProjectEditActivity extends Activity
         implements ProjectQueryHandler.OnQueryCompleteListener {
@@ -79,9 +83,9 @@ public class ProjectEditActivity extends Activity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.opt_done:
-            saveProject();
-            break;
+            case R.id.opt_done:
+                saveProject();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -128,6 +132,32 @@ public class ProjectEditActivity extends Activity
             return;
         }
 
+        Project project = getProject();
+        new EditProjectApi(project) {
+
+            @Override
+            protected void onStart() {
+                super.onStart();
+                // TODO: start loading
+            }
+
+            @Override
+            protected void onSuccess(Void aVoid) {
+                super.onSuccess(aVoid);
+            }
+
+            @Override
+            protected void onFailed(ApiException exception) {
+                super.onFailed(exception);
+            }
+
+            @Override
+            protected void onFinish() {
+                super.onFinish();
+                // TODO: end loading
+            }
+        }.call(null);
+
         ContentValues values = getFieldValues();
         boolean failed = false;
         if (mId > 0) {
@@ -167,6 +197,18 @@ public class ProjectEditActivity extends Activity
 
         mDescription = mDescriptionEditText.getText().toString().trim();
         return true;
+    }
+
+    private Project getProject() {
+        Project project = new Project();
+        project.setName(mName);
+        project.setEstimatedAmount(mAmount);
+        project.setPriority(mPriority);
+        project.setStatus(mStatus);
+        if (StringUtils.isNotBlank(mDescription)) {
+            project.setDescription(mDescription);
+        }
+        return project;
     }
 
     private ContentValues getFieldValues() {

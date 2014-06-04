@@ -5,7 +5,11 @@ import android.net.http.AndroidHttpClient;
 import com.mctlab.ansight.common.AsAppConfig;
 import com.mctlab.ansight.common.AsApplication;
 import com.mctlab.ansight.common.DeviceConfig;
-import com.mctlab.ansight.common.exception.*;
+import com.mctlab.ansight.common.exception.ApiException;
+import com.mctlab.ansight.common.exception.DecodeResponseException;
+import com.mctlab.ansight.common.exception.HttpStatusException;
+import com.mctlab.ansight.common.exception.NetworkNotAvailableException;
+import com.mctlab.ansight.common.exception.RequestAbortedException;
 import com.mctlab.ansight.common.network.api.ExecutorCallback;
 import com.mctlab.ansight.common.network.form.IForm;
 import com.mctlab.ansight.common.util.ExceptionUtils;
@@ -13,7 +17,11 @@ import com.mctlab.ansight.common.util.HttpUtils;
 import com.mctlab.ansight.common.util.L;
 import com.mctlab.ansight.common.util.StringUtils;
 
-import org.apache.http.*;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolVersion;
+import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.message.BasicHttpResponse;
 
@@ -37,17 +45,17 @@ public abstract class AbsHttpTask<Result> implements HttpTask<Result> {
 
     @Override
     public final HttpTaskResult<Result> exec() {
-//        AndroidHttpClient client = HttpClientInstance.newInstance();
+        AndroidHttpClient client = HttpClientInstance.newInstance();
         try {
-            Result result = fakeExec();
-//            Result result = innerExec(client);
+//            Result result = fakeExec();
+            Result result = innerExec(client);
             return wrapResult(result);
         } catch (ApiException e) {
             return wrapResult(e);
         } catch (RequestAbortedException e) {
             return wrapResult(e);
         } finally {
-//            client.close();
+            client.close();
         }
     }
 
@@ -108,9 +116,7 @@ public abstract class AbsHttpTask<Result> implements HttpTask<Result> {
                 }
 
                 @Override
-                public void writeTo(OutputStream outputStream) throws IOException {
-
-                }
+                public void writeTo(OutputStream outputStream) throws IOException {}
 
                 @Override
                 public boolean isStreaming() {
@@ -118,9 +124,7 @@ public abstract class AbsHttpTask<Result> implements HttpTask<Result> {
                 }
 
                 @Override
-                public void consumeContent() throws IOException {
-
-                }
+                public void consumeContent() throws IOException {}
             };
             response.setEntity(httpEntity);
             L.d("socket", "after exec: " + request.getURI());
@@ -185,7 +189,7 @@ public abstract class AbsHttpTask<Result> implements HttpTask<Result> {
 
     private void beforeExecute(HttpUriRequest request) {
         if (AsAppConfig.getInstance().isDebug()) {
-            L.i(this, String.format("%s[url:%s ,method:%s]", callback.getApiName(), request.getURI().toString(), request.getMethod()));
+            L.i(this, String.format("%s[url:%s,method:%s]", callback.getApiName(), request.getURI().toString(), request.getMethod()));
             if (request.getMethod().equalsIgnoreCase("post")) {
                 L.i(this, "post form = " + form);
             }
@@ -222,5 +226,4 @@ public abstract class AbsHttpTask<Result> implements HttpTask<Result> {
     }
 
     protected abstract HttpUriRequest onCreateRequest();
-
 }

@@ -40,9 +40,6 @@ public class Server implements IServer, InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         projectMapper.createTable();
-        Project project = new Project();
-        project.setName("xxxx");
-        LOG.debug("serverId: {}", projectMapper.insert(project));
     }
 
     //-- destructors --//
@@ -51,6 +48,12 @@ public class Server implements IServer, InitializingBean {
     @Override
     public String response() {
         return "Server:" + storage.response();
+    }
+
+    @Override
+    public long insertProject(Project project) {
+        LOG.debug("count: {}", projectMapper.insert(project));
+        return project.getServerId();
     }
 
     //-- un-implements --//

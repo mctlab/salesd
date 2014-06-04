@@ -1,38 +1,17 @@
-package com.mctlab.ansight.common.json;
+package cn.mctlab.archetype.war.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
-import com.mctlab.ansight.common.exception.JsonException;
-import com.mctlab.ansight.common.util.L;
-
-import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Map;
 
 public class JsonMapper {
 
-    public static <T extends IJsonable> T parseJsonObject(JSONObject json, Class<T> clazz) throws JsonException {
-        return parseJsonObject(json.toString(), clazz);
-    }
-
-    public static <T extends IJsonable> T parseJsonObject(String json, Class<T> clazz) throws JsonException {
-        try {
-            return getDeserializer().fromJson(json, clazz);
-        } catch (Throwable e) {
-            throw new JsonException("json=" + json, e);
-        }
-    }
-
-    public static <T extends IJsonable> T parseJsonObject(JsonElement json, Class<T> clazz) throws JsonException {
-        try {
-            return getDeserializer().fromJson(json, clazz);
-        } catch (Throwable e) {
-            throw new JsonException("json=" + json, e);
-        }
+    public static <T extends IJsonable> T fromJson(String json, Class<T> clazz) {
+        return getDeserializer().fromJson(json, clazz);
     }
 
     public static <T extends IJsonable> String toJson(T obj) {
@@ -44,12 +23,7 @@ public class JsonMapper {
     }
 
     public static <T> T jsonToArray(String json, Class<T> arrayClazz) {
-        try {
-            return getDeserializer().fromJson(json, arrayClazz);
-        } catch (Exception e) {
-            L.e(JsonMapper.class, e);
-            return null;
-        }
+        return getDeserializer().fromJson(json, arrayClazz);
     }
 
     public static <T> String listToJson(List<T> list) {
@@ -57,12 +31,7 @@ public class JsonMapper {
     }
 
     public static <T> List<T> jsonToList(String json, TypeToken<List<T>> type) {
-        try {
-            return getDeserializer().fromJson(json, type.getType());
-        } catch (Exception e) {
-            L.e(JsonMapper.class, e);
-            return null;
-        }
+        return getDeserializer().fromJson(json, type.getType());
     }
 
     public static <K, V> String mapToJson(Map<K, V> map) {
@@ -79,7 +48,7 @@ public class JsonMapper {
      *
      * @param o object need to be serialized
      * @return json string
-     * @see Gson
+     * @see com.google.gson.Gson
      */
     public static String writeValue(Object o) {
         return getSerializer().toJson(o);
@@ -92,7 +61,7 @@ public class JsonMapper {
      * @param json  json string
      * @param clazz object type
      * @return parsed data
-     * @see Gson
+     * @see com.google.gson.Gson
      */
     public static <T> T readValue(String json, Class<T> clazz) {
         return getDeserializer().fromJson(json, clazz);

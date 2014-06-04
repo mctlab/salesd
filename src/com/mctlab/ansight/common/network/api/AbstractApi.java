@@ -4,10 +4,21 @@ import com.mctlab.ansight.common.AsAppConfig;
 import com.mctlab.ansight.common.AsRuntime;
 import com.mctlab.ansight.common.DeviceConfig;
 import com.mctlab.ansight.common.activity.AsActivity;
-import com.mctlab.ansight.common.exception.*;
+import com.mctlab.ansight.common.exception.ApiException;
+import com.mctlab.ansight.common.exception.DecodeResponseException;
+import com.mctlab.ansight.common.exception.HttpStatusException;
+import com.mctlab.ansight.common.exception.NetworkNotAvailableException;
+import com.mctlab.ansight.common.exception.RequestAbortedException;
 import com.mctlab.ansight.common.network.form.IForm;
-import com.mctlab.ansight.common.network.http.*;
+import com.mctlab.ansight.common.network.http.AsyncHttpExecutor;
 import com.mctlab.ansight.common.network.http.AsyncHttpExecutor.Priority;
+import com.mctlab.ansight.common.network.http.HttpDeleteTask;
+import com.mctlab.ansight.common.network.http.HttpGetTask;
+import com.mctlab.ansight.common.network.http.HttpHeadTask;
+import com.mctlab.ansight.common.network.http.HttpPostTask;
+import com.mctlab.ansight.common.network.http.HttpPutTask;
+import com.mctlab.ansight.common.network.http.HttpTask;
+import com.mctlab.ansight.common.network.http.HttpTaskResult;
 import com.mctlab.ansight.common.util.ExceptionUtils;
 import com.mctlab.ansight.common.util.HttpUtils;
 import com.mctlab.ansight.common.util.L;
@@ -367,5 +378,4 @@ public abstract class AbstractApi<Form extends IForm, Result> implements IServer
             AbstractApi.this.afterDecode(data);
         }
     };
-
 }
