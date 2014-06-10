@@ -12,7 +12,9 @@ import com.mctlab.salesd.schedule.ScheduleListFragment;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,12 +23,18 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class SalesDMainActivity extends Activity implements
-        View.OnClickListener, CustomerPickerDialogFragment.OnPickCustomersListener {
+        View.OnClickListener, CustomerPickerDialogFragment.OnPickCustomersListener,
+        UserQueryHandler.OnQueryCompleteListener,
+        UserEditDialogFragment.OnUserInfoUpdatedListener {
+
+    private UserQueryHandler mQueryHandler;
 
     private TextView mUserName;
     private TextView mAnnualCompleted;
     private TextView mAnnualTarget;
     private ProgressBar mAnnualProgress;
+
+    private long mUserId = 0L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +47,7 @@ public class SalesDMainActivity extends Activity implements
         mAnnualTarget = (TextView) findViewById(R.id.annual_target);
         mAnnualProgress = (ProgressBar) findViewById(R.id.annual_progress);
 
+        SalesDUtils.setChildViewOnClickListener(this, R.id.user_info_panel, this);
         SalesDUtils.setChildViewOnClickListener(this, R.id.btn_projects, this);
         SalesDUtils.setChildViewOnClickListener(this, R.id.btn_customers, this);
         SalesDUtils.setChildViewOnClickListener(this, R.id.btn_contacts, this);
@@ -49,12 +58,15 @@ public class SalesDMainActivity extends Activity implements
         transaction.replace(R.id.schedules_container, new ScheduleListFragment());
         transaction.commit();
 
-        updateUserInfo();
+        mQueryHandler = new UserQueryHandler(getContentResolver());
+        mQueryHandler.setOnQueryCompleteListener(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        mUserId = 0L;
+        mQueryHandler.startQueryUser(0);
     }
 
     @Override
@@ -95,6 +107,9 @@ public class SalesDMainActivity extends Activity implements
         Intent intent = null;
 
         switch(view.getId()) {
+        case R.id.user_info_panel:
+            UserEditDialogFragment.actionUpdateUserInfo(getFragmentManager(), mUserId, this);
+            break;
         case R.id.btn_projects:
 //          Toast.makeText(this, R.string.projects, Toast.LENGTH_SHORT).show();
             intent = new Intent(SalesDConstant.ACTION_PROJECT_LIST);
@@ -115,6 +130,21 @@ public class SalesDMainActivity extends Activity implements
     }
 
     @Override
+    public void onQueryComplete(int token, Cursor cursor) {
+        updateUserInfo(cursor);
+
+        if (cursor != null) {
+            cursor.close();
+        }
+    }
+
+    @Override
+    public void OnUserInfoUpdated() {
+        mUserId = 0L;
+        mQueryHandler.startQueryUser(0);
+    }
+
+    @Override
     public void OnPickCustomers(List<Long> ids) {
         if (ids != null && ids.size() > 0) {
             Long id = ids.get(0);
@@ -124,13 +154,30 @@ public class SalesDMainActivity extends Activity implements
         }
     }
 
-    protected void updateUserInfo() {
-        mUserName.setText("Test Name");
-        mAnnualCompleted.setText("Has completed: 5");
-        mAnnualTarget.setText("Target: 10");
+    protected void updateUserInfo(Cursor cursor) {
+        String userName = null;
+        int annualTarget = 0;
+        int completed = 0;
 
-        mAnnualProgress.setMax(10);
-        mAnnualProgress.setProgress(5);
+        if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+            mUserId = mQueryHandler.getUserId(cursor);
+            userName = mQueryHandler.getUserName(cursor);
+            annualTarget = mQueryHandler.getUserAnnualTarget(cursor);
+            completed = mQueryHandler.getUserCompleted(cursor);
+        } else {
+            mUserId = 0L;
+        }
+
+        if (TextUtils.isEmpty(userName)) {
+            userName = getString(R.string.user_info_prompt);
+        }
+
+        mUserName.setText(userName);
+        mAnnualTarget.setText(getString(R.string.user_annual_target, annualTarget));
+        mAnnualCompleted.setText(getString(R.string.user_completed, completed));
+
+        mAnnualProgress.setMax(annualTarget);
+        mAnnualProgress.setProgress(completed);
     }
 
 }

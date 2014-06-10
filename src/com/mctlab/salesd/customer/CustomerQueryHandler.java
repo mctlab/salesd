@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.net.Uri.Builder;
-import android.text.TextUtils;
 
 import com.mctlab.salesd.R;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ContactsColumns;

@@ -5,6 +5,7 @@
     android:orientation="vertical" >
 
     <LinearLayout
+        android:id="@+id/user_info_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/darker_gray"
@@ -18,7 +19,9 @@
             android:id="@+id/user_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:duplicateParentState="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/user_name_text_selector"
             />
 
         <LinearLayout

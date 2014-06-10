@@ -36,6 +36,16 @@
 
     <string name="owner">所有者</string>
 
+    <!-- user info -->
+    <string name="user_info_prompt">&lt;用户信息&gt;</string>
+    <string name="user_annual_target">年度目标：<xliff:g id="TARGET">%d</xliff:g></string>
+    <string name="user_completed">已完成：<xliff:g id="COMPLETED">%d</xliff:g></string>
+    <string name="hint_user_name">用户姓名</string>
+    <string name="hint_user_annual_target">年度目标</string>
+    <string name="hint_user_completed">已完成</string>
+    <string name="dlg_title_user_info">用户信息</string>
+    <string name="tip_invalid_annual_target_or_completed">无效的“年度目标”与“已完成”信息</string>
+
     <!-- projects -->
     <string name="projects">项目</string>
     <string name="add_project">新建项目</string>
