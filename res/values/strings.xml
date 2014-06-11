@@ -87,6 +87,8 @@
     <string name="dlg_message_fetching_customers">正在获取客户列表，请稍候。</string>
     <string name="dlg_message_create_customer">您没有可选择的客户，确定要新建一个客户吗？</string>
 
+    <string name="dlg_title_select_contact_template">请选择联系人模板</string>
+
     <!-- contacts -->
     <string name="contacts">联系人</string>
     <string name="add_contact">新建联系人</string>

@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 public class CustomerPickerDialogFragment extends DialogFragment
         implements CustomerQueryHandler.OnQueryCompleteListener, View.OnClickListener,
-            AdapterView.OnItemClickListener {
+        AdapterView.OnItemClickListener {
 
     protected static final int MODE_CREATE_NEW_CONTACT = 0;
     protected static final int MODE_JOIN_PROJECT = 1;

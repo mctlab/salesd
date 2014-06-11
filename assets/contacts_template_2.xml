@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Contact node supports below children nodes
+      --    name: contact's name
+      --    phone_number: contact's phone number
+      --    email: email address
+      --    office_location: office location
+      --    department: contact's department
+      --    title: contact's title
+      --    leader_title: contact's leader title
+      --    characters: characters description
+      -- Note:
+      -- 1. title is mandatory field, others are optional.
+      -- 2. only one contact allows do NOT contain leader_title,
+      --    others must contain it and should be existed.
+      -->
+
+    <contact>
+        <title>总经理</title>
+        <name>总一</name>
+        <phone_number>18601010000</phone_number>
+        <email>email@customer.com</email>
+        <office_location>customer office</office_location>
+        <characters>customer characters</characters>
+    </contact>
+
+    <contact>
+        <title>开发部经理</title>
+        <leader_title>总经理</leader_title>
+        <name>开二</name>
+        <phone_number>18601010100</phone_number>
+        <department>development team</department>
+    </contact>
+
+    <contact>
+        <title>测试部经理</title>
+        <leader_title>总经理</leader_title>
+        <name>测二</name>
+        <phone_number>18601010200</phone_number>
+        <department>test team</department>
+    </contact>
+
+    <contact>
+        <title>市场部经理</title>
+        <leader_title>总经理</leader_title>
+        <name>市二</name>
+        <phone_number>18601010300</phone_number>
+        <department>market team</department>
+    </contact>
+
+    <contact>
+        <title>开发工程师</title>
+        <leader_title>开发部经理</leader_title>
+        <name>开三一</name>
+        <phone_number>18601010101</phone_number>
+    </contact>
+
+    <contact>
+        <title>开发工程师</title>
+        <leader_title>开发部经理</leader_title>
+        <name>开三二</name>
+        <phone_number>18601010102</phone_number>
+    </contact>
+
+    <contact>
+        <title>开发工程师</title>
+        <leader_title>开发部经理</leader_title>
+        <name>开三三</name>
+        <phone_number>18601010103</phone_number>
+    </contact>
+
+    <contact>
+        <title>测试工程师</title>
+        <leader_title>测试部经理</leader_title>
+        <name>测三一</name>
+        <phone_number>18601010201</phone_number>
+    </contact>
+
+    <contact>
+        <title>测试工程师</title>
+        <leader_title>测试部经理</leader_title>
+        <name>测三二</name>
+        <phone_number>18601010202</phone_number>
+    </contact>
+
+</resources>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Contact node supports below children nodes
+      --    name: contact's name
+      --    phone_number: contact's phone number
+      --    email: email address
+      --    office_location: office location
+      --    department: contact's department
+      --    title: contact's title
+      --    leader_title: contact's leader title
+      --    characters: characters description
+      -- Note:
+      -- 1. title is mandatory field, others are optional.
+      -- 2. only one contact allows do NOT contain leader_title,
+      --    others must contain it and should be existed.
+      -->
+
+    <contact>
+        <title>总经理</title>
+    </contact>
+
+    <contact>
+        <title>开发部经理</title>
+        <leader_title>总经理</leader_title>
+    </contact>
+
+    <contact>
+        <title>测试部经理</title>
+        <leader_title>总经理</leader_title>
+    </contact>
+
+    <contact>
+        <title>市场部经理</title>
+        <leader_title>总经理</leader_title>
+    </contact>
+
+    <contact>
+        <title>开发工程师</title>
+        <leader_title>开发部经理</leader_title>
+    </contact>
+
+    <contact>
+        <title>开发工程师</title>
+        <leader_title>开发部经理</leader_title>
+    </contact>
+
+    <contact>
+        <title>开发工程师</title>
+        <leader_title>开发部经理</leader_title>
+    </contact>
+
+    <contact>
+        <title>测试工程师</title>
+        <leader_title>测试部经理</leader_title>
+    </contact>
+
+    <contact>
+        <title>测试工程师</title>
+        <leader_title>测试部经理</leader_title>
+    </contact>
+
+</resources>

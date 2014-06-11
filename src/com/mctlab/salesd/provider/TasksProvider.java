@@ -100,6 +100,7 @@ public class TasksProvider extends ContentProvider {
     protected static final int CONTACTS = 50;
     protected static final int CONTACTS_ID = 51;
     protected static final int CONTACTS_FOLLOW_LEADER = 52;
+    protected static final int CONTACTS_LOAD_FROM_TEMPLATE_XML = 53;
     protected static final int PROCUSTS = 60;
     protected static final int PROCUSTS_ID = 61;
     protected static final int REMINDERS = 70;
@@ -151,6 +152,7 @@ public class TasksProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, "contacts", CONTACTS);
         sUriMatcher.addURI(AUTHORITY, "contacts/#", CONTACTS_ID);
         sUriMatcher.addURI(AUTHORITY, "contacts/follow/#", CONTACTS_FOLLOW_LEADER);
+        sUriMatcher.addURI(AUTHORITY, "contacts/template/*", CONTACTS_LOAD_FROM_TEMPLATE_XML);
         sUriMatcher.addURI(AUTHORITY, "procusts", PROCUSTS);
         sUriMatcher.addURI(AUTHORITY, "procusts/#", PROCUSTS_ID);
         sUriMatcher.addURI(AUTHORITY, "reminders", REMINDERS);
@@ -241,6 +243,8 @@ public class TasksProvider extends ContentProvider {
             return CONTACTS_TYPE;
         case CONTACTS_ID:
             return CONTACTS_ITEM_TYPE;
+        case CONTACTS_LOAD_FROM_TEMPLATE_XML:
+            return CONTACTS_TYPE;
         case PROCUSTS:
             return PROCUSTS_TYPE;
         case PROCUSTS_ID:
@@ -284,6 +288,15 @@ public class TasksProvider extends ContentProvider {
         case CONTACTS:
             table = Tables.CONTACTS;
             break;
+        case CONTACTS_LOAD_FROM_TEMPLATE_XML:
+            long customerId = 0;
+            if (values.containsKey(ContactsColumns.CUSTOMER_ID)) {
+                Long temp = values.getAsLong(ContactsColumns.CUSTOMER_ID);
+                if (temp != null) {
+                    customerId = temp.longValue();
+                }
+            }
+            return loadContactsFromTemplateXml(uri.getLastPathSegment(), customerId);
         case PROCUSTS:
             table = Tables.PROCUSTS;
             break;
@@ -563,6 +576,11 @@ public class TasksProvider extends ContentProvider {
 //        builder.append(PositionsColumns.UPPER_POSITION_ID + "<0");
 //
 //        mDb.delete(Tables.POSITIONS, builder.toString(), null);
+    }
+
+    protected Uri loadContactsFromTemplateXml(String tplName, long customerId) {
+        LogUtil.d("Template name: " + tplName + ", customer id: " + customerId);
+        return null;
     }
 
     @Override

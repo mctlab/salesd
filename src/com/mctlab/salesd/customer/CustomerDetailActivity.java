@@ -4,13 +4,17 @@ import com.mctlab.salesd.R;
 import com.mctlab.salesd.SalesDUtils;
 import com.mctlab.salesd.constant.SalesDConstant;
 import com.mctlab.salesd.project.ProjectListFragment;
+import com.mctlab.salesd.provider.TasksProvider;
+import com.mctlab.salesd.provider.TasksDatabaseHelper.ContactsColumns;
 import com.mctlab.salesd.schedule.ScheduleListFragment;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri.Builder;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -23,7 +27,8 @@ import android.view.View;
 import android.widget.TextView;
 
 public class CustomerDetailActivity extends Activity implements View.OnClickListener,
-        CustomerQueryHandler.OnQueryCompleteListener {
+        CustomerQueryHandler.OnQueryCompleteListener,
+        ContactTplSelectorDialogFragment.OnContactTemplateSelectedListener {
 
     private static final int TOKEN_QUERY_CUSTOMER = 0;
     private static final int TOKEN_QUERY_CUSTOMER_LEADER = 1;
@@ -198,6 +203,18 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
     }
 
     @Override
+    public void OnContactTemplateSelected(String tplName) {
+        Builder builder = TasksProvider.CONTACTS_CONTENT_URI.buildUpon();
+        builder.appendEncodedPath("template");
+        builder.appendEncodedPath(tplName);
+
+        ContentValues values = new ContentValues();
+        values.put(ContactsColumns.CUSTOMER_ID, mId);
+
+        getContentResolver().insert(builder.build(), values);
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
         case R.id.leader:
@@ -205,13 +222,16 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
             if (mLeaderId > 0) {
                 intent = new Intent(SalesDConstant.ACTION_CONTACT_DETAIL);
                 intent.putExtra(SalesDConstant.EXTRA_ID, mLeaderId);
+                startActivity(intent);
             } else {
-                intent = new Intent(SalesDConstant.ACTION_CONTACT_EDIT);
-                intent.putExtra(SalesDConstant.EXTRA_CUSTOMER_ID, mId);
-                intent.putExtra(ContactEditActivity.EXTRA_IS_LEADER, true);
-                intent.putExtra(ContactEditActivity.EXTRA_MY_LEADER, mLeader);
+//              intent = new Intent(SalesDConstant.ACTION_CONTACT_EDIT);
+//              intent.putExtra(SalesDConstant.EXTRA_CUSTOMER_ID, mId);
+//              intent.putExtra(ContactEditActivity.EXTRA_IS_LEADER, true);
+//              intent.putExtra(ContactEditActivity.EXTRA_MY_LEADER, mLeader);
+
+                ContactTplSelectorDialogFragment.actionSelectContactTemplate(
+                        getFragmentManager(), this);
             }
-            startActivity(intent);
             break;
         case R.id.project_tab:
             mViewPager.setCurrentItem(TAB_INDEX_PROJECT);
@@ -319,4 +339,5 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
         mLeader = mQueryHandler.getContactName(cursor);
         mLeaderTextView.setText(Html.fromHtml("<u>" + mLeader + "</u>"));
     }
+
 }
