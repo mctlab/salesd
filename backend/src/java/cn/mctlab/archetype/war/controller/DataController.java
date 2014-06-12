@@ -12,8 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import cn.mctlab.archetype.war.constant.DbConsts;
 import cn.mctlab.archetype.war.data.Project;
+import cn.mctlab.archetype.war.data.SyncData;
 import cn.mctlab.archetype.war.json.JsonMapper;
 import cn.mctlab.archetype.war.service.IServer;
 import cn.mctlab.archetype.war.storage.ProjectMapper;
@@ -63,5 +67,20 @@ public class DataController {
             }
         }
         return null;
+    }
+
+    @RequestMapping("/sync")
+    @ResponseBody
+    public String sync() throws Exception {
+        List<SyncData> syncDatas = new LinkedList<SyncData>();
+        List<Project> projects = server.sync(0);
+        for (Project project : projects) {
+            if (project.getDelete() == 1) {
+                syncDatas.add(new SyncData(ProjectMapper.TABLE_NAME, DbConsts.OP_DELETE, project));
+            } else {
+                syncDatas.add(new SyncData(ProjectMapper.TABLE_NAME, DbConsts.OP_UPDATE, project));
+            }
+        }
+        return JsonMapper.listToJson(syncDatas);
     }
 }

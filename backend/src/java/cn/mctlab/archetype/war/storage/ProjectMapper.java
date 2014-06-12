@@ -9,8 +9,11 @@ package cn.mctlab.archetype.war.storage;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.ResultType;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
 
 import cn.mctlab.archetype.war.data.Project;
 
@@ -63,4 +66,8 @@ public interface ProjectMapper {
             + "version = #{PROJECT.version}"
             + " WHERE serverId = #{PROJECT.serverId}")
     void update(final @Param("PROJECT") Project project);
+
+    @Select("SELECT * FROM " + TABLE_NAME + " WHERE version > #{version}")
+    @ResultType(Project.class)
+    List<Project> sync(final long version);
 }
