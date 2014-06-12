@@ -13,6 +13,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import cn.mctlab.archetype.war.data.Project;
 import cn.mctlab.archetype.war.storage.ProjectMapper;
 
@@ -79,6 +81,11 @@ public class Server implements IServer, InitializingBean {
             LOG.error("deleteProject failed: ", e);
             return false;
         }
+    }
+
+    @Override
+    public List<Project> sync(long version) {
+        return projectMapper.sync(version);
     }
 
     //-- un-implements --//

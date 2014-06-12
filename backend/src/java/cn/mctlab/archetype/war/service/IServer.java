@@ -7,6 +7,8 @@
  */
 package cn.mctlab.archetype.war.service;
 
+import java.util.List;
+
 import cn.mctlab.archetype.war.data.Project;
 
 /**
@@ -21,4 +23,6 @@ public interface IServer {
     boolean updateProject(Project project);
 
     boolean deleteProject(long serverId);
+
+    List<Project> sync(long version);
 }
