@@ -376,14 +376,14 @@ public class TasksProvider extends ContentProvider {
 
                     StringBuilder builder = new StringBuilder();
                     builder.append(ContactsColumns.CUSTOMER_ID + "=" + customerId + " AND ");
-                    builder.append(ContactsColumns.NAME + "=" + leader);
+                    builder.append(ContactsColumns.NAME + "='" + leader + "'");
 
                     Cursor cursor = mDb.query(Tables.CONTACTS, null, builder.toString(), null,
                             null, null, null);
                     if (cursor != null) {
                         if (cursor.moveToFirst()) {
                             int index = cursor.getColumnIndex(ContactsColumns._ID);
-                            values.put(ContactsColumns.CUSTOMER_ID, cursor.getLong(index));
+                            values.put(ContactsColumns.DIRECT_LEADER_ID, cursor.getLong(index));
                         }
                         cursor.close();
                     }
