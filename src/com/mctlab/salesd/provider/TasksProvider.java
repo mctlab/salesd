@@ -1,12 +1,15 @@
 package com.mctlab.salesd.provider;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
+import android.content.ContentProvider;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.UriMatcher;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
+import android.net.Uri;
+import android.provider.BaseColumns;
+import android.text.TextUtils;
 
 import com.mctlab.salesd.AppConfig;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ConfigCategoriesColumns;
@@ -19,16 +22,13 @@ import com.mctlab.salesd.provider.TasksDatabaseHelper.ProjectsColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.Tables;
 import com.mctlab.salesd.util.LogUtil;
 
-import android.content.ContentProvider;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.content.UriMatcher;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
-import android.net.Uri;
-import android.provider.BaseColumns;
-import android.text.TextUtils;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
 
 public class TasksProvider extends ContentProvider {
 
@@ -54,12 +54,10 @@ public class TasksProvider extends ContentProvider {
     protected static final String CONFIG_TYPE = TYPE_PREFIX + "config";
     protected static final String CONFIG_ITEM_TYPE = ITEM_TYPE_PREFIX + "config";
 
-    public static final Uri CONFIG_CATEGORIES_CONTENT_URI = Uri.parse(URI_AUTHORITY_PREFIX +
-            "config/categories");
+    public static final Uri CONFIG_CATEGORIES_CONTENT_URI = Uri.parse(URI_AUTHORITY_PREFIX + "config/categories");
 
     protected static final String CONFIG_CATEGORIES_TYPE = TYPE_PREFIX + "config_category";
-    protected static final String CONFIG_CATEGORIES_ITEM_TYPE = ITEM_TYPE_PREFIX +
-            "config_category";
+    protected static final String CONFIG_CATEGORIES_ITEM_TYPE = ITEM_TYPE_PREFIX + "config_category";
 
     public static final Uri CUSTOMERS_CONTENT_URI = Uri.parse(URI_AUTHORITY_PREFIX + "customers");
 
@@ -213,46 +211,46 @@ public class TasksProvider extends ContentProvider {
     public String getType(Uri uri) {
         final int match = sUriMatcher.match(uri);
         switch (match) {
-        case USERS:
-            return USERS_TYPE;
-        case USERS_ID:
-            return USERS_ITEM_TYPE;
-        case PROJECTS:
-            return PROJECTS_TYPE;
-        case PROJECTS_ID:
-            return PROJECTS_ITEM_TYPE;
-        case CONFIG:
-            return CONFIG_TYPE;
-        case CONFIG_ID:
-            return CONFIG_ITEM_TYPE;
-        case CONFIG_CATEGORIES:
-            return CONFIG_CATEGORIES_TYPE;
-        case CONFIG_CATEGORIES_ID:
-            return CONFIG_CATEGORIES_ITEM_TYPE;
-        case CONFIG_CATEGORIES_LOAD_FROM_XML:
-            return CONFIG_CATEGORIES_TYPE;
-        case CUSTOMERS:
-            return CUSTOMERS_TYPE;
-        case CUSTOMERS_ID:
-            return CUSTOMERS_ITEM_TYPE;
-        case CONTACTS:
-            return CONTACTS_TYPE;
-        case CONTACTS_ID:
-            return CONTACTS_ITEM_TYPE;
-        case CONTACTS_LOAD_FROM_TEMPLATE_XML:
-            return CONTACTS_TYPE;
-        case PROCUSTS:
-            return PROCUSTS_TYPE;
-        case PROCUSTS_ID:
-            return PROCUSTS_ITEM_TYPE;
-        case REMINDERS:
-            return REMINDERS_TYPE;
-        case REMINDERS_ID:
-            return REMINDERS_ITEM_TYPE;
-        case SCHEDULES:
-            return SCHEDULES_TYPE;
-        case SCHEDULES_ID:
-            return SCHEDULES_ITEM_TYPE;
+            case USERS:
+                return USERS_TYPE;
+            case USERS_ID:
+                return USERS_ITEM_TYPE;
+            case PROJECTS:
+                return PROJECTS_TYPE;
+            case PROJECTS_ID:
+                return PROJECTS_ITEM_TYPE;
+            case CONFIG:
+                return CONFIG_TYPE;
+            case CONFIG_ID:
+                return CONFIG_ITEM_TYPE;
+            case CONFIG_CATEGORIES:
+                return CONFIG_CATEGORIES_TYPE;
+            case CONFIG_CATEGORIES_ID:
+                return CONFIG_CATEGORIES_ITEM_TYPE;
+            case CONFIG_CATEGORIES_LOAD_FROM_XML:
+                return CONFIG_CATEGORIES_TYPE;
+            case CUSTOMERS:
+                return CUSTOMERS_TYPE;
+            case CUSTOMERS_ID:
+                return CUSTOMERS_ITEM_TYPE;
+            case CONTACTS:
+                return CONTACTS_TYPE;
+            case CONTACTS_ID:
+                return CONTACTS_ITEM_TYPE;
+            case CONTACTS_LOAD_FROM_TEMPLATE_XML:
+                return CONTACTS_TYPE;
+            case PROCUSTS:
+                return PROCUSTS_TYPE;
+            case PROCUSTS_ID:
+                return PROCUSTS_ITEM_TYPE;
+            case REMINDERS:
+                return REMINDERS_TYPE;
+            case REMINDERS_ID:
+                return REMINDERS_ITEM_TYPE;
+            case SCHEDULES:
+                return SCHEDULES_TYPE;
+            case SCHEDULES_ID:
+                return SCHEDULES_ITEM_TYPE;
         }
 
         throw new IllegalArgumentException("Unkwon uri: " + uri.toString());
@@ -263,48 +261,48 @@ public class TasksProvider extends ContentProvider {
         String table = null;
         final int match = sUriMatcher.match(uri);
         switch (match) {
-        case USERS:
-            table = Tables.USERS;
-            break;
-        case PROJECTS:
-            table = Tables.PROJECTS;
-            break;
-        case CONFIG:
-            values = rebuildConfigValues(values);
-            table = Tables.CONFIG;
-            break;
-        case CONFIG_CATEGORIES:
-            table = Tables.CONFIG_CATEGORIES;
-            break;
-        case CONFIG_CATEGORIES_LOAD_FROM_XML:
-            return loadConfigCategoriesFromXml(uri.getLastPathSegment());
-        case CUSTOMERS:
-            table = Tables.CUSTOMERS;
-            break;
-        case CONTACTS:
-            values = rebuildContactsValues(values);
-            table = Tables.CONTACTS;
-            break;
-        case CONTACTS_LOAD_FROM_TEMPLATE_XML:
-            long customerId = 0;
-            if (values.containsKey(ContactsColumns.CUSTOMER_ID)) {
-                Long temp = values.getAsLong(ContactsColumns.CUSTOMER_ID);
-                if (temp != null) {
-                    customerId = temp.longValue();
+            case USERS:
+                table = Tables.USERS;
+                break;
+            case PROJECTS:
+                table = Tables.PROJECTS;
+                break;
+            case CONFIG:
+                values = rebuildConfigValues(values);
+                table = Tables.CONFIG;
+                break;
+            case CONFIG_CATEGORIES:
+                table = Tables.CONFIG_CATEGORIES;
+                break;
+            case CONFIG_CATEGORIES_LOAD_FROM_XML:
+                return loadConfigCategoriesFromXml(uri.getLastPathSegment());
+            case CUSTOMERS:
+                table = Tables.CUSTOMERS;
+                break;
+            case CONTACTS:
+                values = rebuildContactsValues(values);
+                table = Tables.CONTACTS;
+                break;
+            case CONTACTS_LOAD_FROM_TEMPLATE_XML:
+                long customerId = 0;
+                if (values.containsKey(ContactsColumns.CUSTOMER_ID)) {
+                    Long temp = values.getAsLong(ContactsColumns.CUSTOMER_ID);
+                    if (temp != null) {
+                        customerId = temp.longValue();
+                    }
                 }
-            }
-            return loadContactsFromTemplateXml(uri.getLastPathSegment(), customerId);
-        case PROCUSTS:
-            table = Tables.PROCUSTS;
-            break;
-        case REMINDERS:
-            table = Tables.REMINDERS;
-            break;
-        case SCHEDULES:
-            table = Tables.SCHEDULES;
-            break;
-        default:
-            throw new IllegalArgumentException("Unkwon uri: " + uri.toString());
+                return loadContactsFromTemplateXml(uri.getLastPathSegment(), customerId);
+            case PROCUSTS:
+                table = Tables.PROCUSTS;
+                break;
+            case REMINDERS:
+                table = Tables.REMINDERS;
+                break;
+            case SCHEDULES:
+                table = Tables.SCHEDULES;
+                break;
+            default:
+                throw new IllegalArgumentException("Unkwon uri: " + uri.toString());
         }
 
         long id = mDb.insert(table, null, values);
@@ -801,61 +799,60 @@ public class TasksProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection,
-            String[] selectionArgs) {
+    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         String table = null;
         String selectionAppend = null;
         final int match = sUriMatcher.match(uri);
         switch (match) {
-        case USERS_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case USERS:
-            table = Tables.USERS;
-            break;
-        case PROJECTS_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case PROJECTS:
-            table = Tables.PROJECTS;
-            break;
-        case CONFIG_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case CONFIG:
-            values = rebuildConfigValues(values);
-            table = Tables.CONFIG;
-            break;
-        case CONFIG_CATEGORIES_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case CONFIG_CATEGORIES:
-            table = Tables.CONFIG_CATEGORIES;
-            break;
-        case CUSTOMERS_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case CUSTOMERS:
-            table = Tables.CUSTOMERS;
-            break;
-        case CONTACTS_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case CONTACTS:
-            values = rebuildContactsValues(values);
-            table = Tables.CONTACTS;
-            break;
-        case PROCUSTS_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case PROCUSTS:
-            table = Tables.PROCUSTS;
-            break;
-        case REMINDERS_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case REMINDERS:
-            table = Tables.REMINDERS;
-            break;
-        case SCHEDULES_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case SCHEDULES:
-            table = Tables.SCHEDULES;
-            break;
-        default:
-            throw new IllegalArgumentException("Unkwon uri: " + uri.toString());
+            case USERS_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case USERS:
+                table = Tables.USERS;
+                break;
+            case PROJECTS_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case PROJECTS:
+                table = Tables.PROJECTS;
+                break;
+            case CONFIG_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case CONFIG:
+                values = rebuildConfigValues(values);
+                table = Tables.CONFIG;
+                break;
+            case CONFIG_CATEGORIES_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case CONFIG_CATEGORIES:
+                table = Tables.CONFIG_CATEGORIES;
+                break;
+            case CUSTOMERS_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case CUSTOMERS:
+                table = Tables.CUSTOMERS;
+                break;
+            case CONTACTS_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case CONTACTS:
+                values = rebuildContactsValues(values);
+                table = Tables.CONTACTS;
+                break;
+            case PROCUSTS_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case PROCUSTS:
+                table = Tables.PROCUSTS;
+                break;
+            case REMINDERS_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case REMINDERS:
+                table = Tables.REMINDERS;
+                break;
+            case SCHEDULES_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case SCHEDULES:
+                table = Tables.SCHEDULES;
+                break;
+            default:
+                throw new IllegalArgumentException("Unkwon uri: " + uri.toString());
         }
 
         if (selectionAppend != null) {
@@ -876,53 +873,53 @@ public class TasksProvider extends ContentProvider {
         String selectionAppend = null;
         final int match = sUriMatcher.match(uri);
         switch (match) {
-        case USERS_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case USERS:
-            table = Tables.USERS;
-            break;
-        case PROJECTS_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case PROJECTS:
-            table = Tables.PROJECTS;
-            break;
-        case CONFIG_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case CONFIG:
-            table = Tables.CONFIG;
-            break;
-        case CONFIG_CATEGORIES_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case CONFIG_CATEGORIES:
-            table = Tables.CONFIG_CATEGORIES;
-            break;
-        case CUSTOMERS_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case CUSTOMERS:
-            table = Tables.CUSTOMERS;
-            break;
-        case CONTACTS_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case CONTACTS:
-            table = Tables.CONTACTS;
-            break;
-        case PROCUSTS_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case PROCUSTS:
-            table = Tables.PROCUSTS;
-            break;
-        case REMINDERS_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case REMINDERS:
-            table = Tables.REMINDERS;
-            break;
-        case SCHEDULES_ID:
-            selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case SCHEDULES:
-            table = Tables.SCHEDULES;
-            break;
-        default:
-            throw new IllegalArgumentException("Unkwon uri: " + uri.toString());
+            case USERS_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case USERS:
+                table = Tables.USERS;
+                break;
+            case PROJECTS_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case PROJECTS:
+                table = Tables.PROJECTS;
+                break;
+            case CONFIG_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case CONFIG:
+                table = Tables.CONFIG;
+                break;
+            case CONFIG_CATEGORIES_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case CONFIG_CATEGORIES:
+                table = Tables.CONFIG_CATEGORIES;
+                break;
+            case CUSTOMERS_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case CUSTOMERS:
+                table = Tables.CUSTOMERS;
+                break;
+            case CONTACTS_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case CONTACTS:
+                table = Tables.CONTACTS;
+                break;
+            case PROCUSTS_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case PROCUSTS:
+                table = Tables.PROCUSTS;
+                break;
+            case REMINDERS_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case REMINDERS:
+                table = Tables.REMINDERS;
+                break;
+            case SCHEDULES_ID:
+                selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case SCHEDULES:
+                table = Tables.SCHEDULES;
+                break;
+            default:
+                throw new IllegalArgumentException("Unkwon uri: " + uri.toString());
         }
 
         if (selectionAppend != null) {
@@ -938,115 +935,114 @@ public class TasksProvider extends ContentProvider {
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection,
-            String[] selectionArgs, String sortOrder) {
+    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
         String where = null;
         final int match = sUriMatcher.match(uri);
         switch (match) {
-        case USERS_ID:
-            qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
-        case USERS:
-            qb.setTables(Tables.USERS);
-            break;
-        case PROJECTS_ID:
-            qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
-        case PROJECTS:
-            String customerId = uri.getQueryParameter("customer_id");
-            if (!TextUtils.isEmpty(customerId)) {
-                try {
-                    long id = Long.parseLong(customerId);
-                    if (id > 0) {
-                        qb.appendWhere(PROJECTS_HAVE_CUSTOMER_SELECT);
-                        selectionArgs = insertSelectionArg(selectionArgs, String.valueOf(id));
-                    }
-                } catch (NumberFormatException e) {
-                }
-            }
-            qb.setTables(Tables.PROJECTS);
-            break;
-        case CONFIG_ID:
-            where = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case CONFIG:
-            if (isInProjection(projection, ConfigCategoriesColumns.CATEGORY)
-                    || isInProjection(projection, ConfigCategoriesColumns.SORT_INDEX)) {
-                if (where != null) qb.appendWhere("contacts." + where);
-                qb.setTables(ConfigJoinTable);
-                qb.setProjectionMap(ConfigJoinColumns);
-            } else {
-                if (where != null) qb.appendWhere(where);
-                qb.setTables(Tables.CONFIG);
-            }
-            break;
-        case CONFIG_CATEGORIES_ID:
-            qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
-        case CONFIG_CATEGORIES:
-            qb.setTables(Tables.CONFIG_CATEGORIES);
-            break;
-        case CUSTOMERS_ID:
-            qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
-        case CUSTOMERS:
-            String projectId = uri.getQueryParameter("project_id");
-            String forIntroduction = uri.getQueryParameter("for_introduction");
-            if (!TextUtils.isEmpty(projectId)) {
-                boolean belongTo = !Boolean.parseBoolean(forIntroduction);
-                try {
-                    long id = Long.parseLong(projectId);
-                    if (id > 0) {
-                        if (belongTo) {
-                            qb.appendWhere(CUSTOMERS_OF_PROJECT_SELECT);
-                        } else {
-                            qb.appendWhere(CUSTOMERS_NOT_BELONG_TO_PROJECT_SELECT);
+            case USERS_ID:
+                qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
+            case USERS:
+                qb.setTables(Tables.USERS);
+                break;
+            case PROJECTS_ID:
+                qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
+            case PROJECTS:
+                String customerId = uri.getQueryParameter("customer_id");
+                if (!TextUtils.isEmpty(customerId)) {
+                    try {
+                        long id = Long.parseLong(customerId);
+                        if (id > 0) {
+                            qb.appendWhere(PROJECTS_HAVE_CUSTOMER_SELECT);
+                            selectionArgs = insertSelectionArg(selectionArgs, String.valueOf(id));
                         }
-                        selectionArgs = insertSelectionArg(selectionArgs, String.valueOf(id));
+                    } catch (NumberFormatException e) {
                     }
-                } catch (NumberFormatException e) {
                 }
-            }
-            qb.setTables(Tables.CUSTOMERS);
-            break;
-        case CONTACTS_ID:
-            where = BaseColumns._ID + "=" + ContentUris.parseId(uri);
-        case CONTACTS:
-            if (isInProjection(projection, ContactsViewColumns.DIRECT_LEADER)) {
+                qb.setTables(Tables.PROJECTS);
+                break;
+            case CONFIG_ID:
+                where = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case CONFIG:
+                if (isInProjection(projection, ConfigCategoriesColumns.CATEGORY)
+                        || isInProjection(projection, ConfigCategoriesColumns.SORT_INDEX)) {
+                    if (where != null) { qb.appendWhere("contacts." + where); }
+                    qb.setTables(ConfigJoinTable);
+                    qb.setProjectionMap(ConfigJoinColumns);
+                } else {
+                    if (where != null) { qb.appendWhere(where); }
+                    qb.setTables(Tables.CONFIG);
+                }
+                break;
+            case CONFIG_CATEGORIES_ID:
+                qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
+            case CONFIG_CATEGORIES:
+                qb.setTables(Tables.CONFIG_CATEGORIES);
+                break;
+            case CUSTOMERS_ID:
+                qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
+            case CUSTOMERS:
+                String projectId = uri.getQueryParameter("project_id");
+                String forIntroduction = uri.getQueryParameter("for_introduction");
+                if (!TextUtils.isEmpty(projectId)) {
+                    boolean belongTo = !Boolean.parseBoolean(forIntroduction);
+                    try {
+                        long id = Long.parseLong(projectId);
+                        if (id > 0) {
+                            if (belongTo) {
+                                qb.appendWhere(CUSTOMERS_OF_PROJECT_SELECT);
+                            } else {
+                                qb.appendWhere(CUSTOMERS_NOT_BELONG_TO_PROJECT_SELECT);
+                            }
+                            selectionArgs = insertSelectionArg(selectionArgs, String.valueOf(id));
+                        }
+                    } catch (NumberFormatException e) {
+                    }
+                }
+                qb.setTables(Tables.CUSTOMERS);
+                break;
+            case CONTACTS_ID:
+                where = BaseColumns._ID + "=" + ContentUris.parseId(uri);
+            case CONTACTS:
+                if (isInProjection(projection, ContactsViewColumns.DIRECT_LEADER)) {
 //              selection = rebuildContactsSelection(selection);
-                if (where != null) {
-                    qb.appendWhere("contacts." + where);
+                    if (where != null) {
+                        qb.appendWhere("contacts." + where);
+                    }
+                    qb.setTables(ContactsJoinTable);
+                    qb.setProjectionMap(ContactsJoinColumns);
+                } else {
+                    if (where != null) {
+                        qb.appendWhere(where);
+                    }
+                    qb.setTables(Tables.CONTACTS);
                 }
+                break;
+            case CONTACTS_FOLLOW_LEADER:
+                long leaderId = ContentUris.parseId(uri);
+                where = "contacts." + ContactsColumns.DIRECT_LEADER_ID + "=" + leaderId;
+                qb.appendWhere(where);
                 qb.setTables(ContactsJoinTable);
                 qb.setProjectionMap(ContactsJoinColumns);
-            } else {
-                if (where != null) {
-                    qb.appendWhere(where);
-                }
-                qb.setTables(Tables.CONTACTS);
-            }
-            break;
-        case CONTACTS_FOLLOW_LEADER:
-            long leaderId = ContentUris.parseId(uri);
-            where = "contacts." + ContactsColumns.DIRECT_LEADER_ID + "=" + leaderId;
-            qb.appendWhere(where);
-            qb.setTables(ContactsJoinTable);
-            qb.setProjectionMap(ContactsJoinColumns);
-            break;
-        case PROCUSTS_ID:
-            qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
-        case PROCUSTS:
-            qb.setTables(Tables.PROCUSTS);
-            break;
-        case REMINDERS_ID:
-            qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
-        case REMINDERS:
-            qb.setTables(Tables.REMINDERS);
-            break;
-        case SCHEDULES_ID:
-            qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
-        case SCHEDULES:
-            qb.setTables(Tables.SCHEDULES);
-            break;
-        default:
-            throw new IllegalArgumentException("Unkwon uri: " + uri.toString());
+                break;
+            case PROCUSTS_ID:
+                qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
+            case PROCUSTS:
+                qb.setTables(Tables.PROCUSTS);
+                break;
+            case REMINDERS_ID:
+                qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
+            case REMINDERS:
+                qb.setTables(Tables.REMINDERS);
+                break;
+            case SCHEDULES_ID:
+                qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
+            case SCHEDULES:
+                qb.setTables(Tables.SCHEDULES);
+                break;
+            default:
+                throw new IllegalArgumentException("Unkwon uri: " + uri.toString());
         }
 
         Cursor cursor = qb.query(mDb, projection, selection, selectionArgs, null, null, sortOrder);
@@ -1129,7 +1125,7 @@ public class TasksProvider extends ContentProvider {
      */
     private String[] insertSelectionArg(String[] selectionArgs, String arg) {
         if (selectionArgs == null) {
-            return new String[] {arg};
+            return new String[]{arg};
         } else {
             int newLength = selectionArgs.length + 1;
             String[] newSelectionArgs = new String[newLength];

@@ -3,7 +3,7 @@ package com.mctlab.salesd.constant;
 /**
  * Created by liqiang on 6/4/14.
  */
-public class SalesDUrls {
+public class SalesDUrl {
 
     private static final String PREFIX = "http://192.168.2.1:18080";
 

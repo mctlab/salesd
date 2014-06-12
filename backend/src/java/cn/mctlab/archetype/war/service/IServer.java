@@ -17,4 +17,8 @@ public interface IServer {
     String response();
 
     long insertProject(Project project);
+
+    boolean updateProject(Project project);
+
+    boolean deleteProject(long serverId);
 }

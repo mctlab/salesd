@@ -2,6 +2,8 @@ package com.mctlab.salesd.constant;
 
 public class SalesDConstant {
 
+    public static final int EMPTY_ID = -1;
+
     public static String ACTION_SCHEDULE_LIST = "mctlab.intent.action.ACTION_SCHEDULE_LIST";
     public static String ACTION_REMINDER_LIST = "mctlab.intent.action.ACTION_REMINDER_LIST";
     public static String ACTION_PROJECT_LIST = "mctlab.intent.action.ACTION_PROJECT_LIST";
@@ -18,4 +20,8 @@ public class SalesDConstant {
     public static final String EXTRA_ID = "id";
     public static final String EXTRA_CUSTOMER_ID = "customer_id";
     public static final String EXTRA_PROJECT_ID = "project_id";
+
+    public static final String OP_INSERT = "insert";
+    public static final String OP_UPDATE = "update";
+    public static final String OP_DELETE = "delete";
 }

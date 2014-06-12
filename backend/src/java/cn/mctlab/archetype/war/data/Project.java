@@ -19,6 +19,9 @@ public class Project extends BaseData {
     private String description;
     private int ownerId;
 
+    private long version;
+    private int delete;
+
     public long getServerId() {
         return serverId;
     }
@@ -73,5 +76,29 @@ public class Project extends BaseData {
 
     public void setOwnerId(int ownerId) {
         this.ownerId = ownerId;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
+
+    public int getDelete() {
+        return delete;
+    }
+
+    public void setDelete(int delete) {
+        this.delete = delete;
+    }
+
+    public static Project newDeleteProject(long serverId) {
+        Project project = new Project();
+        project.setServerId(serverId);
+        project.setVersion(System.currentTimeMillis());
+        project.setDelete(1);
+        return project;
     }
 }
