@@ -42,6 +42,7 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
         public static final String STATUS = "status";
         public static final String DESCRIPTION = "description";
         public static final String OWNER_ID = "owner_id";
+        public static final String SERVER_ID = "server_id";
 
         public static final int PRIORITY_COMMON = 0;
         public static final int PRIORITY_IMPORTANT = 1;
@@ -150,7 +151,8 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
                 ProjectsColumns.ESTIMATED_AMOUNT + " INTEGER," +
                 ProjectsColumns.STATUS + " INTEGER," +
                 ProjectsColumns.DESCRIPTION + " TEXT," +
-                ProjectsColumns.OWNER_ID + " INTEGER" +
+                ProjectsColumns.OWNER_ID + " INTEGER," +
+                ProjectsColumns.SERVER_ID + " LONG" +
                 ");");
 
         db.execSQL("CREATE TABLE " + Tables.CONFIG + " (" +

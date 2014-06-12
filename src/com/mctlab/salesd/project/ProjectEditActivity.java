@@ -43,7 +43,8 @@ public class ProjectEditActivity extends Activity
     private ContentResolver mContentResolver;
     private ProjectQueryHandler mQueryHandler;
 
-    private long mId = -1;
+    private long mId = SalesDConstant.EMPTY_ID;
+    private long mServerId = SalesDConstant.EMPTY_ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,10 +58,8 @@ public class ProjectEditActivity extends Activity
         mNameEditText = (EditText) findViewById(R.id.name);
         mAmountEditText = (EditText) findViewById(R.id.amount);
         mDescriptionEditText = (EditText) findViewById(R.id.description);
-        mPrioritySpinner = SalesDUtils.setupSpinner(this, R.id.priority,
-                R.array.project_priority_values);
-        mStatusSpinner = SalesDUtils.setupSpinner(this, R.id.status,
-                R.array.project_status_values);
+        mPrioritySpinner = SalesDUtils.setupSpinner(this, R.id.priority, R.array.project_priority_values);
+        mStatusSpinner = SalesDUtils.setupSpinner(this, R.id.status, R.array.project_status_values);
 
         mContentResolver = getContentResolver();
         mQueryHandler = new ProjectQueryHandler(mContentResolver);
@@ -125,6 +124,8 @@ public class ProjectEditActivity extends Activity
 
         String description = mQueryHandler.getProjectDescription(cursor);
         mDescriptionEditText.setText(description);
+
+        mServerId = mQueryHandler.getProjectServerId(cursor);
     }
 
     private void saveProject() {
@@ -133,7 +134,9 @@ public class ProjectEditActivity extends Activity
         }
 
         Project project = getProject();
-        new EditProjectApi(project) {
+        new EditProjectApi(mId > 0
+                ? EditProjectApi.getRequestUpdateList(project)
+                : EditProjectApi.getRequestInsertList(project)) {
 
             @Override
             protected void onStart() {
@@ -144,11 +147,28 @@ public class ProjectEditActivity extends Activity
             @Override
             protected void onSuccess(Void aVoid) {
                 super.onSuccess(aVoid);
+                ContentValues values = getFieldValues();
+                boolean failed = false;
+                if (mId > 0) {
+                    Uri uri = ContentUris.withAppendedId(TasksProvider.PROJECTS_CONTENT_URI, mId);
+                    int count = mContentResolver.update(uri, values, null, null);
+                    failed = count <= 0;
+                } else {
+                    Uri uri = mContentResolver.insert(TasksProvider.PROJECTS_CONTENT_URI, values);
+                    failed = uri == null;
+                }
+                if (failed) {
+                    Toast.makeText(ProjectEditActivity.this, R.string.tip_save_failed, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ProjectEditActivity.this, R.string.tip_save_succeed, Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             }
 
             @Override
             protected void onFailed(ApiException exception) {
                 super.onFailed(exception);
+                Toast.makeText(ProjectEditActivity.this, R.string.tip_save_failed, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -157,25 +177,6 @@ public class ProjectEditActivity extends Activity
                 // TODO: end loading
             }
         }.call(null);
-
-        ContentValues values = getFieldValues();
-        boolean failed = false;
-        if (mId > 0) {
-            Uri uri = ContentUris.withAppendedId(TasksProvider.PROJECTS_CONTENT_URI, mId);
-            int count = mContentResolver.update(uri, values, null, null);
-            failed = count <= 0;
-        } else {
-            Uri uri = mContentResolver.insert(TasksProvider.PROJECTS_CONTENT_URI, values);
-            failed = uri == null;
-        }
-
-        if (failed) {
-            Toast.makeText(this, R.string.tip_save_failed, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Toast.makeText(this, R.string.tip_save_succeed, Toast.LENGTH_SHORT).show();
-        finish();
     }
 
     private boolean checkFields() {
@@ -208,6 +209,7 @@ public class ProjectEditActivity extends Activity
         if (StringUtils.isNotBlank(mDescription)) {
             project.setDescription(mDescription);
         }
+        project.setServerId(mServerId);
         return project;
     }
 

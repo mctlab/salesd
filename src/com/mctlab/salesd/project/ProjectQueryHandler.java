@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.net.Uri.Builder;
 
+import com.mctlab.salesd.constant.SalesDConstant;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ConfigCategoriesColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ConfigColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ProjectsColumns;
@@ -14,13 +15,14 @@ import com.mctlab.salesd.util.QueryHandler;
 
 public class ProjectQueryHandler extends QueryHandler {
 
-    public static final String[] PROJECT_PROJECTION = new String[] {
-        ProjectsColumns._ID,
-        ProjectsColumns.NAME,
-        ProjectsColumns.ESTIMATED_AMOUNT,
-        ProjectsColumns.PRIORITY,
-        ProjectsColumns.STATUS,
-        ProjectsColumns.DESCRIPTION
+    public static final String[] PROJECT_PROJECTION = new String[]{
+            ProjectsColumns._ID,
+            ProjectsColumns.NAME,
+            ProjectsColumns.ESTIMATED_AMOUNT,
+            ProjectsColumns.PRIORITY,
+            ProjectsColumns.STATUS,
+            ProjectsColumns.DESCRIPTION,
+            ProjectsColumns.SERVER_ID
     };
 
     public static final int PROJECT_COLUMN_INDEX_ID = 0;
@@ -29,23 +31,24 @@ public class ProjectQueryHandler extends QueryHandler {
     public static final int PROJECT_COLUMN_INDEX_PRIORITY = 3;
     public static final int PROJECT_COLUMN_INDEX_STATUS = 4;
     public static final int PROJECT_COLUMN_INDEX_DESCRIPTION = 5;
+    public static final int PROJECT_COLUMN_INDEX_SERVER_ID = 6;
 
-    public static final String[] CONFIG_CATEGORY_PROJECTION = new String[] {
-        ConfigCategoriesColumns._ID,
-        ConfigCategoriesColumns.CATEGORY,
-        ConfigCategoriesColumns.SORT_INDEX
+    public static final String[] CONFIG_CATEGORY_PROJECTION = new String[]{
+            ConfigCategoriesColumns._ID,
+            ConfigCategoriesColumns.CATEGORY,
+            ConfigCategoriesColumns.SORT_INDEX
     };
 
     public static final int CONFIG_CATEGORY_COLUMN_INDEX_ID = 0;
     public static final int CONFIG_CATEGORY_COLUMN_INDEX_CATEGORY = 1;
     public static final int CONFIG_CATEGORY_COLUMN_INDEX_SORT_INDEX = 2;
 
-    public static final String[] CONFIG_PROJECTION = new String[] {
-        ConfigColumns._ID,
-        ConfigColumns.PROJECT_ID,
-        ConfigColumns.TYPE,
-        ConfigColumns.NUMBER,
-        ConfigCategoriesColumns.CATEGORY
+    public static final String[] CONFIG_PROJECTION = new String[]{
+            ConfigColumns._ID,
+            ConfigColumns.PROJECT_ID,
+            ConfigColumns.TYPE,
+            ConfigColumns.NUMBER,
+            ConfigCategoriesColumns.CATEGORY
     };
 
     public static final int CONFIG_COLUMN_INDEX_ID = 0;
@@ -59,16 +62,14 @@ public class ProjectQueryHandler extends QueryHandler {
     }
 
     public void startQueryProjects(int token) {
-        startQuery(token, null, TasksProvider.PROJECTS_CONTENT_URI, PROJECT_PROJECTION,
-                null, null, null);
+        startQuery(token, null, TasksProvider.PROJECTS_CONTENT_URI, PROJECT_PROJECTION, null, null, null);
     }
 
     public void startQueryProjects(int token, long customerId) {
         if (customerId > 0) {
             Builder builder = TasksProvider.PROJECTS_CONTENT_URI.buildUpon();
             builder.appendQueryParameter("customer_id", String.valueOf(customerId));
-            startQuery(token, null, builder.build(), PROJECT_PROJECTION,
-                    null, null, null);
+            startQuery(token, null, builder.build(), PROJECT_PROJECTION, null, null, null);
         }
     }
 
@@ -87,8 +88,8 @@ public class ProjectQueryHandler extends QueryHandler {
     public void startQueryConfig(int token, long projectId) {
         if (projectId > 0) {
             String selection = ConfigColumns.PROJECT_ID + "=" + projectId;
-            startQuery(token, null, TasksProvider.CONFIG_CONTENT_URI, CONFIG_PROJECTION,
-                    selection, null, ConfigCategoriesColumns.SORT_INDEX);
+            startQuery(token, null, TasksProvider.CONFIG_CONTENT_URI,
+                    CONFIG_PROJECTION, selection, null, ConfigCategoriesColumns.SORT_INDEX);
         }
     }
 
@@ -125,6 +126,13 @@ public class ProjectQueryHandler extends QueryHandler {
             return cursor.getString(PROJECT_COLUMN_INDEX_DESCRIPTION);
         }
         return null;
+    }
+
+    public long getProjectServerId(Cursor cursor) {
+        if (cursor != null) {
+            return cursor.getLong(PROJECT_COLUMN_INDEX_SERVER_ID);
+        }
+        return SalesDConstant.EMPTY_ID;
     }
 
     public String getConfigCategoryName(Cursor cursor) {
