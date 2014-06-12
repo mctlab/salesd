@@ -212,6 +212,9 @@ public class CustomerDetailActivity extends Activity implements View.OnClickList
         values.put(ContactsColumns.CUSTOMER_ID, mId);
 
         getContentResolver().insert(builder.build(), values);
+
+        mQueryHandler.cancelOperation(TOKEN_QUERY_CUSTOMER_LEADER);
+        mQueryHandler.startQueryCustomerLeader(TOKEN_QUERY_CUSTOMER_LEADER, mId);
     }
 
     @Override

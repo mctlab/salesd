@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.mctlab.salesd.R;
 import com.mctlab.salesd.constant.SalesDConstant;
+import com.mctlab.salesd.provider.TasksDatabaseHelper.ContactsViewColumns;
 import com.mctlab.salesd.provider.TasksProvider;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ContactsColumns;
 import com.mctlab.salesd.util.LogUtil;
@@ -338,7 +339,7 @@ public class ContactEditActivity extends Activity
         }
 
         if (!TextUtils.isEmpty(mDirectLeader)) {
-            values.put(ContactsColumns.DIRECT_LEADER, mDirectLeader);
+            values.put(ContactsViewColumns.DIRECT_LEADER, mDirectLeader);
         }
 
         values.put(ContactsColumns.CUSTOMER_ID, mCustomerId);

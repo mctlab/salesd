@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
 
 public class TasksDatabaseHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
     private static final String DATABASE_NAME = "tasks.db";
 
     public interface Tables {
@@ -87,8 +87,12 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
         public static final String OFFICE_LOCATION = "office_location";
         public static final String DEPARTMENT = "department";
         public static final String TITLE = "title";
-        public static final String DIRECT_LEADER = "direct_leader";
+        public static final String DIRECT_LEADER_ID = "direct_leader_id";
         public static final String CHARACTERS = "characters";
+    }
+
+    public interface ContactsViewColumns {
+        public static final String DIRECT_LEADER = "direct_leader";
     }
 
     // relational table between projects and customers
@@ -186,7 +190,7 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
                 ContactsColumns.OFFICE_LOCATION + " TEXT," +
                 ContactsColumns.DEPARTMENT + " TEXT," +
                 ContactsColumns.TITLE + " TEXT," +
-                ContactsColumns.DIRECT_LEADER + " TEXT," +
+                ContactsColumns.DIRECT_LEADER_ID + " INTEGER," +
                 ContactsColumns.CHARACTERS + " TEXT" +
                 ");");
 

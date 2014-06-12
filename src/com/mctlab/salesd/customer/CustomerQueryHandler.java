@@ -8,6 +8,7 @@ import android.net.Uri.Builder;
 
 import com.mctlab.salesd.R;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ContactsColumns;
+import com.mctlab.salesd.provider.TasksDatabaseHelper.ContactsViewColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.CustomersColumns;
 import com.mctlab.salesd.provider.TasksProvider;
 import com.mctlab.salesd.util.LogUtil;
@@ -46,8 +47,9 @@ public class CustomerQueryHandler extends QueryHandler {
         ContactsColumns.DEPARTMENT,
         ContactsColumns.TITLE,
         ContactsColumns.CHARACTERS,
-        ContactsColumns.DIRECT_LEADER,
-        ContactsColumns.CUSTOMER_ID
+        ContactsColumns.CUSTOMER_ID,
+        ContactsColumns.DIRECT_LEADER_ID,
+        ContactsViewColumns.DIRECT_LEADER
     };
 
     public static final int CONTACT_COLUMN_INDEX_ID = 0;
@@ -58,8 +60,9 @@ public class CustomerQueryHandler extends QueryHandler {
     public static final int CONTACT_COLUMN_INDEX_DEPARTMENT = 5;
     public static final int CONTACT_COLUMN_INDEX_TITLE = 6;
     public static final int CONTACT_COLUMN_INDEX_CHARACTERS = 7;
-    public static final int CONTACT_COLUMN_INDEX_DIRECT_LEADER = 8;
-    public static final int CONTACT_COLUMN_INDEX_CUSTOMER_ID = 9;
+    public static final int CONTACT_COLUMN_INDEX_CUSTOMER_ID = 8;
+    public static final int CONTACT_COLUMN_INDEX_DIRECT_LEADER_ID = 9;
+    public static final int CONTACT_COLUMN_INDEX_DIRECT_LEADER = 10;
 
     private final Context mContext;
 
@@ -96,9 +99,9 @@ public class CustomerQueryHandler extends QueryHandler {
         if (customerId > 0) {
             String none = mContext.getString(R.string.none);
             StringBuilder selection = new StringBuilder();
-            selection.append(ContactsColumns.CUSTOMER_ID + "=" + customerId).append(" AND (");
-            selection.append(ContactsColumns.DIRECT_LEADER + " is null OR ");
-            selection.append(ContactsColumns.DIRECT_LEADER + "='" + none + "')");
+            selection.append("contacts." + ContactsColumns.CUSTOMER_ID + "=" + customerId);
+            selection.append(" AND ");
+            selection.append("contacts." + ContactsColumns.DIRECT_LEADER_ID + "=0");
             startQuery(token, null, TasksProvider.CONTACTS_CONTENT_URI, CONTACT_PROJECTION,
                     selection.toString(), null, null);
         }
@@ -107,7 +110,7 @@ public class CustomerQueryHandler extends QueryHandler {
     public void startQueryContacts(int token, long customerId) {
         String selection = null;
         if (customerId > 0) {
-            selection = ContactsColumns.CUSTOMER_ID + "=" + customerId;
+            selection = "contacts." + ContactsColumns.CUSTOMER_ID + "=" + customerId;
         }
         startQuery(token, null, TasksProvider.CONTACTS_CONTENT_URI, CONTACT_PROJECTION,
                 selection, null, null);
@@ -125,7 +128,7 @@ public class CustomerQueryHandler extends QueryHandler {
         // TODO: correct customer id checking
         if (customerId >= 0) {
             StringBuilder selection = new StringBuilder();
-            selection.append(ContactsColumns.CUSTOMER_ID + "=" + customerId);
+            selection.append("contacts." + ContactsColumns.CUSTOMER_ID + "=" + customerId);
             startQuery(token, null, TasksProvider.CONTACTS_CONTENT_URI, CONTACT_PROJECTION,
                     selection.toString(), null, null);
         }
@@ -246,6 +249,13 @@ public class CustomerQueryHandler extends QueryHandler {
     public String getContactTitle(Cursor cursor) {
         if (cursor != null) {
             return cursor.getString(CONTACT_COLUMN_INDEX_TITLE);
+        }
+        return null;
+    }
+
+    public Long getContactDirectLeaderId(Cursor cursor) {
+        if (cursor != null) {
+            return cursor.getLong(CONTACT_COLUMN_INDEX_DIRECT_LEADER_ID);
         }
         return null;
     }

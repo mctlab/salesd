@@ -3,7 +3,6 @@ package com.mctlab.salesd.provider;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.Locale;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -13,6 +12,7 @@ import com.mctlab.salesd.AppConfig;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ConfigCategoriesColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ConfigColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ContactsColumns;
+import com.mctlab.salesd.provider.TasksDatabaseHelper.ContactsViewColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.CustomersColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ProcustsColumns;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ProjectsColumns;
@@ -133,9 +133,9 @@ public class TasksProvider extends ContentProvider {
             " LEFT JOIN config_categories ON (config.category_id = config_categories._id)";
     protected static HashMap<String, String> ConfigJoinColumns;
 
-//    protected static String ContactsJoinTable = "contacts " +
-//            " LEFT JOIN contacts leader ON (contacts.direct_leader_id = leader._id)";
-//    protected static HashMap<String, String> ContactsJoinColumns;
+    protected static String ContactsJoinTable = "contacts " +
+            " LEFT JOIN contacts leader ON (contacts.direct_leader_id = leader._id)";
+    protected static HashMap<String, String> ContactsJoinColumns;
 
     static {
         sUriMatcher.addURI(AUTHORITY, "users", USERS);
@@ -171,34 +171,30 @@ public class TasksProvider extends ContentProvider {
         ConfigJoinColumns.put(ConfigCategoriesColumns.SORT_INDEX, "config_categories." +
                 ConfigCategoriesColumns.SORT_INDEX);
 
-//        ContactsJoinColumns = new HashMap<String, String>();
-//        ContactsJoinColumns.put(ContactsColumns._ID, "contacts." +
-//                ContactsColumns._ID);
-//        ContactsJoinColumns.put(ContactsColumns.CUSTOMER_ID, "contacts." +
-//                ContactsColumns.CUSTOMER_ID);
-//        ContactsJoinColumns.put(ContactsColumns.NAME, "contacts." +
-//                ContactsColumns.NAME);
-//        ContactsJoinColumns.put(ContactsColumns.PHONE_NUMBER, "contacts." +
-//                ContactsColumns.PHONE_NUMBER);
-//        ContactsJoinColumns.put(ContactsColumns.EMAIL, "contacts." +
-//                ContactsColumns.EMAIL);
-//        ContactsJoinColumns.put(ContactsColumns.OFFICE_LOCATION, "contacts." +
-//                ContactsColumns.OFFICE_LOCATION);
-//        ContactsJoinColumns.put(ContactsColumns.DEPARTMENT, "contacts." +
-//                ContactsColumns.DEPARTMENT);
-//        ContactsJoinColumns.put(ContactsColumns.TITLE, "contacts." +
-//                ContactsColumns.TITLE);
-//        ContactsJoinColumns.put(ContactsColumns.CHARACTERS, "contacts." +
-//                ContactsColumns.CHARACTERS);
-//        ContactsJoinColumns.put(ContactsColumns.DIRECT_LEADER, "leader." + ContactsColumns.NAME +
-//                " AS " + ContactsColumns.DIRECT_LEADER);
+        ContactsJoinColumns = new HashMap<String, String>();
+        ContactsJoinColumns.put(ContactsColumns._ID, "contacts." +
+                ContactsColumns._ID);
+        ContactsJoinColumns.put(ContactsColumns.CUSTOMER_ID, "contacts." +
+                ContactsColumns.CUSTOMER_ID);
+        ContactsJoinColumns.put(ContactsColumns.NAME, "contacts." +
+                ContactsColumns.NAME);
+        ContactsJoinColumns.put(ContactsColumns.PHONE_NUMBER, "contacts." +
+                ContactsColumns.PHONE_NUMBER);
+        ContactsJoinColumns.put(ContactsColumns.EMAIL, "contacts." +
+                ContactsColumns.EMAIL);
+        ContactsJoinColumns.put(ContactsColumns.OFFICE_LOCATION, "contacts." +
+                ContactsColumns.OFFICE_LOCATION);
+        ContactsJoinColumns.put(ContactsColumns.DEPARTMENT, "contacts." +
+                ContactsColumns.DEPARTMENT);
+        ContactsJoinColumns.put(ContactsColumns.TITLE, "contacts." +
+                ContactsColumns.TITLE);
+        ContactsJoinColumns.put(ContactsColumns.DIRECT_LEADER_ID, "contacts." +
+                ContactsColumns.DIRECT_LEADER_ID);
+        ContactsJoinColumns.put(ContactsColumns.CHARACTERS, "contacts." +
+                ContactsColumns.CHARACTERS);
+        ContactsJoinColumns.put(ContactsViewColumns.DIRECT_LEADER, "leader." +
+                ContactsColumns.NAME + " AS " + ContactsViewColumns.DIRECT_LEADER);
     }
-
-    protected static final String SELECTION_CONTACTS_FOLLOW_LEADER =
-            ContactsColumns.DIRECT_LEADER + " IN "
-                    + "(SELECT " + ContactsColumns.NAME
-                    + " FROM " + Tables.CONTACTS
-                    + " WHERE " + ContactsColumns._ID + "=%d)";
 
     private TasksDatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
@@ -286,6 +282,7 @@ public class TasksProvider extends ContentProvider {
             table = Tables.CUSTOMERS;
             break;
         case CONTACTS:
+            values = rebuildContactsValues(values);
             table = Tables.CONTACTS;
             break;
         case CONTACTS_LOAD_FROM_TEMPLATE_XML:
@@ -337,6 +334,7 @@ public class TasksProvider extends ContentProvider {
                         mConfigCategoryIdMap.put(category, id);
                     }
                 }
+                cursor.close();
             }
         }
         return mConfigCategoryIdMap;
@@ -365,6 +363,34 @@ public class TasksProvider extends ContentProvider {
             }
         }
         return configValues;
+    }
+
+    protected ContentValues rebuildContactsValues(ContentValues values) {
+        if (values != null && values.containsKey(ContactsViewColumns.DIRECT_LEADER)) {
+            String leader = values.getAsString(ContactsViewColumns.DIRECT_LEADER);
+            values.remove(ContactsViewColumns.DIRECT_LEADER);
+
+            if (!TextUtils.isEmpty(leader)) {
+                if (values.containsKey(ContactsColumns.CUSTOMER_ID)) {
+                    Long customerId = values.getAsLong(ContactsColumns.CUSTOMER_ID);
+
+                    StringBuilder builder = new StringBuilder();
+                    builder.append(ContactsColumns.CUSTOMER_ID + "=" + customerId + " AND ");
+                    builder.append(ContactsColumns.NAME + "=" + leader);
+
+                    Cursor cursor = mDb.query(Tables.CONTACTS, null, builder.toString(), null,
+                            null, null, null);
+                    if (cursor != null) {
+                        if (cursor.moveToFirst()) {
+                            int index = cursor.getColumnIndex(ContactsColumns._ID);
+                            values.put(ContactsColumns.CUSTOMER_ID, cursor.getLong(index));
+                        }
+                        cursor.close();
+                    }
+                }
+            }
+        }
+        return values;
     }
 
     protected Uri loadConfigCategoriesFromXml(String path) {
@@ -579,8 +605,199 @@ public class TasksProvider extends ContentProvider {
     }
 
     protected Uri loadContactsFromTemplateXml(String tplName, long customerId) {
-        LogUtil.d("Template name: " + tplName + ", customer id: " + customerId);
+        LogUtil.d("Load contacts template: " + tplName + ", customer id: " + customerId);
+        mPositionIdMap.clear();
+
+        InputStreamReader reader = null;
+        try {
+            reader = new InputStreamReader(getContext().getAssets().open(tplName));
+            XmlPullParser parser = XmlPullParserFactory.newInstance().newPullParser();
+            parser.setInput(reader);
+
+            clearContacts(customerId, false);
+
+            int eventType = parser.getEventType();
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                if (eventType == XmlPullParser.START_TAG) {
+                    String tag = parser.getName();
+                    if (TextUtils.equals(tag, "contact")) {
+                        eventType = insertContact(customerId, parser);
+                        continue;
+                    }
+                }
+                parser.next();
+                eventType = parser.getEventType();
+            }
+        } catch (IOException e) {
+            LogUtil.w("Failed to open: " + tplName + ", message: " + e.getMessage());
+        } catch (XmlPullParserException e) {
+            LogUtil.w("Failed to parse: " + tplName + ", message: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            clearContacts(customerId, true);
+
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+
         return null;
+    }
+
+    protected int insertContact(long customerId, XmlPullParser parser) {
+        int eventType = XmlPullParser.END_DOCUMENT;
+
+        try {
+            ContentValues values = new ContentValues();
+            values.put(ContactsColumns.CUSTOMER_ID, customerId);
+
+            String value, title = null, leaderTitle = null;
+
+            LogUtil.d(">> new contact");
+            eventType = parser.getEventType();
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                if (eventType == XmlPullParser.START_TAG) {
+                    String tag = parser.getName();
+                    if (TextUtils.equals(tag, "name")) {
+                        value = parser.nextText();
+                        if (!TextUtils.isEmpty(value)) {
+                            LogUtil.d("-- name: " + value);
+                            values.put(ContactsColumns.NAME, value);
+                        }
+                    } else if (TextUtils.equals(tag, "phone_number")) {
+                        value = parser.nextText();
+                        if (!TextUtils.isEmpty(value)) {
+                            LogUtil.d("-- phone_number: " + value);
+                            values.put(ContactsColumns.PHONE_NUMBER, value);
+                        }
+                    } else if (TextUtils.equals(tag, "email")) {
+                        value = parser.nextText();
+                        if (!TextUtils.isEmpty(value)) {
+                            LogUtil.d("-- email: " + value);
+                            values.put(ContactsColumns.EMAIL, value);
+                        }
+                    } else if (TextUtils.equals(tag, "office_location")) {
+                        value = parser.nextText();
+                        if (!TextUtils.isEmpty(value)) {
+                            LogUtil.d("-- office_location: " + value);
+                            values.put(ContactsColumns.OFFICE_LOCATION, value);
+                        }
+                    } else if (TextUtils.equals(tag, "department")) {
+                        value = parser.nextText();
+                        if (!TextUtils.isEmpty(value)) {
+                            LogUtil.d("-- department: " + value);
+                            values.put(ContactsColumns.DEPARTMENT, value);
+                        }
+                    } else if (TextUtils.equals(tag, "title")) {
+                        value = parser.nextText();
+                        if (!TextUtils.isEmpty(value)) {
+                            LogUtil.d("-- title: " + value);
+                            title = value;
+                            values.put(ContactsColumns.TITLE, value);
+                        }
+                    } else if (TextUtils.equals(tag, "leader_title")) {
+                        value = parser.nextText();
+                        if (!TextUtils.isEmpty(value)) {
+                            LogUtil.d("-- leader_title: " + value);
+                            leaderTitle = value;
+                        }
+                    } else if (TextUtils.equals(tag, "characters")) {
+                        value = parser.nextText();
+                        if (!TextUtils.isEmpty(value)) {
+                            LogUtil.d("-- characters: " + value);
+                            values.put(ContactsColumns.CHARACTERS, value);
+                        }
+                    }
+                } else if (eventType == XmlPullParser.END_TAG) {
+                    String tag = parser.getName();
+                    if (TextUtils.equals(tag, "contact")) {
+                        break;
+                    }
+                }
+
+                parser.next();
+                eventType = parser.getEventType();
+            }
+
+            boolean insert = true;
+            // checking contact title
+            if (!values.containsKey(ContactsColumns.TITLE)) {
+                // invalid contact, no title field
+                LogUtil.d("** ignore: no title field");
+                insert = false;
+            }
+
+            boolean isLeader = false;
+            // checking contact leader title
+            if (insert) {
+                long leaderId = 0L;
+                if (TextUtils.isEmpty(leaderTitle)) {
+                    if (mPositionIdMap.containsKey("__00__")) {
+                        // customer leader already exists
+                        LogUtil.d("** ignore: customer leader already exists");
+                        insert = false;
+                    } else {
+                        isLeader = true;
+                    }
+                } else {
+                    if (mPositionIdMap.containsKey(leaderTitle)) {
+                        leaderId = mPositionIdMap.get(leaderTitle);
+                    } else {
+                        leaderId = -2 - mPositionIdMap.size();
+                        mPositionIdMap.put(leaderTitle, leaderId);
+                    }
+                }
+                values.put(ContactsColumns.DIRECT_LEADER_ID, leaderId);
+            }
+
+            // checking contact name
+            if (insert && !values.containsKey(ContactsColumns.NAME)) {
+                values.put(ContactsColumns.NAME, title);
+            }
+
+            // insert contact
+            if (insert) {
+                long id = mDb.insert(Tables.CONTACTS, null, values);
+                if (id > 0) {
+                    if (isLeader) {
+                        // add leader identifier for later use
+                        mPositionIdMap.put("__00__", 0L);
+                    }
+                    if (mPositionIdMap.containsKey(title)) {
+                        long oldId = mPositionIdMap.get(title);
+                        StringBuilder builder = new StringBuilder();
+                        builder.append(ContactsColumns.CUSTOMER_ID + "=" + customerId);
+                        builder.append(" AND ");
+                        builder.append(ContactsColumns.DIRECT_LEADER_ID + "=" + oldId);
+
+                        values = new ContentValues();
+                        values.put(ContactsColumns.DIRECT_LEADER_ID, id);
+
+                        mDb.update(Tables.CONTACTS, values, builder.toString(), null);
+                    }
+                    mPositionIdMap.put(title, id);
+                }
+            }
+        } catch (Exception e) {
+
+        }
+
+        return eventType;
+    }
+
+    protected void clearContacts(long customerId, boolean onlyInvalid) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(ContactsColumns.CUSTOMER_ID + "=" + customerId);
+
+        if (onlyInvalid) {
+            builder.append(" AND ");
+            builder.append(ContactsColumns.DIRECT_LEADER_ID + "<0");
+        }
+
+        mDb.delete(Tables.CONTACTS, builder.toString(), null);
     }
 
     @Override
@@ -619,6 +836,7 @@ public class TasksProvider extends ContentProvider {
         case CONTACTS_ID:
             selectionAppend = BaseColumns._ID + "=" + ContentUris.parseId(uri);
         case CONTACTS:
+            values = rebuildContactsValues(values);
             table = Tables.CONTACTS;
             break;
         case PROCUSTS_ID:
@@ -791,24 +1009,26 @@ public class TasksProvider extends ContentProvider {
         case CONTACTS_ID:
             where = BaseColumns._ID + "=" + ContentUris.parseId(uri);
         case CONTACTS:
-//            if (isInProjection(projection, ContactsColumns.DIRECT_LEADER)) {
-//                if (where != null) {
-//                    qb.appendWhere("contacts." + where);
-//                }
-//                qb.setTables(ContactsJoinTable);
-//                qb.setProjectionMap(ContactsJoinColumns);
-//            } else {
+            if (isInProjection(projection, ContactsViewColumns.DIRECT_LEADER)) {
+//              selection = rebuildContactsSelection(selection);
+                if (where != null) {
+                    qb.appendWhere("contacts." + where);
+                }
+                qb.setTables(ContactsJoinTable);
+                qb.setProjectionMap(ContactsJoinColumns);
+            } else {
                 if (where != null) {
                     qb.appendWhere(where);
                 }
                 qb.setTables(Tables.CONTACTS);
-//            }
+            }
             break;
         case CONTACTS_FOLLOW_LEADER:
             long leaderId = ContentUris.parseId(uri);
-            where = String.format(Locale.US, SELECTION_CONTACTS_FOLLOW_LEADER, leaderId);
+            where = "contacts." + ContactsColumns.DIRECT_LEADER_ID + "=" + leaderId;
             qb.appendWhere(where);
-            qb.setTables(Tables.CONTACTS);
+            qb.setTables(ContactsJoinTable);
+            qb.setProjectionMap(ContactsJoinColumns);
             break;
         case PROCUSTS_ID:
             qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
@@ -843,6 +1063,65 @@ public class TasksProvider extends ContentProvider {
             }
         }
         return false;
+    }
+
+    public String rebuildContactsSelection(String selection) {
+        // not full test function
+        if (TextUtils.isEmpty(selection)) {
+            return selection;
+        }
+
+        if (selection.contains(ContactsColumns._ID)) {
+            selection = selection.replace(ContactsColumns._ID, "contacts." + ContactsColumns._ID);
+        }
+
+        if (selection.contains(ContactsColumns.CUSTOMER_ID)) {
+            selection = selection.replace(ContactsColumns.CUSTOMER_ID, "contacts." +
+                    ContactsColumns.CUSTOMER_ID);
+        }
+
+        if (selection.contains(ContactsColumns.NAME)) {
+            selection = selection.replace(ContactsColumns.NAME, "contacts." +
+                    ContactsColumns.NAME);
+        }
+
+        if (selection.contains(ContactsColumns.PHONE_NUMBER)) {
+            selection = selection.replace(ContactsColumns.PHONE_NUMBER, "contacts." +
+                    ContactsColumns.PHONE_NUMBER);
+        }
+
+        if (selection.contains(ContactsColumns.EMAIL)) {
+            selection = selection.replace(ContactsColumns.EMAIL, "contacts." +
+                    ContactsColumns.EMAIL);
+        }
+
+        if (selection.contains(ContactsColumns.OFFICE_LOCATION)) {
+            selection = selection.replace(ContactsColumns.OFFICE_LOCATION, "contacts." +
+                    ContactsColumns.OFFICE_LOCATION);
+        }
+
+        if (selection.contains(ContactsColumns.DEPARTMENT)) {
+            selection = selection.replace(ContactsColumns.DEPARTMENT, "contacts." +
+                    ContactsColumns.DEPARTMENT);
+        }
+
+        if (selection.contains(ContactsColumns.TITLE)) {
+            selection = selection.replace(ContactsColumns.TITLE, "contacts." +
+                    ContactsColumns.TITLE);
+        }
+
+        if (selection.contains(ContactsColumns.DIRECT_LEADER_ID)) {
+            selection = selection.replace(ContactsColumns.DIRECT_LEADER_ID, "contacts." +
+                    ContactsColumns.DIRECT_LEADER_ID);
+        }
+
+        if (selection.contains(ContactsColumns.CHARACTERS)) {
+            selection = selection.replace(ContactsColumns.CHARACTERS, "contacts." +
+                    ContactsColumns.CHARACTERS);
+        }
+
+        LogUtil.v("new contact selection: " + selection);
+        return selection;
     }
 
     /**
