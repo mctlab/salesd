@@ -25,5 +25,4 @@ public abstract class AbsPostJsonGetJsonApi<JSON extends IJsonable, RESULT exten
     }
 
     protected abstract RESULT decodeJson(JSONObject json) throws DecodeResponseException;
-
 }

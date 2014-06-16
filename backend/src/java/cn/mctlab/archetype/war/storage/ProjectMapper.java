@@ -33,6 +33,8 @@ public interface ProjectMapper {
             + "description TEXT, "
             + "ownerId INT, "
             + "version BIGINT, "
+            + "createTime BIGINT, "
+            + "isDelete INT DEFAULT 0, "
             + "PRIMARY KEY (serverId))"
     )
     void createTable();
@@ -44,7 +46,8 @@ public interface ProjectMapper {
             + "status, "
             + "description, "
             + "ownerId, "
-            + "version"
+            + "version, "
+            + "createTime"
             + ") VALUES("
             + "#{PROJECT.name}, "
             + "#{PROJECT.priority}, "
@@ -52,7 +55,8 @@ public interface ProjectMapper {
             + "#{PROJECT.status}, "
             + "#{PROJECT.description}, "
             + "#{PROJECT.ownerId}, "
-            + "#{PROJECT.version}"
+            + "#{PROJECT.version}, "
+            + "#{PROJECT.createTime}"
             + ")")
     @Options(useGeneratedKeys = true, keyProperty = "PROJECT.serverId", keyColumn = "serverId")
     int insert(final @Param("PROJECT") Project project);
@@ -66,6 +70,12 @@ public interface ProjectMapper {
             + "version = #{PROJECT.version}"
             + " WHERE serverId = #{PROJECT.serverId}")
     void update(final @Param("PROJECT") Project project);
+
+    @Update("UPDATE " + TABLE_NAME + " set "
+            + "version = #{PROJECT.version}, "
+            + "isDelete = #{PROJECT.isDelete}"
+            + " WHERE serverId = #{PROJECT.serverId}")
+    void delete(final @Param("PROJECT") Project project);
 
     @Select("SELECT * FROM " + TABLE_NAME + " WHERE version > #{version}")
     @ResultType(Project.class)

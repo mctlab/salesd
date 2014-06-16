@@ -21,5 +21,4 @@ public abstract class AbsPutJsonApi<JSON extends IJsonable, RESULT> extends AbsP
         super.onPreProcess(request);
         HttpUtils.setEntity((HttpPut) request, content);
     }
-
 }

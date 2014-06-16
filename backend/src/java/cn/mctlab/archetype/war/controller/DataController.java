@@ -17,6 +17,7 @@ import java.util.List;
 
 import cn.mctlab.archetype.war.constant.DbConsts;
 import cn.mctlab.archetype.war.data.Project;
+import cn.mctlab.archetype.war.data.Sync;
 import cn.mctlab.archetype.war.data.SyncData;
 import cn.mctlab.archetype.war.json.JsonMapper;
 import cn.mctlab.archetype.war.service.IServer;
@@ -55,7 +56,7 @@ public class DataController {
                     long serverId = json.get(KEY_SERVER_ID).getAsLong();
                     LOG.debug("{} {} status: {}", table, operation, server.deleteProject(serverId));
                 } else {
-                    Project project = JsonMapper.getSerializer().fromJson(json.get(KEY_DATA), Project.class);
+                    Project project = JsonMapper.fromJson(json.get(KEY_DATA), Project.class);
                     LOG.debug("{}: {}", table, project.writeJson());
                     if (DbConsts.OP_INSERT.equals(operation)) {
                         LOG.debug("{} {} serverId: {}", table, operation, server.insertProject(project));
@@ -71,16 +72,26 @@ public class DataController {
 
     @RequestMapping("/sync")
     @ResponseBody
-    public String sync() throws Exception {
-        List<SyncData> syncDatas = new LinkedList<SyncData>();
-        List<Project> projects = server.sync(0);
-        for (Project project : projects) {
-            if (project.getDelete() == 1) {
-                syncDatas.add(new SyncData(ProjectMapper.TABLE_NAME, DbConsts.OP_DELETE, project));
-            } else {
-                syncDatas.add(new SyncData(ProjectMapper.TABLE_NAME, DbConsts.OP_UPDATE, project));
+    public String sync(final @RequestBody String body) throws Exception {
+        LOG.debug(body);
+        Sync[] syncs = JsonMapper.jsonToArray(body, Sync[].class);
+        List<SyncData> results = new LinkedList<SyncData>();
+        for (Sync sync : syncs) {
+            String table = sync.getTable();
+            long version = sync.getVersion();
+            if (ProjectMapper.TABLE_NAME.equals(table)) {
+                List<Project> projects = server.sync(version);
+                for (Project project : projects) {
+                    if (project.getIsDelete() == 1) {
+                        results.add(new SyncData(ProjectMapper.TABLE_NAME, DbConsts.OP_DELETE, Project.newDeleteProject(project.getServerId())));
+                    } else if (project.getCreateTime() > version) {
+                        results.add(new SyncData(ProjectMapper.TABLE_NAME, DbConsts.OP_INSERT, project));
+                    } else {
+                        results.add(new SyncData(ProjectMapper.TABLE_NAME, DbConsts.OP_UPDATE, project));
+                    }
+                }
             }
         }
-        return JsonMapper.listToJson(syncDatas);
+        return JsonMapper.listToJson(results);
     }
 }

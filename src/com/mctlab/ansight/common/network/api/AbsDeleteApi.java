@@ -13,5 +13,4 @@ public abstract class AbsDeleteApi<FORM extends IForm, RESULT> extends AbstractA
     protected HttpDeleteTask<RESULT> onCreateTask() {
         return newHttpDeleteTask();
     }
-
 }
