@@ -5,7 +5,7 @@ package com.mctlab.salesd.constant;
  */
 public class SalesDUrl {
 
-    private static final String PREFIX = "http://192.168.2.1:18080";
+    private static final String PREFIX = "http://salesdbackend.duapp.com";
 
     private static String rootUrl() {
         return PREFIX;
