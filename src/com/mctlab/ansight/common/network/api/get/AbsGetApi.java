@@ -14,5 +14,4 @@ public abstract class AbsGetApi<Form extends IForm, Result> extends AbstractApi<
     protected HttpGetTask<Result> onCreateTask() {
         return newHttpGetTask();
     }
-
 }

@@ -5,6 +5,9 @@ import android.net.Uri;
 import android.net.Uri.Builder;
 
 import com.mctlab.ansight.common.AsApplication;
+import com.mctlab.ansight.common.json.JsonMapper;
+import com.mctlab.salesd.data.SyncData;
+import com.mctlab.salesd.data.SyncData.Deserializer;
 import com.mctlab.salesd.provider.TasksProvider;
 
 public class ThisApplication extends AsApplication {
@@ -18,7 +21,7 @@ public class ThisApplication extends AsApplication {
         super.onCreate();
         initAppConfig();
         loadConfigCategories();
-        // TODO: JsonMapper.registerDeserializer(Something.class, new Something.Deserializer());
+        JsonMapper.registerDeserializer(SyncData.class, new Deserializer());
     }
 
     @Override
@@ -37,5 +40,4 @@ public class ThisApplication extends AsApplication {
         Uri uri = builder.appendPath("categories.xml").build();
         resolver.insert(uri, null);
     }
-
 }

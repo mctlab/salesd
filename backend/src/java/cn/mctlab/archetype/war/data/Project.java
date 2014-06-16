@@ -20,7 +20,8 @@ public class Project extends BaseData {
     private int ownerId;
 
     private long version;
-    private int delete;
+    private long createTime;
+    private int isDelete;
 
     public long getServerId() {
         return serverId;
@@ -86,19 +87,26 @@ public class Project extends BaseData {
         this.version = version;
     }
 
-    public int getDelete() {
-        return delete;
+    public long getCreateTime() {
+        return createTime;
     }
 
-    public void setDelete(int delete) {
-        this.delete = delete;
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public int getIsDelete() {
+        return isDelete;
+    }
+
+    public void setIsDelete(int isDelete) {
+        this.isDelete = isDelete;
     }
 
     public static Project newDeleteProject(long serverId) {
         Project project = new Project();
         project.setServerId(serverId);
-        project.setVersion(System.currentTimeMillis());
-        project.setDelete(1);
+        project.setIsDelete(1);
         return project;
     }
 }

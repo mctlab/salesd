@@ -170,8 +170,10 @@ public class HttpUtils {
 
     public static RequestParams generatePostParams(IForm form) {
         RequestParams params = new RequestParams();
-        for (NameValuePair e : form.listParams()) {
-            params.put(e.getName(), e.getValue());
+        if (form != null) {
+            for (NameValuePair e : form.listParams()) {
+                params.put(e.getName(), e.getValue());
+            }
         }
         return params;
     }
@@ -192,5 +194,4 @@ public class HttpUtils {
         Header[] headers = response.getHeaders(key);
         return headers != null && headers.length > 0 ? headers[0].getValue().trim() : "";
     }
-
 }

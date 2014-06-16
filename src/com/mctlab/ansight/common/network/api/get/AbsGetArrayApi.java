@@ -42,5 +42,4 @@ public abstract class AbsGetArrayApi<Form extends IForm, Result> extends AbsGetA
     }
 
     protected abstract Result decode(Object obj) throws DecodeResponseException;
-
 }

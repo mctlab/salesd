@@ -25,5 +25,4 @@ public abstract class AbsPostGetJsonApi<FORM extends IForm, RESULT extends IJson
     }
 
     protected abstract RESULT decodeJson(JSONObject obj) throws DecodeResponseException;
-
 }

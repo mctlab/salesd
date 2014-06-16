@@ -3,6 +3,7 @@ package cn.mctlab.archetype.war.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.List;
@@ -11,6 +12,10 @@ import java.util.Map;
 public class JsonMapper {
 
     public static <T extends IJsonable> T fromJson(String json, Class<T> clazz) {
+        return getDeserializer().fromJson(json, clazz);
+    }
+
+    public static <T extends IJsonable> T fromJson(JsonElement json, Class<T> clazz) {
         return getDeserializer().fromJson(json, clazz);
     }
 

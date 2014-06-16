@@ -14,5 +14,4 @@ public abstract class AbsPutApi<FORM extends IForm, RESULT> extends AbstractApi<
     protected HttpPutTask<RESULT> onCreateTask() {
         return newHttpPutTask();
     }
-
 }

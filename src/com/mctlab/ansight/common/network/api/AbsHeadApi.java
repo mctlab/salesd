@@ -21,5 +21,4 @@ public abstract class AbsHeadApi<Form extends IForm> extends AbstractApi<Form, V
     protected HttpHeadTask onCreateTask() {
         return newHttpHeadTask();
     }
-
 }

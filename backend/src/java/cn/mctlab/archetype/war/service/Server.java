@@ -54,28 +54,33 @@ public class Server implements IServer, InitializingBean {
 
     @Override
     public long insertProject(Project project) {
-        project.setVersion(System.currentTimeMillis());
+        long version = System.currentTimeMillis();
+        project.setVersion(version);
+        project.setCreateTime(version);
         LOG.debug("count: {}", projectMapper.insert(project));
         return project.getServerId();
     }
 
     @Override
     public boolean updateProject(Project project) {
-        project.setVersion(System.currentTimeMillis());
+        long version = System.currentTimeMillis();
+        project.setVersion(version);
         try {
             projectMapper.update(project);
             return true;
         } catch (Exception e) {
-            LOG.error("deleteProject failed: ", e);
+            LOG.error("updateProject failed: ", e);
             return false;
         }
     }
 
     @Override
     public boolean deleteProject(long serverId) {
+        long version = System.currentTimeMillis();
         Project mock = Project.newDeleteProject(serverId);
+        mock.setVersion(version);
         try {
-//            projectMapper.delete(mock);
+            projectMapper.delete(mock);
             return true;
         } catch (Exception e) {
             LOG.error("deleteProject failed: ", e);
