@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,17 +17,90 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.mctlab.ansight.common.exception.ApiException;
+import com.mctlab.ansight.common.exception.RequestAbortedException;
 import com.mctlab.ansight.common.util.StringUtils;
 import com.mctlab.salesd.R;
 import com.mctlab.salesd.SalesDUtils;
+import com.mctlab.salesd.activity.WaitingDialogFragment;
 import com.mctlab.salesd.api.EditProjectApi;
 import com.mctlab.salesd.constant.SalesDConstant;
 import com.mctlab.salesd.data.Project;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ProjectsColumns;
 import com.mctlab.salesd.provider.TasksProvider;
+import com.mctlab.salesd.util.LogUtil;
 
 public class ProjectEditActivity extends Activity
         implements ProjectQueryHandler.OnQueryCompleteListener {
+
+    private static final int API_TOKEN_INSERT_PROJECT = 0;
+    private static final int API_TOKEN_UPDATE_PROJECT = 1;
+
+    class ProjectCallbackListener extends EditProjectApi.CallbackListener {
+
+        @Override
+        public void onApiStart(int token) {
+            super.onApiStart(token);
+            LogUtil.d("project api: start");
+            Resources resources = ProjectEditActivity.this.getResources();
+            if ((mId > 0)) {
+                WaitingDialogFragment.actionShowProgress(getFragmentManager(),
+                        resources.getString(R.string.dlg_message_updating_project));
+            } else {
+                WaitingDialogFragment.actionShowProgress(getFragmentManager(),
+                        resources.getString(R.string.dlg_message_adding_new_project));
+            }
+        }
+
+        @Override
+        public void onApiAborted(int token, RequestAbortedException exception) {
+            super.onApiAborted(token, exception);
+            LogUtil.d("project api: abort");
+            WaitingDialogFragment.actionDismissProgress();
+        }
+
+        @Override
+        public void onApiSuccess(int token, Void result) {
+            super.onApiSuccess(token, result);
+            LogUtil.d("project api: success");
+            WaitingDialogFragment.actionDismissProgress();
+
+            ContentValues values = getFieldValues();
+            boolean failed = false;
+            if (mId > 0) {
+                Uri uri = ContentUris.withAppendedId(TasksProvider.PROJECTS_CONTENT_URI, mId);
+                int count = mContentResolver.update(uri, values, null, null);
+                failed = count <= 0;
+            } else {
+                Uri uri = mContentResolver.insert(TasksProvider.PROJECTS_CONTENT_URI, values);
+                failed = uri == null;
+            }
+            if (failed) {
+                Toast.makeText(ProjectEditActivity.this, R.string.tip_save_failed,
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(ProjectEditActivity.this, R.string.tip_save_succeed,
+                        Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+
+        @Override
+        public void onApiFailed(int token, ApiException exception) {
+            super.onApiFailed(token, exception);
+            LogUtil.d("project api: failed");
+            WaitingDialogFragment.actionDismissProgress();
+
+            Toast.makeText(ProjectEditActivity.this, R.string.tip_save_failed,
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onApiFinish(int token) {
+            super.onApiFinish(token);
+            LogUtil.d("project api: finish");
+        }
+
+    }
 
     private EditText mNameEditText;
     private EditText mDescriptionEditText;
@@ -40,6 +114,8 @@ public class ProjectEditActivity extends Activity
     private int mPriority;
     private int mStatus;
 
+    private ProjectCallbackListener mProjectCallbackListener;
+
     private ContentResolver mContentResolver;
     private ProjectQueryHandler mQueryHandler;
 
@@ -52,15 +128,18 @@ public class ProjectEditActivity extends Activity
         setContentView(R.layout.project_edit_activity);
 
         if (getIntent() != null) {
-            mId = getIntent().getLongExtra(SalesDConstant.EXTRA_ID, -1);
+            mId = getIntent().getLongExtra(SalesDConstant.EXTRA_ID, SalesDConstant.EMPTY_ID);
         }
 
         mNameEditText = (EditText) findViewById(R.id.name);
         mAmountEditText = (EditText) findViewById(R.id.amount);
         mDescriptionEditText = (EditText) findViewById(R.id.description);
-        mPrioritySpinner = SalesDUtils.setupSpinner(this, R.id.priority, R.array.project_priority_values);
-        mStatusSpinner = SalesDUtils.setupSpinner(this, R.id.status, R.array.project_status_values);
+        mPrioritySpinner = SalesDUtils.setupSpinner(this, R.id.priority,
+                R.array.project_priority_values);
+        mStatusSpinner = SalesDUtils.setupSpinner(this, R.id.status,
+                R.array.project_status_values);
 
+        mProjectCallbackListener = new ProjectCallbackListener();
         mContentResolver = getContentResolver();
         mQueryHandler = new ProjectQueryHandler(mContentResolver);
         mQueryHandler.setOnQueryCompleteListener(this);
@@ -134,49 +213,13 @@ public class ProjectEditActivity extends Activity
         }
 
         Project project = getProject();
-        new EditProjectApi(mId > 0
-                ? EditProjectApi.getRequestUpdateList(project)
-                : EditProjectApi.getRequestInsertList(project)) {
-
-            @Override
-            protected void onStart() {
-                super.onStart();
-                // TODO: start loading
-            }
-
-            @Override
-            protected void onSuccess(Void aVoid) {
-                super.onSuccess(aVoid);
-                ContentValues values = getFieldValues();
-                boolean failed = false;
-                if (mId > 0) {
-                    Uri uri = ContentUris.withAppendedId(TasksProvider.PROJECTS_CONTENT_URI, mId);
-                    int count = mContentResolver.update(uri, values, null, null);
-                    failed = count <= 0;
-                } else {
-                    Uri uri = mContentResolver.insert(TasksProvider.PROJECTS_CONTENT_URI, values);
-                    failed = uri == null;
-                }
-                if (failed) {
-                    Toast.makeText(ProjectEditActivity.this, R.string.tip_save_failed, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(ProjectEditActivity.this, R.string.tip_save_succeed, Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-            }
-
-            @Override
-            protected void onFailed(ApiException exception) {
-                super.onFailed(exception);
-                Toast.makeText(ProjectEditActivity.this, R.string.tip_save_failed, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            protected void onFinish() {
-                super.onFinish();
-                // TODO: end loading
-            }
-        }.call(null);
+        if (mId > 0) {
+            EditProjectApi.updateProject(API_TOKEN_UPDATE_PROJECT, project,
+                    mProjectCallbackListener);
+        } else {
+            EditProjectApi.insertProject(API_TOKEN_INSERT_PROJECT, project,
+                    mProjectCallbackListener);
+        }
     }
 
     private boolean checkFields() {

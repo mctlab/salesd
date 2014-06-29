@@ -9,6 +9,7 @@ import com.mctlab.ansight.common.exception.DecodeResponseException;
 import com.mctlab.ansight.common.exception.HttpStatusException;
 import com.mctlab.ansight.common.exception.NetworkNotAvailableException;
 import com.mctlab.ansight.common.exception.RequestAbortedException;
+import com.mctlab.ansight.common.network.api.callback.ApiCallbackListener;
 import com.mctlab.ansight.common.network.form.IForm;
 import com.mctlab.ansight.common.network.http.AsyncHttpExecutor;
 import com.mctlab.ansight.common.network.http.AsyncHttpExecutor.Priority;
@@ -35,6 +36,9 @@ public abstract class AbstractApi<Form extends IForm, Result> implements IServer
 
     private AsyncHttpExecutor<Result> executor;
 
+    private int token;
+
+    private WeakReference<ApiCallbackListener<Result>> callbackListenerRef;
     private WeakReference<AsActivity> activityRef;
     private WeakReference<HttpUriRequest> requestRef;
 
@@ -112,6 +116,15 @@ public abstract class AbstractApi<Form extends IForm, Result> implements IServer
 
     protected final HttpHeadTask newHttpHeadTask() {
         return new HttpHeadTask(baseUrl, form, (ExecutorCallback<Void>) executorCallback);
+    }
+
+    public void setCallbackListener(int token, ApiCallbackListener<Result> listener) {
+        this.token = token;
+        callbackListenerRef = new WeakReference<ApiCallbackListener<Result>>(listener);
+    }
+
+    public ApiCallbackListener<Result> getCallbackListener() {
+        return callbackListenerRef == null ? null : callbackListenerRef.get();
     }
 
     /**
@@ -235,16 +248,32 @@ public abstract class AbstractApi<Form extends IForm, Result> implements IServer
 
     protected abstract HttpTask<Result> onCreateTask();
 
-    protected void onSuccess(Result result) {}
+    protected void onSuccess(Result result) {
+        ApiCallbackListener<Result> listener = getCallbackListener();
+        if (listener != null) {
+            listener.onApiSuccess(token, result);
+        }
+    }
 
-    protected void onFailed(ApiException exception) {}
+    protected void onFailed(ApiException exception) {
+        ApiCallbackListener<Result> listener = getCallbackListener();
+        if (listener != null) {
+            listener.onApiFailed(token, exception);
+        }
+    }
 
     protected void onStart() {
-        // TODO: start loading
+        ApiCallbackListener<Result> listener = getCallbackListener();
+        if (listener != null) {
+            listener.onApiStart(token);
+        }
     }
 
     protected void onFinish() {
-        // TODO: end loading
+        ApiCallbackListener<Result> listener = getCallbackListener();
+        if (listener != null) {
+            listener.onApiFinish(token);
+        }
     }
 
     /**
@@ -254,6 +283,10 @@ public abstract class AbstractApi<Form extends IForm, Result> implements IServer
 
     protected void onAborted(RequestAbortedException exception) {
         L.i(this, exception);
+        ApiCallbackListener<Result> listener = getCallbackListener();
+        if (listener != null) {
+            listener.onApiAborted(token, exception);
+        }
     }
 
     /**
