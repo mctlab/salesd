@@ -9,18 +9,58 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.mctlab.salesd.R;
+import com.mctlab.salesd.activity.WaitingDialogFragment;
 import com.mctlab.salesd.api.SyncApi;
 import com.mctlab.salesd.constant.SalesDConstant;
 import com.mctlab.salesd.data.Project;
-import com.mctlab.salesd.data.Sync;
 import com.mctlab.salesd.data.SyncData;
 import com.mctlab.salesd.data.SyncProject;
-import com.mctlab.salesd.provider.TasksDatabaseHelper.Tables;
+import com.mctlab.salesd.util.LogUtil;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class ProjectListActivity extends Activity {
+
+    class SyncCallbackListener extends SyncApi.CallbackListener {
+
+        @Override
+        public void onApiStart(int token) {
+            super.onApiStart(token);
+            WaitingDialogFragment.actionShowProgress(getFragmentManager(),
+                    getString(R.string.dlg_message_syncing_project));
+        }
+
+        @Override
+        public void onApiSuccess(int token, List<SyncData> syncDatas) {
+            super.onApiSuccess(token, syncDatas);
+            long version = 0L;
+            for (SyncData syncData : syncDatas) {
+                if (syncData instanceof SyncProject) {
+                    Project project = ((SyncProject) syncData).getData();
+                    if (project.getVersion() > version) {
+                        version = project.getVersion();
+                    }
+                    if (SalesDConstant.OP_DELETE.equals(syncData.getOperation())) {
+                        LogUtil.d("Delete " + project.getName());
+                    } else if (SalesDConstant.OP_INSERT.equals(syncData.getOperation())) {
+                        LogUtil.d("Insert " + project.getName());
+                    } else if (SalesDConstant.OP_UPDATE.equals(syncData.getOperation())) {
+                        LogUtil.d("Update " + project.getName());
+                    }
+                }
+            }
+            LogUtil.d("Table project version: " + version);
+        }
+
+        @Override
+        public void onApiFinish(int token) {
+            super.onApiFinish(token);
+            WaitingDialogFragment.actionDismissProgress();
+        }
+
+    }
+
+    SyncCallbackListener mSyncCallbackListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +68,8 @@ public class ProjectListActivity extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         setContentView(R.layout.project_list_activity);
+
+        mSyncCallbackListener = new SyncCallbackListener();
 
         FragmentTransaction transaction;
         transaction = getFragmentManager().beginTransaction();
@@ -38,27 +80,7 @@ public class ProjectListActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        List<Sync> syncs = new LinkedList<Sync>();
-        final Sync syncProject = new Sync(Tables.PROJECTS, 0);
-        syncs.add(syncProject);
-        new SyncApi(syncs.toArray(new Sync[syncs.size()])) {
-            @Override
-            protected void onSuccess(List<SyncData> syncDatas) {
-                super.onSuccess(syncDatas);
-                for (SyncData syncData : syncDatas) {
-                    if (syncData instanceof SyncProject) {
-                        Project project = ((SyncProject) syncData).getData();
-                        if (SalesDConstant.OP_DELETE.equals(syncData.getOperation())) {
-
-                        } else if (SalesDConstant.OP_INSERT.equals(syncData.getOperation())) {
-
-                        } else if (SalesDConstant.OP_UPDATE.equals(syncData.getOperation())) {
-
-                        }
-                    }
-                }
-            }
-        }.call(null);
+        SyncApi.syncProjects(0, mSyncCallbackListener);
     }
 
     @Override

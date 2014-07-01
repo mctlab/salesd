@@ -58,6 +58,7 @@
 
     <string name="dlg_message_adding_new_project">正在创建新项目</string>
     <string name="dlg_message_updating_project">正在更新项目</string>
+    <string name="dlg_message_syncing_project">正在同步项目</string>
 
     <!-- config -->
     <string name="config">项目配置</string>
