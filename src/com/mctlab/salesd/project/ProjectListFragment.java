@@ -3,12 +3,16 @@ package com.mctlab.salesd.project;
 import com.mctlab.salesd.R;
 import com.mctlab.salesd.constant.SalesDConstant;
 import com.mctlab.salesd.provider.TasksDatabaseHelper.ProjectsColumns;
+import com.mctlab.salesd.provider.TasksProvider;
+import com.mctlab.salesd.util.LogUtil;
 
 import android.app.ListFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +25,7 @@ public class ProjectListFragment extends ListFragment
         implements ProjectQueryHandler.OnQueryCompleteListener {
 
     protected ProjectQueryHandler mQueryHandler;
+    protected ContentObserver mContentObserver;
     protected ListAdapter mAdapter;
 
     protected View mEmptyView;
@@ -31,6 +36,17 @@ public class ProjectListFragment extends ListFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContentObserver = new ContentObserver(new Handler()) {
+            @Override
+            public void onChange(boolean selfChange) {
+                super.onChange(selfChange);
+                if (mCustomerRelated) {
+                    mQueryHandler.startQueryProjects(0, mCustomerId);
+                } else {
+                    mQueryHandler.startQueryProjects(0);
+                }
+            }
+        };
     }
 
     @Override
@@ -54,6 +70,9 @@ public class ProjectListFragment extends ListFragment
         mQueryHandler.setOnQueryCompleteListener(this);
         mAdapter = new ListAdapter(getActivity());
         getListView().setAdapter(mAdapter);
+
+        getActivity().getContentResolver().registerContentObserver(
+                TasksProvider.PROJECTS_CONTENT_URI, true, mContentObserver);
     }
 
     @Override
@@ -69,6 +88,7 @@ public class ProjectListFragment extends ListFragment
     @Override
     public void onDestroyView() {
         mAdapter.changeCursor(null);
+        getActivity().getContentResolver().unregisterContentObserver(mContentObserver);
         super.onDestroyView();
     }
 

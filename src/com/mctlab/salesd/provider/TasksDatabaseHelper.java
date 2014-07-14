@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
 
 public class TasksDatabaseHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
     private static final String DATABASE_NAME = "tasks.db";
 
     public interface Tables {
@@ -20,6 +20,7 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
         public static final String PROCUSTS = "procusts";
         public static final String REMINDERS = "reminders";
         public static final String SCHEDULES = "schedules";
+        public static final String SD_TABLE_VERSIONS = "sd_table_versions";
     }
 
     public interface UsersColumns {
@@ -129,6 +130,12 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
         public static final int STATUS_COMPLETE = 1;
     }
 
+    public interface SDTableVersionsColumns {
+        public static final String _ID = BaseColumns._ID;
+        public static final String TABLE = "sd_table";
+        public static final String VERSION = "version";
+    }
+
     public TasksDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -206,7 +213,7 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
                 RemindersColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 RemindersColumns.PROJECT_ID + " INTEGER," +
                 RemindersColumns.CUSTOMER_ID + " INTEGER," +
-                RemindersColumns.REMINDER_CYCLE + " INTEGER" +
+                RemindersColumns.REMINDER_CYCLE + " INTEGER," +
                 RemindersColumns.OWNER_ID + " INTEGER" +
                 ");");
 
@@ -217,8 +224,14 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
                 SchedulesColumns.START_TIME + " INTEGER," +
                 SchedulesColumns.STATUS + " INTEGER," +
                 SchedulesColumns.NOTE + " TEXT," +
-                SchedulesColumns.LAST_MODIFIED + " INTEGER" +
+                SchedulesColumns.LAST_MODIFIED + " INTEGER," +
                 SchedulesColumns.OWNER_ID + " INTEGER" +
+                ");");
+
+        db.execSQL("CREATE TABLE " + Tables.SD_TABLE_VERSIONS + " (" +
+                SDTableVersionsColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                SDTableVersionsColumns.TABLE + " TEXT," +
+                SDTableVersionsColumns.VERSION + " INTEGER" +
                 ");");
     }
 
@@ -233,6 +246,7 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + Tables.PROCUSTS + ";");
         db.execSQL("DROP TABLE IF EXISTS " + Tables.REMINDERS + ";");
         db.execSQL("DROP TABLE IF EXISTS " + Tables.SCHEDULES + ";");
+        db.execSQL("DROP TABLE IF EXISTS " + Tables.SD_TABLE_VERSIONS + ";");
 
         onCreate(db);
     }

@@ -2,6 +2,7 @@ package com.mctlab.salesd.project;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,7 +16,9 @@ import com.mctlab.salesd.constant.SalesDConstant;
 import com.mctlab.salesd.data.Project;
 import com.mctlab.salesd.data.SyncData;
 import com.mctlab.salesd.data.SyncProject;
+import com.mctlab.salesd.provider.TasksDatabaseHelper.Tables;
 import com.mctlab.salesd.util.LogUtil;
+import com.mctlab.salesd.util.TableUtil;
 
 import java.util.List;
 
@@ -41,15 +44,18 @@ public class ProjectListActivity extends Activity {
                         version = project.getVersion();
                     }
                     if (SalesDConstant.OP_DELETE.equals(syncData.getOperation())) {
-                        LogUtil.d("Delete " + project.getName());
+                        project.deleteFromLocal(mContentResolver);
                     } else if (SalesDConstant.OP_INSERT.equals(syncData.getOperation())) {
-                        LogUtil.d("Insert " + project.getName());
+                        project.saveToLocal(mContentResolver, false);
                     } else if (SalesDConstant.OP_UPDATE.equals(syncData.getOperation())) {
-                        LogUtil.d("Update " + project.getName());
+                        project.saveToLocal(mContentResolver, true);
                     }
                 }
             }
-            LogUtil.d("Table project version: " + version);
+            if (version > 0L) {
+                TableUtil.setTableVersion(getContentResolver(), Tables.SD_TABLE_VERSIONS,
+                        version);
+            }
         }
 
         @Override
@@ -60,7 +66,8 @@ public class ProjectListActivity extends Activity {
 
     }
 
-    SyncCallbackListener mSyncCallbackListener;
+    private SyncCallbackListener mSyncCallbackListener;
+    private ContentResolver mContentResolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +77,7 @@ public class ProjectListActivity extends Activity {
         setContentView(R.layout.project_list_activity);
 
         mSyncCallbackListener = new SyncCallbackListener();
+        mContentResolver = getContentResolver();
 
         FragmentTransaction transaction;
         transaction = getFragmentManager().beginTransaction();
@@ -80,7 +88,8 @@ public class ProjectListActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        SyncApi.syncProjects(0, mSyncCallbackListener);
+        long version = TableUtil.getTableVersion(getContentResolver(), Tables.SD_TABLE_VERSIONS);
+        SyncApi.syncProjects(0, version, mSyncCallbackListener);
     }
 
     @Override

@@ -84,6 +84,11 @@ public class TasksProvider extends ContentProvider {
     protected static final String SCHEDULES_TYPE = TYPE_PREFIX + "schedule";
     protected static final String SCHEDULES_ITEM_TYPE = ITEM_TYPE_PREFIX + "schedule";
 
+    public static final Uri SD_TABLE_VERSIONS_CONTENT_URI = Uri.parse(
+            URI_AUTHORITY_PREFIX + "sd_table_versions");
+
+    protected static final String SD_TABLE_VERSIONS_TYPE = TYPE_PREFIX + "sd_table_versions";
+
     protected static final int USERS = 10;
     protected static final int USERS_ID = 11;
     protected static final int PROJECTS = 20;
@@ -105,6 +110,7 @@ public class TasksProvider extends ContentProvider {
     protected static final int REMINDERS_ID = 71;
     protected static final int SCHEDULES = 80;
     protected static final int SCHEDULES_ID = 81;
+    protected static final int SD_TABLE_VERSIONS = 90;
 
     protected static final UriMatcher sUriMatcher = new UriMatcher(
             UriMatcher.NO_MATCH);
@@ -157,6 +163,7 @@ public class TasksProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, "reminders/#", REMINDERS_ID);
         sUriMatcher.addURI(AUTHORITY, "schedules", SCHEDULES);
         sUriMatcher.addURI(AUTHORITY, "schedules/#", SCHEDULES_ID);
+        sUriMatcher.addURI(AUTHORITY, "sd_table_versions", SD_TABLE_VERSIONS);
 
         ConfigJoinColumns = new HashMap<String, String>();
         ConfigJoinColumns.put(ConfigColumns._ID, "config." + ConfigColumns._ID);
@@ -251,6 +258,8 @@ public class TasksProvider extends ContentProvider {
                 return SCHEDULES_TYPE;
             case SCHEDULES_ID:
                 return SCHEDULES_ITEM_TYPE;
+            case SD_TABLE_VERSIONS:
+                return SD_TABLE_VERSIONS_TYPE;
         }
 
         throw new IllegalArgumentException("Unkwon uri: " + uri.toString());
@@ -301,12 +310,16 @@ public class TasksProvider extends ContentProvider {
             case SCHEDULES:
                 table = Tables.SCHEDULES;
                 break;
+            case SD_TABLE_VERSIONS:
+                table = Tables.SD_TABLE_VERSIONS;
+                break;
             default:
                 throw new IllegalArgumentException("Unkwon uri: " + uri.toString());
         }
 
         long id = mDb.insert(table, null, values);
         if (id >= 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
             return ContentUris.withAppendedId(uri, id);
         }
         return null;
@@ -851,6 +864,9 @@ public class TasksProvider extends ContentProvider {
             case SCHEDULES:
                 table = Tables.SCHEDULES;
                 break;
+            case SD_TABLE_VERSIONS:
+                table = Tables.SD_TABLE_VERSIONS;
+                break;
             default:
                 throw new IllegalArgumentException("Unkwon uri: " + uri.toString());
         }
@@ -864,6 +880,9 @@ public class TasksProvider extends ContentProvider {
         }
 
         int count = mDb.update(table, values, selection, selectionArgs);
+        if (count > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
         return count;
     }
 
@@ -918,6 +937,8 @@ public class TasksProvider extends ContentProvider {
             case SCHEDULES:
                 table = Tables.SCHEDULES;
                 break;
+            case SD_TABLE_VERSIONS:
+                table = Tables.SD_TABLE_VERSIONS;
             default:
                 throw new IllegalArgumentException("Unkwon uri: " + uri.toString());
         }
@@ -931,6 +952,9 @@ public class TasksProvider extends ContentProvider {
         }
 
         int count = mDb.delete(table, selection, selectionArgs);
+        if (count > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
         return count;
     }
 
@@ -1040,6 +1064,9 @@ public class TasksProvider extends ContentProvider {
                 qb.appendWhere(BaseColumns._ID + "=" + ContentUris.parseId(uri));
             case SCHEDULES:
                 qb.setTables(Tables.SCHEDULES);
+                break;
+            case SD_TABLE_VERSIONS:
+                qb.setTables(Tables.SD_TABLE_VERSIONS);
                 break;
             default:
                 throw new IllegalArgumentException("Unkwon uri: " + uri.toString());

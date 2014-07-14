@@ -64,16 +64,16 @@ public class ProjectEditActivity extends Activity
             LogUtil.d("project api: success");
             WaitingDialogFragment.actionDismissProgress();
 
-            ContentValues values = getFieldValues();
             boolean failed = false;
-            if (mId > 0) {
-                Uri uri = ContentUris.withAppendedId(TasksProvider.PROJECTS_CONTENT_URI, mId);
-                int count = mContentResolver.update(uri, values, null, null);
-                failed = count <= 0;
-            } else {
-                Uri uri = mContentResolver.insert(TasksProvider.PROJECTS_CONTENT_URI, values);
-                failed = uri == null;
-            }
+//            ContentValues values = getProject().getContentValues();
+//            if (mId > 0) {
+//                Uri uri = ContentUris.withAppendedId(TasksProvider.PROJECTS_CONTENT_URI, mId);
+//                int count = mContentResolver.update(uri, values, null, null);
+//                failed = count <= 0;
+//            } else {
+//                Uri uri = mContentResolver.insert(TasksProvider.PROJECTS_CONTENT_URI, values);
+//                failed = uri == null;
+//            }
             if (failed) {
                 Toast.makeText(ProjectEditActivity.this, R.string.tip_save_failed,
                         Toast.LENGTH_SHORT).show();
@@ -254,24 +254,6 @@ public class ProjectEditActivity extends Activity
         }
         project.setServerId(mServerId);
         return project;
-    }
-
-    private ContentValues getFieldValues() {
-        ContentValues values = new ContentValues();
-
-        if (!TextUtils.isEmpty(mName)) {
-            values.put(ProjectsColumns.NAME, mName);
-        }
-
-        values.put(ProjectsColumns.ESTIMATED_AMOUNT, mAmount);
-        values.put(ProjectsColumns.PRIORITY, mPriority);
-        values.put(ProjectsColumns.STATUS, mStatus);
-
-        if (!TextUtils.isEmpty(mDescription)) {
-            values.put(ProjectsColumns.DESCRIPTION, mDescription);
-        }
-
-        return values;
     }
 
 }
